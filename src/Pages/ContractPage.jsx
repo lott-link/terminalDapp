@@ -11,11 +11,18 @@ const ContractPage = () => {
     const [loadingProfile,setLoadingProfile] = useState(false)
     const [input,setInput] = useState()
     const [infoFields,setInfoFields] = useState([])
-    const [parsedUserInfo,setParsedUserInfo] = useState()
     const signIn = ()=>{
-        window.contract.methods.signIn("mamad","").send({from:account})
+        setSendInfoLoading(true)
+        setSendInfoDisabled(true)
+        let data = getInfoFieldsData()
+        data = JSON.stringify(data).replaceAll("\"","\'")
+        window.contract.methods.signIn(input,JSON.stringify(data)).send({from:account})
         .then(res => console.log(res))
         .catch(err=> console.log(err,"err in signIn"))
+        .finally(()=>{
+            setSendInfoLoading(false)
+            setSendInfoDisabled(false)
+        })
       }
       const [userInfo,setUserInfo] = useState()
       const getUserInfo = ()=>{
@@ -28,15 +35,17 @@ const ContractPage = () => {
         })
       }
       const parseUserInfo = (info)=>{
-        let data = info.replaceAll("\'","\"")
-        data = JSON.parse(data.slice(1,data.length-1))
-        const fields = []
-        for(const key in data){
-            if (infoOptions.includes(key)){
-                fields.push({key,value:data[key]})
+        if(info){
+            let data = info.replaceAll("\'","\"")
+            data = JSON.parse(data.slice(1,data.length-1))
+            const fields = []
+            for(const key in data){
+                if (infoOptions.includes(key)){
+                    fields.push({key,value:data[key]})
+                }
             }
+            setInfoFields(fields)
         }
-        setInfoFields(fields)
       }
     const handleInputChange = (index,event)=>{
         const values = [...infoFields]
@@ -80,6 +89,7 @@ const ContractPage = () => {
         contract.methods.addrToUser(address).call()
         .then(res=>{
             setUserName(res)
+            setButtonDisabled(false)
             getUserInfo()
         })
         .catch(err=>console.log(err,"error in Address to user contractpage"))
@@ -89,7 +99,7 @@ const ContractPage = () => {
         if(active){
           addressToUser(account)
         }
-      },[active,account])
+      },[active,account,chainId])
     const sendInfo = ()=>{
         setSendInfoDisabled(true)
         setSendInfoLoading(true)
@@ -106,7 +116,7 @@ const ContractPage = () => {
     }
     return (
         <div className="w-100 h-100 p-4">
-            {active && (userName && userName.username ? <div>username:{userName.username}</div> : loadingProfile ? <div>loading...</div> : <div><input className="input" placeholder="Enter username" type="text" onChange={e=>setInput(e.target.value)} /><button className="mx-2" onClick={signIn} >sign in</button></div>)}            
+            {active && (userName && userName.username ? <div>username:{userName.username}</div> : loadingProfile ? <div>loading...</div> : <div className="my-2"><input className="input" placeholder="Enter username" type="text" onChange={e=>setInput(e.target.value)} /><button className="mx-2" onClick={signIn} disabled={sendInfoDisabled} >sign in and setInfo</button>{sendInfoLoading && <span>loading...</span>}</div>)}            
              {/* <input className="input" placeholder="Enter username" type="text" onChange={e=>setInput(e.target.value)} /> */}
             {/* <button className="mx-2" onClick={signIn} >sign in</button> */}
             <div>{infoOptions.map((option,index)=><button className="mx-1" disabled={buttonDisabled} onClick={()=>addOptionInput(option)} key={index}>{option}</button>)}</div>
@@ -123,7 +133,7 @@ const ContractPage = () => {
                         </div>
                     )
                 })}
-                {infoFields.length !== 0 && <div><button disabled={sendInfoDisabled} onClick={sendInfo}>send info</button>{sendInfoLoading && <span>loading...</span>}</div>}
+                {infoFields.length !== 0 && userName && userName.username && <div><button disabled={sendInfoDisabled} onClick={sendInfo}>send info</button>{sendInfoLoading && <span>loading...</span>}</div>}
             </div>
             <pre>
                 {infoFields.length !== 0 && JSON.stringify(infoFields,null,2)}

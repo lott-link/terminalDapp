@@ -39,7 +39,7 @@ const Sidebar = () => {
       .then(res=>setBalance(res))
       .catch(err=>setBalance("cant' get balance"))
     }
-  },[active,account])
+  },[active,account,chainId])
   return (
     <div className="w-100 h-100 mt-5">
       {!active && <div className="w-100 text-center">
@@ -59,7 +59,7 @@ const Sidebar = () => {
       </div>}
       <div className="text-center">
         {account && <div>{account.slice(0,4)+ "..." + account.slice(-4)}</div>}
-        {chainId && <div>{chainId}</div>}
+        {chainId && (chainId === 137 ? <div>{chainId}</div> : <div>please change your network to polygon</div>)}
         {active && (userName && userName.username ? <div>username:{userName.username}</div> : loadingProfile ? <div>loading...</div> : <div>you are not signed in <div><button onClick={()=>history.push('/contract')}>Sign in</button></div></div>)}
         {active && balance && <div>balance:{balance}</div>}
       </div>
