@@ -21,6 +21,9 @@
 * {
     font-family: "UbuntuMono";
 }
+:root {
+    --main-bg-color:#020227;
+}
 #app-container {
     height: 100%;
     margin: 30px;
@@ -28,7 +31,7 @@
 }
 #title {
     position: absolute;
-    background-color: #020227;
+    background-color: var(--main-bg-color);
     left: 45%;
     top: -15px;
     text-transform: uppercase;
@@ -36,7 +39,7 @@
 #navbar {
     height: 3rem;
     border-bottom:2px solid white;
-    background-color:#020227;
+    background-color:var(--main-bg-color);
     padding: 8px;
 }
 #navbar a {
@@ -44,7 +47,7 @@
     color:white;
 }
 #sidebar {
-    background-color:#020227;
+    background-color:var(--main-bg-color);
     border-right:2px solid white;
 }
 .ascii-art {
@@ -54,10 +57,49 @@
     outline:none;
     padding: 5px;
     border:7px double white;
-    background-color: #020227;
+    background-color: var(--main-bg-color);
     caret-color: white;
     color:white;
 }
 .input::placeholder{
     color:white;
+}
+.wallet-button {
+    width:90%;
+    height: 2rem;
+    border:none;
+}
+.wallet-button-text {
+    text-align: left;
+    background-color: gray;
+    padding-left: 10px;
+}
+.circle {
+    width:14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: green;
+}
+.secondary-button {
+    width:90%;
+    height: 2rem;
+    border:none;
+    background:yellow;
+}
+.select-button {
+    width:12rem;
+    padding:0.5rem;
+    background-color: var(--main-bg-color);
+    border:1px solid white;
+    border-top:none;
+    color:white
+}
+.contract-button {
+    height: 2rem;
+    border:none;
+    background:yellow;
+}
+.selected-nav-item {
+    border:1px solid white;
+    padding: 6px;
 }

@@ -9,5 +9,5 @@ export const walletconnect = new WalletConnectConnector({
     chainId:137,
 })
 export const injected = new InjectedConnector({
-    supportedChainIds:[1,3,4,5,137]
+    supportedChainIds:[1,3,4,5,137,80001]
 })
