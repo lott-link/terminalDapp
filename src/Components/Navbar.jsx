@@ -42,7 +42,7 @@ const Navbar = () => {
       {enableBack && (<Link to="/" className="text-white mx-2">back</Link>)}
       {navItems &&
         navItems.map((item, index) => (
-          <div key={Math.random() * 1000} className="mx-1">
+          <div key={Math.random() * 1000} className="mx-1 d-flex align-items-center">
             {item.type==="directory" && index === 0 &&
             <Link style={{color:'white'}} to='/'
               className={`${index===0 && item.title!=="HomePage"  && "trapezoid py-1  "} mx-1`}
@@ -53,7 +53,7 @@ const Navbar = () => {
             <a style={{color:'white'}} 
               className="mx-1"
               // className={pathName === item.path ? "selected-nav-item directory px-2" : "directory px-2"}
-              onClick={()=>handleNav(item.title)}>{item.title}{item.title!=="HomePage" && <span>{" "}<img src={play} /></span>}</a>
+              onClick={()=>handleNav(item.title)}>{item.title}{item.title!=="HomePage" && <span >{" "}<img className='mb-1' src={play} /></span>}</a>
             }
             {item.type==="link" &&
             <Link style={{color:'white'}}

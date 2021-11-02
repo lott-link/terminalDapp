@@ -20,7 +20,6 @@ const ContractPage = () => {
     const [signedIn,setSignedIn] = useState(false)
     const [payableAmount,setPayableAmount] = useState(0)
     const [presenter,setPresenter] = useState()
-    const estimatedTime = 15;
       const parseUserInfo = (info)=>{
         if(info){
             let data = info.replaceAll("\'","\"")
@@ -116,21 +115,29 @@ const ContractPage = () => {
     //****** Contract Read methods end ********/
 
     //****** Contract Write methods start ********/
-      const signIn = ()=>{
+      const signIn = async ()=>{
         setSendInfoLoading(true)
         setSendInfoDisabled(true)
-        let data = getInfoFieldsData()
-        data = JSON.stringify(data).replaceAll("\"","\'")
-        const value = mode === 0 ? 0 : payableAmount;
-        console.log(input,JSON.stringify(data),presenter,value)
         const contract = new library.eth.Contract(contractABI,contractAddress)
-        contract.methods.signIn(input,JSON.stringify(data),presenter).send({from:account,value})
-        .then(res => console.log(res))
-        .catch(err=> console.log(err,"err in signIn"))
-        .finally(()=>{
+        const findUser = contract.methods.userToAddr(input).call().then(res=>res)
+        if(findUser!=="0x0000000000000000000000000000000000000000"){
+            setError("user already exists!")
             setSendInfoLoading(false)
             setSendInfoDisabled(false)
-        })
+        }else{
+            let data = getInfoFieldsData()
+            data = JSON.stringify(data).replaceAll("\"","\'")
+            const value = mode === 0 ? 0 : payableAmount;
+            console.log(input,JSON.stringify(data),presenter,value)
+            contract.methods.signIn(input,JSON.stringify(data),presenter).send({from:account,value})
+            .then(res => console.log(res))
+            .catch(err=> console.log(err,"err in signIn"))
+            .finally(()=>{
+                setSendInfoLoading(false)
+                setSendInfoDisabled(false)
+            })
+        }
+        
       }
     const sendInfo = ()=>{
         setSendInfoDisabled(true)
@@ -159,6 +166,9 @@ const ContractPage = () => {
         }
     }
     useEffect(()=>{
+        setInput("")
+    },[mode])
+    useEffect(()=>{
         setInfoFields([])
         if(active){
           addressToUser(account)
@@ -186,7 +196,7 @@ const ContractPage = () => {
                     <div className="circle"></div>
                 </div>
             </div>
-            <div style={{height:'80%'}} className="px-4 text-center">
+            <div style={{height:'80%',overflowY:"auto"}} className="px-4 text-center">
                 {active && !signedIn && <div>
                     <div className="my-2">Pure usernames are payable but new user can sign in free by using `_` in first character of username.</div>
                     <button onClick={()=>setMode(0)} className="select-button" style={{backgroundColor:mode === 0 ? "#1919b8":"#020227",transition:'0.2s'}}>_Regular</button>
@@ -226,12 +236,12 @@ const ContractPage = () => {
                     })}
                     {/* {infoFields.length !== 0 && userName && userName.username && <div><button style={{width:'21rem'}} className="contract-button" disabled={sendInfoDisabled} onClick={sendInfo}>send info</button>{sendInfoLoading && <span>loading...</span>}</div>} */}
                     {infoFields.length !== 0 && signedIn && <div><Button secondary style={{width:'272px'}} disabled={sendInfoDisabled} onClick={sendInfo}>send info</Button>{sendInfoLoading && <span>loading...</span>}</div>}
-                    {/* {signedIn && 
+                    {error && 
                         <div>
-                            <div>{error}</div>
-                            <div><button onClick={getUserInfo}>try again</button></div>
+                            <div className="text-danger">{error}</div>
+                            {/* <div><button onClick={getUserInfo}>try again</button></div> */}
                         </div>
-                    } */}
+                    }
                 </div>
                 { (sendInfoLoading || loadingProfile) &&<div className="bg-primary w-100 h-100 d-flex jutfiy-content-center align-items-center" style={{position:'absolute',top:'0',left:'0', opacity:'50%'}}>
                     <h3 className="w-100 text-center">loading...</h3>
