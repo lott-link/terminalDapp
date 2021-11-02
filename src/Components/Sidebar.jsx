@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { walletconnect, injected } from "../Wallet/connectors";
 import { useWeb3React } from "@web3-react/core";
-import { contractABI, contractAddress } from "../Contract/ContractInfo";
+import { contractABI, contractAddress } from "../Contracts/ContractInfo";
 import { useHistory } from "react-router";
+import Button from '../Components/styled/Button'
 const Sidebar = () => {
   const {activate,account,chainId,active,connector,library,deactivate} = useWeb3React()
   const [loadingProfile,setLoadingProfile] = useState(false)
@@ -10,6 +11,7 @@ const Sidebar = () => {
   const [userName,setUserName] = useState()
   const [userInfo,setUserInfo] = useState()
   const [error,setError] = useState()
+  const [signedIn,setSignedIn] = useState(false)
   const history = useHistory()
   const walletConnect = async ()=>{
     await activate(walletconnect)
@@ -17,29 +19,34 @@ const Sidebar = () => {
   const metamask = async ()=>{
     await activate(injected)
   }
-  const userToAddress = ()=>{
-    const web3 = library;
-    const contract = new web3.eth.Contract(contractABI,contractAddress)
-    contract.methods.userToAddr().call()
-    .then(res=>{})
-  }
-  
-  const addressToUser = (address)=>{
+  const addressToUser = async (address)=>{
     setLoadingProfile(true)
     const web3 = library;
     const contract = new web3.eth.Contract(contractABI,contractAddress)
-    window.contract = contract;
-    contract.methods.addrToUser(address).call()
-    .then(res=>setUserName(res))
-    .catch(err=>setError(err))
-    .finally(()=>setLoadingProfile(false))
+    const registered = await contract.methods.registered(account).call(res=>res)
+    if(registered){
+      contract.methods.addressToUsername(address).call()
+        .then(res=>{
+          setSignedIn(true)
+          setUserName(res)
+        })
+        .catch(err=>setError(err))
+        .finally(()=>setLoadingProfile(false))
+    }else{
+      setError("you are not signed in")
+      setSignedIn(false)
+      setLoadingProfile(false)
+    }
   }
-  const getUserInfo = ()=>{
+  const getUserInfo = async ()=>{
     const contract = new library.eth.Contract(contractABI,contractAddress)
-    contract.methods.userInfo(account).call()
-    .then(res=>{
-        setUserInfo(parseUserInfo(res.info))
-    })
+    const registered = await contract.methods.registered(account).call(res=>res)
+    if(registered){
+      contract.methods.addressToProfile(account).call()
+        .then(res=>{
+            setUserInfo(parseUserInfo(res.info))
+        })
+    }
   }
   const parseUserInfo = (info)=>{
     if(info){
@@ -53,20 +60,20 @@ const Sidebar = () => {
     }
   }
   useEffect(()=>{
-    if(active){
+    if(active && chainId === 80001){
       addressToUser(account)
       const web3 = library;
       web3.eth.getBalance(account)
       .then(res=>setBalance(res))
       .catch(err=>setBalance("cant' get balance"))
-      getUserInfo()
+        getUserInfo()
     }else{
       setUserInfo('')
     }
   },[active,account,chainId])
   return (
     <div className="w-100 h-100">
-      <div style={{height:'40%',position:'relative'}}>
+      <div style={{height:'40%',position:'relative',}} className="d-flex flex-column">
         <div style={{width:'90%',margin:'0.5rem auto',fontSize:'1.3rem'}}>{active ? "Wallet" : "Connect Wallet"}</div>
         {!active && <div className="w-100 text-center">
           <button onClick={metamask} className="wallet-button p-0">
@@ -98,41 +105,46 @@ const Sidebar = () => {
               <div className="mx-1">{balance}</div>
             </div> 
           </div>}
-          {chainId && (chainId === 137 ? <div>{chainId}</div> : <div>please change your network to polygon</div>)}
+          {chainId && (chainId === 80001 ? <div>{chainId}</div> : <div style={{color:'red'}}>please change your network to polygon</div>)}
+        </div>
           {active && 
-            <div className="w-100">
-              <button style={{position:'absolute',bottom:'0',right:'5%'}} onClick={deactivate} className="my-2 wallet-button">
+            <div className="w-100" style={{position:'absolute',bottom:'0',left:'0'}}>
+              {/* <button style={{position:'absolute',bottom:'0',right:'5%'}} onClick={deactivate} className="my-2 wallet-button">
                 disconecct
-              </button>
+              </button> */}
+              <Button primary  onClick={deactivate} className="my-2 wallet-button">
+                disconecct
+              </Button>
             </div>
         }
-        </div>
       </div>
-      {!loadingProfile ? <div className="w-100 p-3" style={{borderTop:'2px solid white',height:'60%',position:'relative'}}>
-        {active && userName && userName.username && <div className="d-flex">
+      {!loadingProfile ? <div className="w-100 p-3" style={{height:"60%",borderTop:'2px solid white',position:'relative'}}>
+        {active && signedIn && <div className="d-flex">
           <div style={{width:'50px',height:'50px',borderRadius:'50%',backgroundColor:'gray'}}></div>
           <div className="mx-3">
-            <div>{userName.username}</div>
+            <div>{userName}</div>
             <div style={{color:'yellow'}}>Edit Profile</div>
           </div>
         </div>}
         {/* {active && (userName && userName.username ? <div>username:{userName.username}</div> : loadingProfile ? <div>loading...</div> : <div>you are not signed in <div className="w-100 text-center"><button className="wallet-button" onClick={()=>history.push('/contract')}>Sign in</button></div></div>)} */}
-        {userInfo && 
-          <div className="my-2">
+        {userInfo && userInfo.length !== 0 ? 
+          (<div className="my-2">
             {userInfo.map((item,index)=>{
               return <div key={index} className="d-flex align-items-center">
                 <div className="circle"></div>
                 <div className="mx-1">{item.key}:{item.value}</div>
               </div>
             })}
-          </div>
-        }
-        {userInfo && <div className="w-100" style={{position:'absolute',bottom:'5%'}}>
-          <button className="wallet-button">more</button>
+          </div>)
+          : <div>there is no info</div>
+        } 
+        {userInfo && <div className="w-100" style={{position:'absolute',bottom:'0',left:'0'}}>
+          {/* <button className="wallet-button">more</button> */}
+          <Button primary style={{width:'90%'}}>more</Button>
         </div>
         }
         {error && <div>{error}</div>}
-        {active && userName && !userName.username && <div className="w-100 text-center" style={{position:'absolute',bottom:'5%',right:'0'}}><button onClick={()=>history.push('/contract')} className="secondary-button">Sign in</button></div>}
+        {active && !signedIn && <div className="w-100 text-center" style={{position:'absolute',bottom:'5%',right:'0'}}><button onClick={()=>history.push('/contract/signin')} className="secondary-button">Sign in</button></div>}
       </div> : <div>loading...</div>}
       </div>
   );

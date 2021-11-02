@@ -1,9 +1,7 @@
-import homePage from "../Pages/homePage"
-import firstPage from "../Pages/firstPage"
-import secondPage from "../Pages/secondPage"
+import HomePage from "../Pages/HomePage"
+import Contract from '../Pages/Contract'
 const mainRoutes = [
-    {path:"/",exact:true,component:homePage,title:"Homepage"},
-    {path:"/contract",exact:false,component:firstPage,title:"Contract"},
-    {path:"/second",exact:true,component:secondPage,title:"secondPage"},
+    {path:"/",exact:true,component:HomePage,title:"HomePage",type:'directory'},
+    {path:"/contract",exact:false,component:Contract,title:"Contract",type:'directory'},
 ]
 export default mainRoutes;

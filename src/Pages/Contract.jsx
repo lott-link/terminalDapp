@@ -1,10 +1,11 @@
 import React from 'react'
 import { Route } from 'react-router-dom'
-import firstPageRoutes from '../Routes/firstPageRoutes'
+import contractRoutes from '../Routes/contractRoutes'
 const firstPage = () => {
     return (
         <div className="w-100 h-100">
-            {firstPageRoutes.map((route,index)=>{
+            {contractRoutes.map((route,index)=>{
+                if(route.render)
                 return <Route
                 key={index}
                 path={route.path} 

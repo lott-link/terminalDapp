@@ -1,105 +1,141 @@
 @font-face {
-    font-family: 'DosVGA';
-    src: url('./Assetes/MorePerfectDOSVGA.ttf');
+  font-family: "DosVGA";
+  src: url("./Assetes/MorePerfectDOSVGA.ttf");
 }
 @font-face {
-    font-family: 'EnvyCode';
-    src: url('./Assetes/Envy\ Code\ R.ttf');
+  font-family: "EnvyCode";
+  src: url("./Assetes/Envy\ Code\ R.ttf");
 }
 @font-face {
-    font-family: 'EnvyCodeBold';
-    src: url('./Assetes/Envy\ Code\ R\ Bold.ttf');
+  font-family: "EnvyCodeBold";
+  src: url("./Assetes/Envy\ Code\ R\ Bold.ttf");
 }
 @font-face {
-    font-family: 'UbuntuR';
-    src: url('./Assetes//Ubuntu-R.ttf');
+  font-family: "UbuntuR";
+  src: url("./Assetes//Ubuntu-R.ttf");
 }
 @font-face {
-    font-family: 'UbuntuMono';
-    src: url('./Assetes/UbuntuMono-R.ttf');
+  font-family: "UbuntuMono";
+  src: url("./Assetes/UbuntuMono-R.ttf");
 }
 * {
-    font-family: "UbuntuMono";
+  font-family: "DosVGA";
 }
 :root {
-    --main-bg-color:#020227;
+  --main-bg-color: #020227;
 }
 #app-container {
-    height: 100%;
-    margin: 30px;
-    border: 7px double white;
+  min-height: 700px;
+  min-width: 1050px;
+  height: 100%;
+  margin: 30px;
+  border: 7px double white;
 }
 #title {
-    position: absolute;
-    background-color: var(--main-bg-color);
-    left: 45%;
-    top: -15px;
-    text-transform: uppercase;
+  position: absolute;
+  background-color: var(--main-bg-color);
+  left: 45%;
+  top: -15px;
+  text-transform: uppercase;
 }
 #navbar {
-    height: 3rem;
-    border-bottom:2px solid white;
-    background-color:var(--main-bg-color);
-    padding: 8px;
+  height: 3rem;
+  border-bottom: 2px solid white;
+  background-color: var(--main-bg-color);
+  padding: 8px;
 }
 #navbar a {
-    text-decoration: none;
-    color:white;
+  text-decoration: none;
+  color: white;
 }
 #sidebar {
-    background-color:var(--main-bg-color);
-    border-right:2px solid white;
+  background-color: var(--main-bg-color);
+  border-right: 2px solid white;
 }
 .ascii-art {
-    white-space:'pre';
+  white-space: "pre";
 }
 .input {
-    outline:none;
-    padding: 5px;
-    border:7px double white;
-    background-color: var(--main-bg-color);
-    caret-color: white;
-    color:white;
+  outline: none;
+  padding: 5px;
+  border: 7px double white;
+  background-color: var(--main-bg-color);
+  caret-color: white;
+  color: white;
 }
-.input::placeholder{
-    color:white;
+.input::placeholder {
+  color: white;
 }
 .wallet-button {
-    width:90%;
-    height: 2rem;
-    border:none;
+  width: 90%;
+  height: 2rem;
+  border: none;
 }
 .wallet-button-text {
-    text-align: left;
-    background-color: gray;
-    padding-left: 10px;
+  text-align: left;
+  background-color: gray;
+  padding-left: 10px;
 }
 .circle {
-    width:14px;
-    height: 14px;
-    border-radius: 50%;
-    background-color: green;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: green;
 }
 .secondary-button {
-    width:90%;
-    height: 2rem;
-    border:none;
-    background:yellow;
+  width: 90%;
+  height: 2rem;
+  border: none;
+  background: yellow;
 }
 .select-button {
-    width:12rem;
-    padding:0.5rem;
-    background-color: var(--main-bg-color);
-    border:1px solid white;
-    border-top:none;
-    color:white
+  width: 12rem;
+  padding: 0.5rem;
+  background-color: var(--main-bg-color);
+  border: 1px solid white;
+  color: white;
 }
 .contract-button {
-    height: 2rem;
-    border:none;
-    background:yellow;
+  height: 2rem;
+  border: none;
+  background: yellow;
 }
 .selected-nav-item {
-    border:1px solid white;
-    padding: 6px;
+  border: 1px solid white;
+}
+.directory {
+  padding: 4px;
+}
+.link {
+  padding: 4px;
+}
+.trapezoid {
+  clip-path: polygon(0 0, 85% 0, 100% 100%, 0% 100%);
+  background-color: mediumblue;
+  padding-left: 5px !important;
+  padding-right: 20px;
+}
+*::-webkit-scrollbar {
+  width: 9px; /* width of the entire scrollbar */
+}
+
+*::-webkit-scrollbar-track {
+    background:url(./Assetes/background.png) black;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: white;
+
+  /* background-color: orange;
+  border: 3px solid orange; */
+}
+*::-webkit-scrollbar-button:vertical:decrement {
+  background-image: url(./Assetes/arrowUp.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+}
+*::-webkit-scrollbar-button:vertical:increment {
+  background-image: url(./Assetes/arrowDown.svg);
+  background-repeat: no-repeat;
+  background-position: center;
 }
