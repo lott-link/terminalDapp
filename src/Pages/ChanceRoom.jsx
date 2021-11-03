@@ -12,6 +12,9 @@ const ChanceRoom = () => {
     const [info,setInfo] = useState()
     const [users,setUsers] = useState([])
     const [usersUpdated,setUsersUpdated] = useState(false)
+    const [disableBuySeat,setDisableBuySeat] = useState()
+    const [disableChooseWinner,setDisableChooseWinner] = useState()
+    const [roomStatus,setRoomStatus] = useState("")
     const getInfo = async ()=>{
         const contract = new library.eth.Contract(contractABI,address);
         const creator = await contract.methods.owner().call().then(res=>res)
@@ -21,8 +24,24 @@ const ChanceRoom = () => {
         const userLimit = await contract.methods.userLimit().call().then(res=>res)
         const deadLine = await contract.methods.deadLine().call().then(res=>res)
         const gateFee = await contract.methods.gateFee().call().then(res=>res)
-        setInfo({creator,commission,status,prize,userLimit,deadLine,gateFee})
-        getUsers()
+        const winner = await contract.methods.winner().call().then(res=>res)
+        setInfo({creator,commission,status,prize,userLimit,deadLine,gateFee,winner})
+        const userCount = getUsers();
+        const time = new Date(deadLine*1000).getTime()
+        // if((userLimit!==0 && userCount === userLimit) ||
+        //    (deadLine !==0 && time)){
+        //        setDisableBuySeat(true)
+        //        setDisableChooseWinner(true)
+        //        setRoomStatus("choose winner")
+        // }
+        // if(status==="waiting for random number..."){
+        //     setDisableBuySeat(true)
+        //     setRoomStatus("waiting for chainLink")
+        // }
+        // else if(status==="finished"){
+        //     setDisableChooseWinner(true)
+        //     setRoomStatus("winner")
+        // }
     }
     const getUsers = async ()=>{
         const contract = new library.eth.Contract(contractABI,address);
@@ -41,10 +60,15 @@ const ChanceRoom = () => {
             setUsers(prevState=>[...prevState,{address,userName,seat:i,}])
         }
         setUsersUpdated(true)
+        return userCount;
     }
     const buySeat = ()=>{
         const contract = new library.eth.Contract(contractABI,address);
         contract.methods.signIn().send({from:account,value:info.gateFee})
+    }
+    const chooseWinner = ()=>{
+        const contract = new library.eth.Contract(contractABI,address);
+        contract.methods.rollDice().send({from:account})
     }
     useEffect(()=>{
         if(active && !usersUpdated){
@@ -56,25 +80,17 @@ const ChanceRoom = () => {
             {info && 
             <div className="d-flex flex-column align-items-center">
                 <div>chanceroom:{address}</div>
-                <div>
-                    creator:{info.creator}
+                <div>creator:{info.creator}</div>
+                <div>commission on room:{info.commission}</div>
+                <div>status:{info.status}</div>
+                <div>total prize:{info.prize}</div>
+                <div>limit on user:{info.userLimit}</div>
+                <div>limit on time:{info.deadLine}</div>
+                <div>winner:{info.winner}</div>
+                <div className="d-flex">
+                    <Button secondary onClick={buySeat}>buy seat</Button>
+                    <Button secondary onClick={chooseWinner} >roll dice</Button>
                 </div>
-                <div>
-                    commission on room:{info.commission}
-                </div>
-                <div>
-                    status:{info.status}
-                </div>
-                <div>
-                    total prize:{info.prize}
-                </div>
-                <div>
-                    limit on user:{info.userLimit}
-                </div>
-                <div>
-                    limit on time:{info.deadLine}
-                </div>
-                <Button secondary onClick={buySeat} disabled={info && (info.gateFee?false:true)}>buy seat</Button>
             </div>}
             {users.length !== 0 &&
                 <Table className="w-50 mx-auto" striped bordered hover size="md" variant="light">
