@@ -20,6 +20,8 @@ const ContractPage = () => {
     const [signedIn,setSignedIn] = useState(false)
     const [payableAmount,setPayableAmount] = useState(0)
     const [presenter,setPresenter] = useState()
+    const [loadingMsg,setLoadingMsg] = useState()
+    const [estimatedTime,setEstimatedTime] = useState()
       const parseUserInfo = (info)=>{
         if(info){
             let data = info.replaceAll("\'","\"")
@@ -116,44 +118,96 @@ const ContractPage = () => {
 
     //****** Contract Write methods start ********/
       const signIn = async ()=>{
+        let date1,date2;
         setSendInfoLoading(true)
         setSendInfoDisabled(true)
+        setLoadingMsg("Wating to approve")
         const contract = new library.eth.Contract(contractABI,contractAddress)
-        const findUser = contract.methods.userToAddr(input).call().then(res=>res)
-        if(findUser!=="0x0000000000000000000000000000000000000000"){
+        const findUser = await contract.methods.userToAddr(input).call().then(res=>res)
+        console.log(findUser)
+        console.log(library.utils.hexToNumberString(findUser))
+        if(library.utils.hexToNumberString(findUser)!== "0" ){
             setError("user already exists!")
             setSendInfoLoading(false)
             setSendInfoDisabled(false)
+            setLoadingMsg()
         }else{
             let data = getInfoFieldsData()
             data = JSON.stringify(data).replaceAll("\"","\'")
             const value = mode === 0 ? 0 : payableAmount;
             console.log(input,JSON.stringify(data),presenter,value)
             contract.methods.signIn(input,JSON.stringify(data),presenter).send({from:account,value})
-            .then(res => console.log(res))
-            .catch(err=> console.log(err,"err in signIn"))
-            .finally(()=>{
-                setSendInfoLoading(false)
+            .on("transactionHash",transactionHash=>{
+                date1 = new Date().getTime()
+                setLoadingMsg('Wating to comfirm')
+                progress()
+            })
+            .on("receipt",receipt=>{
+                date2 = new Date().getTime()
+                setNow(0)
+                setLoadingMsg()
                 setSendInfoDisabled(false)
+                setSendInfoLoading(false)
+                postWaitingTime(date2-date1)
+                getUserInfo()
+                addressToUser(account)
+            })
+            .on("error",error=>{
+                setLoadingMsg()
+                setSendInfoDisabled(false)
+                setSendInfoLoading(false)
+                console.log("error in sending info",error)
             })
         }
-        
       }
     const sendInfo = ()=>{
+        let date1,date2;
         setSendInfoDisabled(true)
         setSendInfoLoading(true)
+        setLoadingMsg("Wating to approve")
         let data = getInfoFieldsData()
         data = JSON.stringify(data).replaceAll("\"","\'")
         const contract = new library.eth.Contract(contractABI,contractAddress)
         contract.methods.setInfo(JSON.stringify(data)).send({from:account})
-        .then(res=>console.log(res))
-        .catch(err => console.log(err,"err in sending info"))
-        .finally(()=>{
+        .on("transactionHash",transactionHash=>{
+            date1 = new Date().getTime()
+            setLoadingMsg('Wating to comfirm')
+            progress()
+        })
+        .on("receipt",receipt=>{
+            date2 = new Date().getTime()
+            setNow(0)
+            setLoadingMsg()
             setSendInfoDisabled(false)
             setSendInfoLoading(false)
+            postWaitingTime(date2-date1)
+            addressToUser(account)
+        })
+        .on("error",error=>{
+            setSendInfoDisabled(false)
+            setSendInfoLoading(false)
+            console.log("error in sending info",error)
         })
     }
     //****** Contract Write methods end********/
+    const postWaitingTime = (time)=>{
+        fetch('/estimatedtime',{
+            method:'POST',
+            headers: {
+                'Content-Type': 'application/json'
+              },
+            body:JSON.stringify({
+                time:time/1000
+            })
+        })
+    }
+    const getEstimatedTime = async ()=>{
+        fetch('/estimatedtime')
+        .then(res=>res.json())
+        .then(data=>{
+            setEstimatedTime(data.estimatedTime)
+        })
+    }
     const handleUserName = (e)=>{
         if(mode===0){
             if(e.target.value[0]!=='_')
@@ -166,6 +220,9 @@ const ContractPage = () => {
         }
     }
     useEffect(()=>{
+        getEstimatedTime()
+    },[])
+    useEffect(()=>{
         setInput("")
     },[mode])
     useEffect(()=>{
@@ -174,18 +231,19 @@ const ContractPage = () => {
           addressToUser(account)
         }
       },[active,account,chainId])
-    //   useEffect(()=>{
-    //     const interval = setInterval(()=>{
-    //         let state;
-    //         setNow(prev => state=prev)
-    //         if(state+100/estimatedTime>=100){
-    //             setNow(100)
-    //             clearInterval(interval)
-    //         }
-    //         else
-    //             setNow(prevState => Math.floor(prevState+100/estimatedTime))
-    //     },1000)
-    //   },[])
+    const progress = ()=>{
+        const interval = setInterval(()=>{
+            let state;
+            setNow(prev => state=prev)
+            console.log(state)
+            if(state+100/estimatedTime>=100){
+                setNow(100)
+                clearInterval(interval)
+            }
+            else
+                setNow(prevState => Math.floor(prevState+100/estimatedTime))
+        },1000)
+    }
     return (
         <div className="w-100 h-100" style={{position:'relative'}}>
             <div className="px-4 d-flex align-items-center justify-content-between" style={{height:'5%',borderBottom:'2px solid white'}}>
@@ -206,18 +264,16 @@ const ContractPage = () => {
                     <div className="my-2">username:{userName}</div> : loadingProfile ? 
                         <div>loading...</div> : 
                             <div className="my-2">
-                                
                                 <div className="d-flex flex-column align-items-center">
                                         <Input style={{width:'24rem'}} value={input}  placeholder="Enter username" type="text" onChange={handleUserName} />
                                         <Input style={{width:"24rem"}}  placeholder="presenter" type="text" onChange={e=>setPresenter(e.target.value)}/>
                                         <Input style={{width:"24rem"}} className="text-center my-1" type="text" disabled={true} value={`Payable Amount:${mode===0 ? "0":payableAmount}`} />
                                 </div>
-                                <div><button style={{width:'24rem'}} className="m-2 contract-button" onClick={signIn} disabled={sendInfoDisabled} >
-                                    sign in and setInfo
-                                </button></div>
                                 {sendInfoLoading && <span>loading...</span>}
-                            </div>)}            
+                            </div>)
+                }            
                 <div className="my-2">{infoOptions.map((option,index)=><Button primary className="mx-1" disabled={buttonDisabled} onClick={()=>addOptionInput(option)} key={index}>{option}</Button>)}</div>
+                
                 {active && (infoFields.length===0 && <div>there is no info</div>)}
                 <div className="container">
                     {infoFields.map((item,index)=>{
@@ -225,16 +281,22 @@ const ContractPage = () => {
                             <div key={index} className="d-flex justify-content-center my-3">
                                 <div className=""></div>
                                 <div style={{width:'13%'}} className=" d-flex justify-content-end align-items-center">{item.key}:</div>
-                                {/* <input placeholder={optionPlaceholder[item.key]} className="input col-4"  onChange={event=>handleInputChange(index,event)} name="value" value={item.value} type="text" /> */}
                                 <div>
                                     <Input placeholder={optionPlaceholder[item.key]} className=""  onChange={event=>handleInputChange(index,event)} name="value" value={item.value} type="text" />
                                 </div>
-                                {/* <button className="col-1 mx-2" onClick={()=>handleRempveField(index)}>remove</button> */}
                                 <div className="d-flex align-items-center"><Button primary  onClick={()=>handleRempveField(index)}>remove</Button></div>
                             </div>
                         )
                     })}
-                    {/* {infoFields.length !== 0 && userName && userName.username && <div><button style={{width:'21rem'}} className="contract-button" disabled={sendInfoDisabled} onClick={sendInfo}>send info</button>{sendInfoLoading && <span>loading...</span>}</div>} */}
+                    {/* button when user not signed in */}
+                    { active && !signedIn && !loadingProfile &&
+                        <div className="d-flex flex-column align-items-center">
+                            <Button secondary style={{width:'24rem'}} className="" onClick={signIn} disabled={sendInfoDisabled} >
+                            sign in and setInfo
+                            </Button>
+                        </div>
+                    }
+                    {/* button when user signed in and want to send info */}
                     {infoFields.length !== 0 && signedIn && <div><Button secondary style={{width:'272px'}} disabled={sendInfoDisabled} onClick={sendInfo}>send info</Button>{sendInfoLoading && <span>loading...</span>}</div>}
                     {error && 
                         <div>
@@ -243,14 +305,16 @@ const ContractPage = () => {
                         </div>
                     }
                 </div>
-                { (sendInfoLoading || loadingProfile) &&<div className="bg-primary w-100 h-100 d-flex jutfiy-content-center align-items-center" style={{position:'absolute',top:'0',left:'0', opacity:'50%'}}>
-                    <h3 className="w-100 text-center">loading...</h3>
+                { (sendInfoLoading || loadingProfile) &&
+                <div className="bg-primary w-100 h-100 d-flex flex-column justify-content-center align-items-center" style={{position:'absolute',top:'0',left:'0', opacity:'50%'}}>
+                    {sendInfoLoading && loadingMsg==='Wating to comfirm' &&
+                     <div className="w-25 my-2" style={{background:'white'}}>
+                        <div style={{width:now+"%",color:"white",backgroundColor:'red',transition:'0.2s',fontSize:'smaller' }}>
+                            <span className="d-flex ejustify-content-center">{`${now}%`}</span>{console.log(now)}
+                        </div>
+                    </div> }
+                    <h3 className="w-100 text-center">{sendInfoLoading ? loadingMsg : "loading"}...</h3>
                 </div>}
-                {/* <div className="w-25" style={{background:'white'}}>
-                    <div style={{width:now+"%",color:'white',backgroundColor:'lightgray',transition:'0.2s',fontSize:'smaller' }}>
-                        <span className="d-flex ejustify-content-center">{`${now}%`}</span>
-                    </div>
-                </div> */}
             </div>
             <div className="p-3" style={{height:'15%',borderTop:'2px solid white',overflow:'auto'}}>
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam rem a incidunt tempore possimus, sapiente eos illo repudiandae non eveniet aperiam delectus minima itaque quod at rerum blanditiis! Dolorem, optio?

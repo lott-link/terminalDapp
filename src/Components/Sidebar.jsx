@@ -4,6 +4,8 @@ import { useWeb3React } from "@web3-react/core";
 import { contractABI, contractAddress } from "../Contracts/ContractInfo";
 import { useHistory } from "react-router";
 import Button from '../Components/styled/Button'
+import metamaskIcon from '../Assetes/icons/metamask/medium.png'
+import walletConnectIcon from '../Assetes/icons/walletconnect/medium.png'
 const Sidebar = () => {
   const {activate,account,chainId,active,connector,library,deactivate} = useWeb3React()
   const [loadingProfile,setLoadingProfile] = useState(false)
@@ -78,7 +80,7 @@ const Sidebar = () => {
         {!active && <div className="w-100 text-center">
           <button onClick={metamask} className="wallet-button p-0">
             <div className="d-flex h-100">
-              <div className="wallet-button-logo d-flex justify-content-center align-items-center" style={{width:'15%'}}><div className="circle"></div></div>
+              <div className="wallet-button-logo d-flex justify-content-center align-items-center" style={{width:'15%'}}><img  src={metamaskIcon}/></div>
               <div className="wallet-button-text d-flex align-items-center" style={{width:'85%'}}>metamask</div>
             </div>
           </button>
@@ -86,7 +88,7 @@ const Sidebar = () => {
         {!active && <div className="w-100 text-center">
           <button onClick={walletConnect} className="wallet-button mt-2 p-0">
             <div className="d-flex h-100">
-              <div className="wallet-button-logo d-flex justify-content-center align-items-center" style={{width:'15%'}}><div className="circle"></div></div>
+              <div className="wallet-button-logo d-flex justify-content-center align-items-center" style={{width:'15%'}}><img  src={walletConnectIcon}/></div>
               <div className="wallet-button-text d-flex align-items-center" style={{width:'85%'}}>walletconnect</div>
             </div>
           </button>
