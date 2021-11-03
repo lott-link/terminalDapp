@@ -197,7 +197,7 @@ const ContractPage = () => {
                 'Content-Type': 'application/json'
               },
             body:JSON.stringify({
-                time:time/1000
+                time:Math.floor(time/1000)
             })
         })
     }
@@ -244,10 +244,13 @@ const ContractPage = () => {
                 setNow(prevState => Math.floor(prevState+100/estimatedTime))
         },1000)
     }
+    if(!active)
+        return (<h2 className="w-100 h-100 d-flex justify-content-center align-items-center">please connect your wallet</h2>)
+    else  
     return (
         <div className="w-100 h-100" style={{position:'relative'}}>
             <div className="px-4 d-flex align-items-center justify-content-between" style={{height:'5%',borderBottom:'2px solid white'}}>
-                <div><img src={play} style={{transform:"rotate(180deg)"}} /> back</div>
+                <div></div>
                 <div>Sign In</div>
                 <div className="d-flex">
                     <div className="circle mx-1"></div>
@@ -256,7 +259,6 @@ const ContractPage = () => {
             </div>
             <div style={{height:'80%',overflowY:"auto"}} className="px-4 text-center">
                 {active && !signedIn && <div>
-                    <div className="my-2">Pure usernames are payable but new user can sign in free by using `_` in first character of username.</div>
                     <button onClick={()=>setMode(0)} className="select-button" style={{backgroundColor:mode === 0 ? "#1919b8":"#020227",transition:'0.2s'}}>_Regular</button>
                     <button onClick={()=>setMode(1)} className="select-button" style={{backgroundColor:mode === 1 ? "#1919b8":"#020227",transition:'0.2s'}}>Pure</button>
                 </div>}
@@ -265,8 +267,12 @@ const ContractPage = () => {
                         <div>loading...</div> : 
                             <div className="my-2">
                                 <div className="d-flex flex-column align-items-center">
-                                        <Input style={{width:'24rem'}} value={input}  placeholder="Enter username" type="text" onChange={handleUserName} />
-                                        <Input style={{width:"24rem"}}  placeholder="presenter" type="text" onChange={e=>setPresenter(e.target.value)}/>
+                                        {/* <Input style={{width:'24rem'}} small={`enter a name${mode===0 ? ", it automatically start with _":""}`}
+                                        value={input}  placeholder="Enter username" type="text" onChange={handleUserName} /> */}
+                                        <Input style={{width:'24rem'}} small={`enter a name${mode===0 ? ", it automatically start with _":""}`}
+                                        value={input}  title="Enter username" type="text" onChange={handleUserName} />
+                                        <Input style={{width:"24rem"}} small="enter username of your presenter, as default Lott.Link" 
+                                        title="presenter" type="text" onChange={e=>setPresenter(e.target.value)}/>
                                         <Input style={{width:"24rem"}} className="text-center my-1" type="text" disabled={true} value={`Payable Amount:${mode===0 ? "0":payableAmount}`} />
                                 </div>
                                 {sendInfoLoading && <span>loading...</span>}
@@ -282,7 +288,7 @@ const ContractPage = () => {
                                 <div className=""></div>
                                 <div style={{width:'13%'}} className=" d-flex justify-content-end align-items-center">{item.key}:</div>
                                 <div>
-                                    <Input placeholder={optionPlaceholder[item.key]} className=""  onChange={event=>handleInputChange(index,event)} name="value" value={item.value} type="text" />
+                                    <Input style={{width:'24rem'}} title={optionPlaceholder[item.key]} className=""  onChange={event=>handleInputChange(index,event)} name="value" value={item.value} type="text" />
                                 </div>
                                 <div className="d-flex align-items-center"><Button primary  onClick={()=>handleRempveField(index)}>remove</Button></div>
                             </div>
@@ -317,7 +323,7 @@ const ContractPage = () => {
                 </div>}
             </div>
             <div className="p-3" style={{height:'15%',borderTop:'2px solid white',overflow:'auto'}}>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam rem a incidunt tempore possimus, sapiente eos illo repudiandae non eveniet aperiam delectus minima itaque quod at rerum blanditiis! Dolorem, optio?
+            this contract mint a unique username on your wallet address to easily named you on other contract. you can set your contact info optionaly. other people can see your info. _reqular user name are free and pure user name are payble.
             </div>
         </div>
     )

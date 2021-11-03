@@ -93,6 +93,7 @@
   padding: 0.5rem;
   background-color: var(--main-bg-color);
   border: 1px solid white;
+  border-top: none;
   color: white;
 }
 .contract-button {

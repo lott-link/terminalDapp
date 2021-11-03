@@ -1,10 +1,12 @@
 import styled from "styled-components";
+import { useState } from "react";
 const TextInput = styled.input`
     width:272px;
     height: 40px;
     margin: 1em;
     margin-bottom:${props=> props.small ? '0' : "1em"};
     padding: 0.25em 1em;
+    text-align: center;
     /* padding: 12px 0 12px 8px; */
     border:7px white double;
     color:white;
@@ -30,14 +32,15 @@ const TextInput = styled.input`
     }
 `
 const Small = styled.small`
-    width:272px;
-    height: 21px;
+    width:24rem;
     color:${props => props.success ? props.success==="success" ? "#00AAAC" : "#FF00FF" : 'white'};
 `
 const Input = (props)=>{
+    const [focus,setFocus] = useState(false)
     return (
-        <div style={{display:'flex',flexDirection:'column'}}>
-            <TextInput {...props} />
+        <div style={{display:'flex',flexDirection:'column',position:'relative'}}>
+            <TextInput {...props} onFocus={()=>setFocus(true)} onBlur={()=>setFocus(false)} />
+            <label style={{position:'absolute',left:'35%',backgroundColor:'#020227',top:`${!focus?"24px":"3px"}`,paddingLeft:`${!focus?"0px":"4px"}`,paddingRight:`${!focus?"0px":"4px"}`,transition:'0.2s',pointerEvents:'none'}}>{props.title}</label>
             {props.small && <Small style={{textAlign:'start',marginLeft:"1em"}}>{props.small}</Small>}
         </div>
     )
