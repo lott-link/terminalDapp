@@ -189,32 +189,32 @@ const CreateChanceRoom = () => {
             <div className='d-flex flex-column'>
                 <div className="d-flex justify-content-center">
                     <Input type="text" name="info" 
-                        onChange={handleChange} placeholder={"info"}
-                        style={{width:'20rem'}}
+                        onChange={handleChange} title={"info"}
+                        style={{width:'24rem'}} value={input.info}
                     />
                     <Input className="" type="text" name="baseURI" 
-                        onChange={handleChange} placeholder={"baseURI"}
-                        style={{width:'20rem'}}
+                        onChange={handleChange} title={"baseURI"}
+                        style={{width:'24rem'}} value={input.baseURI}
                     />
                 </div>
                 <div className="d-flex justify-content-center">
                     <Input className="" type="text" name="gateFee" 
-                        onChange={handleChange} placeholder={"gateFee"}
-                        style={{width:'20rem'}}
+                        onChange={handleChange} title={"gateFee"}
+                        style={{width:'24rem'}} value={input.gateFee}
                     />
                     <Input className="" type="text" name="percentCommission" 
-                        onChange={handleChange} placeholder={"percentCommission"}
-                        style={{width:'20rem'}}
+                        onChange={handleChange} title={"percentCommission"}
+                        style={{width:'24rem'}} value={input.percentCommission}
                     />
                 </div>
                 <div className="d-flex justify-content-center">
                     <Input className="" type="text" name="userLimit" 
-                        onChange={handleChange} placeholder={"userLimit"}
-                        style={{width:'20rem'}}
+                        onChange={handleChange} title={"userLimit"}
+                        style={{width:'24rem'}} value={input.userLimit}
                     />
                     <Input className="" type="text" name="timeLimit" 
-                        onChange={handleChange} placeholder={"timeLimit"}
-                        style={{width:'20rem'}}
+                        onChange={handleChange} title={"timeLimit"}
+                        style={{width:'24rem'}} value={input.timeLimit}
                     />
                 </div>
                 <button className="contract-button mx-auto" 

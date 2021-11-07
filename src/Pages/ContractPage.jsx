@@ -251,7 +251,7 @@ const ContractPage = () => {
                                         <Input style={{width:'24rem'}} small={`enter a name${mode===0 ? ", it automatically start with _":""}`}
                                         value={input}  title="Enter username" type="text" onChange={handleUserName} />
                                         <Input style={{width:"24rem"}} small="enter username of your presenter, as default Lott.Link" 
-                                        title="presenter" type="text" onChange={e=>setPresenter(e.target.value)}/>
+                                        value={presenter} title="presenter" type="text" onChange={e=>setPresenter(e.target.value)}/>
                                         <Input style={{width:"24rem"}} className="text-center my-1" type="text" disabled={true} value={`Payable Amount:${mode===0 ? "0":payableAmount}`} />
                                 </div>
                                 {sendInfoLoading && <span>loading...</span>}
