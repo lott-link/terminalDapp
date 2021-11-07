@@ -29,7 +29,8 @@ const CreateChanceRoom = () => {
         renounceRole:'',
         randomness:'',
         signIn:'',
-        upgradeRNC:''
+        upgradeRNC:'',
+        percentCommission:''
     })
     const [loading,setLoading] = useState({
         Factory:false,
