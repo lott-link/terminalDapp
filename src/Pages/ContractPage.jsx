@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useWeb3React } from "@web3-react/core";
-import { contractABI, contractAddress } from '../Contracts/ContractInfo'
+import { factoryContractAddress } from '../Contracts/ContractAddress'
+import { factoryContractABI,registerContractABI } from '../Contracts/ContractsABI'
 import Button from '../Components/styled/Button'
 import Input from '../Components/styled/input';
 import play from '../Assetes/play.svg'
@@ -21,7 +22,7 @@ const ContractPage = () => {
     const [payableAmount,setPayableAmount] = useState(0)
     const [presenter,setPresenter] = useState()
     const [loadingMsg,setLoadingMsg] = useState()
-    const [estimatedTime,setEstimatedTime] = useState()
+    const estimatedTime = 15;
       const parseUserInfo = (info)=>{
         if(info){
             let data = info.replaceAll("\'","\"")
@@ -75,13 +76,14 @@ const ContractPage = () => {
     //****** Contract Read methods start********/
     const addressToUser = async (address)=>{
         setLoadingProfile(true)
-        const web3 = library;
-        const contract = new web3.eth.Contract(contractABI,contractAddress)
-        const registered = await contract.methods.registered(account).call(res=>res)
-        const getPayableAmount = await contract.methods.pureNameFee().call(res=>res)
+        const factoryContract = new library.eth.Contract(factoryContractABI,factoryContractAddress)
+        const contractAddress = await factoryContract.methods.registerContract().call(res=>res)
+        const registerContract = new library.eth.Contract(registerContractABI,contractAddress)
+        const registered = await registerContract.methods.registered(account).call(res=>res)
+        const getPayableAmount = await registerContract.methods.pureNameFee().call(res=>res)
         setPayableAmount(getPayableAmount)
         if(registered){
-            contract.methods.addressToUsername(address).call()
+            registerContract.methods.addressToUsername(address).call()
             .then(res=>{
                 setUserName(res)
                 setSignedIn(true)
@@ -98,10 +100,12 @@ const ContractPage = () => {
         }
       }
       const getUserInfo = async ()=>{
-        const contract = new library.eth.Contract(contractABI,contractAddress)
-        const registered = await contract.methods.registered(account).call(res=>res)
+        const factoryContract = new library.eth.Contract(factoryContractABI,factoryContractAddress)
+        const contractAddress = await factoryContract.methods.registerContract().call(res=>res)
+        const registerContract = new library.eth.Contract(registerContractABI,contractAddress)
+        const registered = await registerContract.methods.registered(account).call(res=>res)
         if(registered){
-            contract.methods.addressToProfile(account).call()
+            registerContract.methods.addressToProfile(account).call()
             .then(res=>{
                 setUserInfo(res.info.trim())
                 parseUserInfo(res.info)
@@ -118,12 +122,13 @@ const ContractPage = () => {
 
     //****** Contract Write methods start ********/
       const signIn = async ()=>{
-        let date1,date2;
         setSendInfoLoading(true)
         setSendInfoDisabled(true)
         setLoadingMsg("Wating to approve")
-        const contract = new library.eth.Contract(contractABI,contractAddress)
-        const findUser = await contract.methods.userToAddr(input).call().then(res=>res)
+        const factoryContract = new library.eth.Contract(factoryContractABI,factoryContractAddress)
+        const contractAddress = await factoryContract.methods.registerContract().call(res=>res)
+        const registerContract = new library.eth.Contract(registerContractABI,contractAddress)
+        const findUser = await registerContract.methods.userToAddr(input).call().then(res=>res)
         console.log(findUser)
         console.log(library.utils.hexToNumberString(findUser))
         if(library.utils.hexToNumberString(findUser)!== "0" ){
@@ -136,19 +141,16 @@ const ContractPage = () => {
             data = JSON.stringify(data).replaceAll("\"","\'")
             const value = mode === 0 ? 0 : payableAmount;
             console.log(input,JSON.stringify(data),presenter,value)
-            contract.methods.signIn(input,JSON.stringify(data),presenter).send({from:account,value})
+            registerContract.methods.signIn(input,JSON.stringify(data),presenter).send({from:account,value})
             .on("transactionHash",transactionHash=>{
-                date1 = new Date().getTime()
                 setLoadingMsg('Wating to comfirm')
                 progress()
             })
             .on("receipt",receipt=>{
-                date2 = new Date().getTime()
                 setNow(0)
                 setLoadingMsg()
                 setSendInfoDisabled(false)
                 setSendInfoLoading(false)
-                postWaitingTime(date2-date1)
                 getUserInfo()
                 addressToUser(account)
             })
@@ -160,27 +162,25 @@ const ContractPage = () => {
             })
         }
       }
-    const sendInfo = ()=>{
-        let date1,date2;
+    const sendInfo = async ()=>{
         setSendInfoDisabled(true)
         setSendInfoLoading(true)
         setLoadingMsg("Wating to approve")
         let data = getInfoFieldsData()
         data = JSON.stringify(data).replaceAll("\"","\'")
-        const contract = new library.eth.Contract(contractABI,contractAddress)
-        contract.methods.setInfo(JSON.stringify(data)).send({from:account})
+        const factoryContract = new library.eth.Contract(factoryContractABI,factoryContractAddress)
+        const contractAddress = await factoryContract.methods.registerContract().call(res=>res)
+        const registerContract = new library.eth.Contract(registerContractABI,contractAddress)
+        registerContract.methods.setInfo(JSON.stringify(data)).send({from:account})
         .on("transactionHash",transactionHash=>{
-            date1 = new Date().getTime()
             setLoadingMsg('Wating to comfirm')
             progress()
         })
         .on("receipt",receipt=>{
-            date2 = new Date().getTime()
             setNow(0)
             setLoadingMsg()
             setSendInfoDisabled(false)
             setSendInfoLoading(false)
-            postWaitingTime(date2-date1)
             addressToUser(account)
         })
         .on("error",error=>{
@@ -190,24 +190,6 @@ const ContractPage = () => {
         })
     }
     //****** Contract Write methods end********/
-    const postWaitingTime = (time)=>{
-        fetch('/estimatedtime',{
-            method:'POST',
-            headers: {
-                'Content-Type': 'application/json'
-              },
-            body:JSON.stringify({
-                time:Math.floor(time/1000)
-            })
-        })
-    }
-    const getEstimatedTime = async ()=>{
-        fetch('/estimatedtime')
-        .then(res=>res.json())
-        .then(data=>{
-            setEstimatedTime(data.estimatedTime)
-        })
-    }
     const handleUserName = (e)=>{
         if(mode===0){
             if(e.target.value[0]!=='_')
@@ -219,9 +201,6 @@ const ContractPage = () => {
             setInput(e.target.value)
         }
     }
-    useEffect(()=>{
-        getEstimatedTime()
-    },[])
     useEffect(()=>{
         setInput("")
     },[mode])

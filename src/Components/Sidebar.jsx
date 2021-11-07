@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { walletconnect, injected } from "../Wallet/connectors";
 import { useWeb3React } from "@web3-react/core";
-import { contractABI, contractAddress } from "../Contracts/ContractInfo";
+import { factoryContractAddress } from '../Contracts/ContractAddress'
+import { factoryContractABI,registerContractABI} from '../Contracts/ContractsABI'
 import { useHistory } from "react-router";
 import Button from '../Components/styled/Button'
 import metamaskIcon from '../Assetes/icons/metamask/medium.png'
@@ -23,11 +24,12 @@ const Sidebar = () => {
   }
   const addressToUser = async (address)=>{
     setLoadingProfile(true)
-    const web3 = library;
-    const contract = new web3.eth.Contract(contractABI,contractAddress)
-    const registered = await contract.methods.registered(account).call(res=>res)
+    const factoryContract = new library.eth.Contract(factoryContractABI,factoryContractAddress)
+    const contractAddress = await factoryContract.methods.registerContract().call(res=>res)
+    const registerContract = new library.eth.Contract(registerContractABI,contractAddress)
+    const registered = await registerContract.methods.registered(account).call(res=>res)
     if(registered){
-      contract.methods.addressToUsername(address).call()
+      registerContract.methods.addressToUsername(address).call()
         .then(res=>{
           setSignedIn(true)
           setUserName(res)
@@ -41,10 +43,12 @@ const Sidebar = () => {
     }
   }
   const getUserInfo = async ()=>{
-    const contract = new library.eth.Contract(contractABI,contractAddress)
-    const registered = await contract.methods.registered(account).call(res=>res)
+    const factoryContract = new library.eth.Contract(factoryContractABI,factoryContractAddress)
+    const contractAddress = await factoryContract.methods.registerContract().call(res=>res)
+    const registerContract = new library.eth.Contract(registerContractABI,contractAddress)
+    const registered = await registerContract.methods.registered(account).call(res=>res)
     if(registered){
-      contract.methods.addressToProfile(account).call()
+      registerContract.methods.addressToProfile(account).call()
         .then(res=>{
             setUserInfo(parseUserInfo(res.info))
         })

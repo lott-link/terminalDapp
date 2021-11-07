@@ -42,7 +42,7 @@ const Input = (props)=>{
             <TextInput {...props} onFocus={()=>setFocus(true)} onBlur={()=>setFocus(false)} />
             <label style={{position:'absolute',left:'35%',backgroundColor:'#020227',top:`${!focus?"24px":"3px"}`,paddingLeft:`${!focus?"0px":"4px"}`,paddingRight:`${!focus?"0px":"4px"}`,transition:'0.2s',pointerEvents:'none'}}>{props.title}</label>
             {props.small && <Small style={{textAlign:'start',marginLeft:"1em"}}>{props.small}</Small>}
-        </div>
+        </div> 
     )
 }
 export default Input;
