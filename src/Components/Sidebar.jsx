@@ -7,6 +7,7 @@ import { useHistory } from "react-router";
 import Button from '../Components/styled/Button'
 import metamaskIcon from '../Assetes/icons/metamask/medium.png'
 import walletConnectIcon from '../Assetes/icons/walletconnect/medium.png'
+import { useEagerConnect, useInactiveListener } from '../Hooks/hooks'
 const Sidebar = () => {
   const {activate,account,chainId,active,connector,library,deactivate} = useWeb3React()
   const [loadingProfile,setLoadingProfile] = useState(false)
@@ -21,6 +22,9 @@ const Sidebar = () => {
   }
   const metamask = async ()=>{
     await activate(injected)
+  }
+  const network = async ()=>{
+    await activate(network)
   }
   const addressToUser = async (address)=>{
     setLoadingProfile(true)
@@ -68,8 +72,8 @@ const Sidebar = () => {
   useEffect(()=>{
     if(active && chainId === 80001){
       addressToUser(account)
-      const web3 = library;
-      web3.eth.getBalance(account)
+      console.log(account)
+      library.eth.getBalance(account)
       .then(res=>setBalance(res))
       .catch(err=>setBalance("cant' get balance"))
         getUserInfo()
@@ -77,6 +81,24 @@ const Sidebar = () => {
       setUserInfo('')
     }
   },[active,account,chainId])
+
+
+  /* testing */
+   // handle logic to recognize the connector currently being activated
+   const [activatingConnector, setActivatingConnector] = React.useState()
+   React.useEffect(() => {
+     if (activatingConnector && activatingConnector === connector) {
+       setActivatingConnector(undefined)
+     }
+   }, [activatingConnector, connector])
+ 
+   // handle logic to eagerly connect to the injected ethereum provider, if it exists and has granted access already
+   const triedEager = useEagerConnect()
+ 
+   // handle logic to connect in reaction to certain events on the injected ethereum provider, if it exists
+   useInactiveListener(!triedEager || !!activatingConnector)
+  /* testing */
+
   return (
     <div className="w-100 h-100">
       <div style={{height:'40%',position:'relative',}} className="d-flex flex-column">
@@ -97,7 +119,6 @@ const Sidebar = () => {
             </div>
           </button>
         </div>}
-        
         <div className="" style={{margin:'0.75rem'}}>
           {account && <div>
               <div>Wallet Address:</div>

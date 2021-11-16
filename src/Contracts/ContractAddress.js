@@ -1,1 +1,1 @@
-export const factoryContractAddress = "0x2262F540DF345dE225B4d97651A492308dD1DB1a"
+export const factoryContractAddress = "0xe88f4Ba9F8fe1701F3463A6244dcd7d3538a3b3F"

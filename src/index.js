@@ -6,13 +6,16 @@ import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Web3 from 'web3'
 import { Web3ReactProvider } from '@web3-react/core'
+import MetamaskProvider from './Components/MetamaskProvider';
 function getLibrary(provider){
   return new Web3(provider)
 }
 ReactDOM.render(
   <React.StrictMode>
     <Web3ReactProvider getLibrary={getLibrary}>
-      <App />
+      {/* <MetamaskProvider> */}
+        <App />
+      {/* </MetamaskProvider> */}
     </Web3ReactProvider>
   </React.StrictMode>,
   document.getElementById('root')

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import Input from '../Components/styled/input' 
-const contractAddress = "0x13356777Ef8547d9e2F94a3C0ED2020c1Cd04e65"
+import { factoryContractAddress } from '../Contracts/ContractAddress'
+import { factoryContractABI } from '../Contracts/ContractsABI'
 const contractABI = [{"inputs":[{"internalType":"address","name":"_registerContract","type":"address"},{"internalType":"address","name":"_randomNumberConsumer","type":"address"},{"internalType":"address","name":"_chanceRoomLibrary","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"newLibrary","type":"address"},{"indexed":false,"internalType":"address","name":"updater","type":"address"}],"name":"ChanceRoomLibraryUpdated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"chanceRoom","type":"address"},{"indexed":false,"internalType":"address","name":"owner","type":"address"}],"name":"NewChanceRoom","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"newConsumer","type":"address"},{"indexed":false,"internalType":"address","name":"updater","type":"address"}],"name":"RandomNumberConsumerUpdated","type":"event"},{"inputs":[],"name":"chanceRoomLibrary","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"chanceroomsList","outputs":[{"internalType":"contract ChanceRoom[]","name":"","type":"address[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"info","type":"string"},{"internalType":"string","name":"baseURI","type":"string"},{"internalType":"uint256","name":"gateFee","type":"uint256"},{"internalType":"uint256","name":"percentCommission","type":"uint256"},{"internalType":"uint256","name":"userLimit","type":"uint256"},{"internalType":"uint256","name":"timeLimit","type":"uint256"}],"name":"newChanceRoom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_chanceRoomLibrary","type":"address"}],"name":"newChanceRoomLibrary","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_randomNumberConsumer","type":"address"}],"name":"newRandomNumberConsumer","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"randomNumberConsumer","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"registerContract","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"}]
 const CreateChanceRoom = () => {
     const {activate,account,chainId,active,connector,library,deactivate} = useWeb3React()
@@ -85,7 +86,7 @@ const CreateChanceRoom = () => {
         withdrawableSupply:'',
     })
     const getData = async (method)=>{
-        const contract = new library.eth.Contract(contractABI,contractAddress);
+        const contract = new library.eth.Contract(factoryContractABI,factoryContractAddress);
         setLoading(prevState=> {
             return { ...prevState,[method]:true}
         })
@@ -146,7 +147,8 @@ const CreateChanceRoom = () => {
         setLoading({...loading,[method]:false})
     }
     const sendData = (method)=>{
-        const contract = new library.eth.Contract(contractABI,contractAddress);
+        library.setProvider(library.givenProvider)
+        const contract = new library.eth.Contract(factoryContractABI,factoryContractAddress);
         setLoading({...loading,name:true})
         switch(method){
             case 'cancel':
