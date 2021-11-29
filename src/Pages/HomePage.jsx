@@ -32,7 +32,7 @@ const HomePage = () => {
     const spender = "0x80197C1b1d7521919768cc518983640E5Ec4e2ad";
     const createPermitMessageData = function (nonce) {
         const message = {
-          onwer: fromAddress,
+          owner: fromAddress,
           spender: spender,
           value: 100,
           nonce: nonce,
@@ -48,7 +48,7 @@ const HomePage = () => {
               {name: "verifyingContract",type: "address"}
             ],
             Permit: [
-              {name: "onwer",type: "address",},
+              {name: "owner",type: "address",},
               {name: "spender",type: "address",},
               {name: "value",type: "uint256",},
               {name: "nonce",type: "uint256",},
