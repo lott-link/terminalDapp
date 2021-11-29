@@ -8,7 +8,7 @@ const client = create('/ip4/127.0.0.1/tcp/5001')
 const HomePage = () => {
     const { library, active, account } = useWeb3React()
     const [file,setFile] = useState()
-    const [url,setUrl] = useState()
+    const [hash,setHash] = useState()
     const sendFile = async ()=>{
         try{
             let width, height;
@@ -20,8 +20,8 @@ const HomePage = () => {
             }
             const added = await client.add(file)
             console.log(added)
-            const fileUrl = `https://ipfs.infura.io/ipfs/${added.path}`
-            setUrl(fileUrl)
+            // const fileUrl = `https://ipfs.infura.io/ipfs/${added.path}`
+            setHash(added.path)
         }
         catch(error){
             console.log("error occured whilte uploading the file!",error)
@@ -158,7 +158,7 @@ const HomePage = () => {
             <div>
                 <input onChange={(e)=>setFile(e.target.files[0])} type="file" />
                 <button onClick={sendFile}>send</button>
-                {url && <img src={url} />}
+                {hash && <div>{hash}</div>}
             </div>
             <div><button onClick={signTransferPermit}>sign</button></div>
         </div>
