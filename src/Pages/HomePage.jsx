@@ -32,8 +32,8 @@ const HomePage = () => {
             //*****************************//
             //********uploading locally******
             const formData = new FormData()
-            // formData.append('hash',added.path)
-            formData.append('hash',"sdfadded.path")
+            formData.append('hash',added.path)
+            formData.append('hash',added.path)
             formData.append("file",file)
             axios.post('http://files.lott.link/upload',formData,{
               headers:{
