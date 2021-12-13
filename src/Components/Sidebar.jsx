@@ -83,7 +83,7 @@ const Sidebar = () => {
   },[active,account,chainId])
 
 
-  /* testing */
+
    // handle logic to recognize the connector currently being activated
    const [activatingConnector, setActivatingConnector] = React.useState()
    React.useEffect(() => {
@@ -97,7 +97,6 @@ const Sidebar = () => {
  
    // handle logic to connect in reaction to certain events on the injected ethereum provider, if it exists
    useInactiveListener(!triedEager || !!activatingConnector)
-  /* testing */
 
   return (
     <div className="w-100 h-100">

@@ -2,8 +2,18 @@ import { useState, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
 import mainRoutes from "../Routes/mainRoutes";
 import contractRoutes from "../Routes/contractRoutes";
+import nftRoutes  from '../Routes/nftRoutes.js'
+import useWidth from "../Hooks/useWidth";
+import MobileSidebar from "./MobileSidebar";
 import play from '../Assetes/play.svg'
+import menu from '../Assetes/menu.svg'
 const Navbar = () => {
+  //sidebar
+  const width = useWidth()
+  const [show,setShow] = useState(false)
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  //sidebar
   const [navItems, setNavItems] = useState();
   const [pathName, setPathName] = useState();
   const history = useHistory()
@@ -16,6 +26,9 @@ const Navbar = () => {
       case "/contract":
         setNavItems([...contractRoutes]);
         break;
+      case "/nft":
+        setNavItems([...nftRoutes]);
+        break;
     }
   });
   const handleNav = (path)=>{
@@ -25,12 +38,17 @@ const Navbar = () => {
     }
     if(path==="HomePage")
       setNavItems([...mainRoutes])
+    if(path==="NFT")
+      setNavItems([...nftRoutes])
+
   }
   useEffect(() => {
     setNavItems(mainRoutes);
   }, []);
   return (
     <nav className="d-flex" id="navbar">
+      {width < 500 && <div onClick={()=>setShow(!show)} className="text-white d-flex align-items-center"><img style={{background:"white"}} src={menu}/></div>}
+      {show && <div style={{background:'white'}}>sidebar</div>}
       {navItems &&
         navItems.map((item, index) => (
           <div key={Math.random() * 1000} className="mx-1 d-flex align-items-center">
@@ -52,6 +70,7 @@ const Navbar = () => {
             }
           </div>
         ))}
+        <MobileSidebar show={show} handleClose={handleClose}/>
     </nav>
   );
 };
