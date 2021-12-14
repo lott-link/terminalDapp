@@ -1,6 +1,7 @@
-import HomePage from "../Pages/HomePage"
-import Contract from '../Pages/Contract'
-import NFT from '../Pages/NFT'
+import React from 'react'
+const HomePage = React.lazy(()=>import('../Pages/HomePage'))
+const Contract =  React.lazy(()=>import('../Pages/Contract'))
+const NFT = React.lazy(()=>import('../Pages/NFT'))
 const mainRoutes = [
     {path:"/",exact:true,component:HomePage,title:"HomePage",type:'directory'},
     {path:"/contract",exact:false,component:Contract,title:"Contract",type:'directory'},

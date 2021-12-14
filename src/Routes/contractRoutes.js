@@ -1,9 +1,10 @@
-import ContractPage from '../Pages/ContractPage';
-import CreateChanceRoom from '../Pages/CreateChanceRoom'
-import HomePage from "../Pages/HomePage"
-import Contract from '../Pages/Contract'
-import ChanceRoomList from '../Pages/ChanceRoomList';
-import ChanceRoom from '../Pages/ChanceRoom';
+import React from 'react'
+const ContractPage = React.lazy(()=>import('../Pages/ContractPage'))
+const CreateChanceRoom = React.lazy(()=>import('../Pages/CreateChanceRoom'))
+const Contract = React.lazy(()=>import('../Pages/Contract'))
+const ChanceRoomList = React.lazy(()=>import('../Pages/ChanceRoomList'))
+const ChanceRoom = React.lazy(()=>import('../Pages/ChanceRoom'))
+
 const contractRoutes = [
     {path:"/contract",exact:false,component:Contract,title:"Contract",type:'directory',render:false,display:true},
     {path:'/contract/signin',exact:true,component:ContractPage,title:"Sign In",type:'link',render:true,display:true},

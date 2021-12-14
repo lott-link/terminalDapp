@@ -1,19 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Button from "../Components/styled/Button";
 import { useWeb3React } from "@web3-react/core"; 
 import { useHistory } from "react-router";
 import CountDown from "../Components/CountDown";
-import { factoryContractAddress } from '../Contracts/ContractAddress'
+import { context } from '../App'
 import styles from './chanceRoomList.module.css'
 import axios from 'axios'
 import Web3 from "web3";
 const ChanceRoomList = () => {
-  const { active,account,library,activate} = useWeb3React()
+  const { active,account,library} = useWeb3React()
+  const data = useContext(context)
   const [clicked, setClicked] = useState(1);
   const [list,setList] = useState([]);
   const [cList,setCList]= useState([])
-  const [listLoading,setListLoading] = useState(false)
-  const [events,setEvents] = useState()
   const history = useHistory()
   const getTime = (time)=>{
     if(parseInt(time) === 0)
@@ -49,7 +48,7 @@ const ChanceRoomList = () => {
   const getAllTransactions = ()=>{
     const topic = Web3.utils.sha3("NewChanceRoom(address,address,uint256,uint256,uint256,uint256)")
     axios.get(`https://api-testnet.polygonscan.com/api?module=logs&action=getLogs&fromBlock=21122189&toBlock=31122189
-    &address=${factoryContractAddress}&apikey=YourApiKeyToken
+    &address=${data.addresses[data.network]['factory']}&apikey=YourApiKeyToken
     &topic0=${topic}`)
     .then(res=>{
       console.log("data is ",res.data.result);
@@ -75,7 +74,7 @@ const ChanceRoomList = () => {
   const subscribe = ()=>{
     library.setProvider(new Web3.providers.WebsocketProvider("wss://rpc-mumbai.maticvigil.com/ws/v1/c94e97b70a9c2127c529d948ce9229b844c4dbdb"))    
     library.eth.subscribe('logs', {
-        address: factoryContractAddress,
+        address: data.addresses[data.network]['factory'],
         topics: [library.utils.sha3("NewChanceRoom(address,address,uint256,uint256,uint256,uint256)")]
       }, function(error, result){
           if (!error){
@@ -156,7 +155,6 @@ const ChanceRoomList = () => {
           })}
         </tbody>
       </table>
-      {listLoading && <div>loading...</div>}
       <Button secondary onClick={()=>history.push('/contract/createchanceroom')}>create new room</Button>
       </div>
     </div>

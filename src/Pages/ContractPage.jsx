@@ -4,9 +4,8 @@ import { factoryContractAddress } from '../Contracts/ContractAddress'
 import { factoryContractABI,registerContractABI } from '../Contracts/ContractsABI'
 import Button from '../Components/styled/Button'
 import Input from '../Components/styled/input';
-import play from '../Assetes/play.svg'
 const ContractPage = () => {
-    const {activate,account,chainId,active,connector,library,deactivate} = useWeb3React()
+    const {account,chainId,active,library} = useWeb3React()
     const [buttonDisabled, setButtonDisabled] = useState(true)
     const [sendInfoDisabled,setSendInfoDisabled] = useState(false)
     const [sendInfoLoading,setSendInfoLoading] = useState(false)

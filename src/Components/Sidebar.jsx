@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { walletconnect, injected } from "../Wallet/connectors";
 import { useWeb3React } from "@web3-react/core";
-import { factoryContractAddress } from '../Contracts/ContractAddress'
-import { factoryContractABI,registerContractABI} from '../Contracts/ContractsABI'
+import { registerContractABI} from '../Contracts/ContractsABI'
 import { useHistory } from "react-router";
 import Button from '../Components/styled/Button'
 import metamaskIcon from '../Assetes/icons/metamask/medium.png'
 import walletConnectIcon from '../Assetes/icons/walletconnect/medium.png'
 import { useEagerConnect, useInactiveListener } from '../Hooks/hooks'
+import { context } from '../App' 
 const Sidebar = () => {
   const {activate,account,chainId,active,connector,library,deactivate} = useWeb3React()
   const [loadingProfile,setLoadingProfile] = useState(false)
@@ -17,20 +17,16 @@ const Sidebar = () => {
   const [error,setError] = useState()
   const [signedIn,setSignedIn] = useState(false)
   const history = useHistory()
+  const data = useContext(context)
   const walletConnect = async ()=>{
     await activate(walletconnect)
   }
   const metamask = async ()=>{
     await activate(injected)
   }
-  const network = async ()=>{
-    await activate(network)
-  }
   const addressToUser = async (address)=>{
     setLoadingProfile(true)
-    const factoryContract = new library.eth.Contract(factoryContractABI,factoryContractAddress)
-    const contractAddress = await factoryContract.methods.registerContract().call(res=>res)
-    const registerContract = new library.eth.Contract(registerContractABI,contractAddress)
+    const registerContract = new library.eth.Contract(registerContractABI,data.addresses[data.network]['register'])
     const registered = await registerContract.methods.registered(account).call(res=>res)
     if(registered){
       registerContract.methods.addressToUsername(address).call()
@@ -47,9 +43,7 @@ const Sidebar = () => {
     }
   }
   const getUserInfo = async ()=>{
-    const factoryContract = new library.eth.Contract(factoryContractABI,factoryContractAddress)
-    const contractAddress = await factoryContract.methods.registerContract().call(res=>res)
-    const registerContract = new library.eth.Contract(registerContractABI,contractAddress)
+    const registerContract = new library.eth.Contract(registerContractABI,data.addresses[data.network]['register'])
     const registered = await registerContract.methods.registered(account).call(res=>res)
     if(registered){
       registerContract.methods.addressToProfile(account).call()
@@ -82,7 +76,24 @@ const Sidebar = () => {
     }
   },[active,account,chainId])
 
-
+  const changeToPolygon = ()=>{
+    if(window.ethereum){
+      window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: '0x89' }],
+      })
+      data.setNetwork('polygon')
+    }
+  }
+  const changeToMumbai = ()=>{
+    if(window.ethereum){
+      window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: '0x13881' }],
+      })
+      data.setNetwork('mumbai')
+    }
+  }
 
    // handle logic to recognize the connector currently being activated
    const [activatingConnector, setActivatingConnector] = React.useState()
@@ -133,11 +144,18 @@ const Sidebar = () => {
           </div>}
           {chainId && (chainId === 80001 ? <div>{chainId}</div> : <div style={{color:'red'}}>please change your network to polygon</div>)}
         </div>
+          { 
+            <div className="w-100" style={{position:'absolute',bottom:'15%',left:'0'}}>
+              <Button primary className="my-2" onClick={changeToPolygon}>
+                Polygon
+              </Button>
+              <Button primary className="my-2" onClick={changeToMumbai}>
+                Mumbai
+              </Button>
+            </div>
+          }
           {active && 
             <div className="w-100" style={{position:'absolute',bottom:'0',left:'0'}}>
-              {/* <button style={{position:'absolute',bottom:'0',right:'5%'}} onClick={deactivate} className="my-2 wallet-button">
-                disconecct
-              </button> */}
               <Button primary  onClick={deactivate} className="my-2 wallet-button">
                 disconecct
               </Button>

@@ -6,13 +6,17 @@ import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Web3 from 'web3'
 import { Web3ReactProvider } from '@web3-react/core'
+import { Suspense } from 'react'
 function getLibrary(provider){
   return new Web3(provider)
 }
+
 ReactDOM.render(
   <React.StrictMode>
     <Web3ReactProvider getLibrary={getLibrary}>
-        <App />
+        <Suspense fallback={<div>loading...</div>}>
+            <App />
+        </Suspense>
     </Web3ReactProvider>
   </React.StrictMode>,
   document.getElementById('root')
