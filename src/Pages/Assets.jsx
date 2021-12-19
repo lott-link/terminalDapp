@@ -31,10 +31,12 @@ const Assets = () => {
             const contract = new library.eth.Contract(contractABI,contractAddress)
             const tokenURI = await contract.methods.tokenURI(tokenID).call(res=>res)
             const tokenJson = await axios.get(tokenURI).then(res=>res.data)
+            console.log("tokenURI",tokenURI)
+            console.log("tokenJson",tokenJson)
             const data = {
                 author:tokenJson.author,
                 description:tokenJson.description,
-                publicFileHash:"https://ipfs.infura.io/ipfs/"+tokenJson.publicFileHash
+                image:tokenJson.image
             }
             setModal(data)
             localStorage.setItem(contractAddress+tokenID,JSON.stringify(data))
@@ -65,10 +67,10 @@ const Assets = () => {
             {show && 
                 <div className="w-25 d-flex flex-column align-items-center"
                  style={{position:'absolute',right:'30%',border:'7px double white'}} >
-                    <div>author:{modal.author}</div>
+                    {/* <div>author:{modal.author}</div> */}
                     <div>description:{modal.description}</div>
                     <div><img style={{width:"200px"}} 
-                    src={modal.publicFileHash} alt="" /></div>
+                    src={modal.image} alt="" /></div>
                     <div style={{cursor:'pointer'}} onClick={()=>setShow(false)}>close</div>
                 </div>
             }

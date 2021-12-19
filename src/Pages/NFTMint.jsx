@@ -42,20 +42,9 @@ const NFTMint = () => {
       if(!active) return;
       let uri = input.uri;
       if(uriDisabled){
-        //getting user name
-        // let userName;
-        // const registerContract = new library.eth.Contract(registerContractABI,data.addresses[data.network]["register"])
-        // const registered = await registerContract.methods.registered(account).call(res=>res)
-        // if(registered){
-        //   await registerContract.methods.addressToUsername(account).call()
-        //   .then(res=>{
-        //       userName = res
-        //     })
-        // }
         const json = await client.add(JSON.stringify({
-          author:"userName",
           description:input.publicInfo,
-          publicFileHash:input.publicFileHash
+          image:"https://ipfs.infura.io/ipfs/"+input.publicFileHash
         }))
         uri = `https://ipfs.infura.io/ipfs/${json.path}`
         console.log(uri)
