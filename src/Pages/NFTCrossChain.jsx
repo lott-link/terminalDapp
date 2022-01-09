@@ -158,7 +158,7 @@ const NFTCrossChain = () => {
                                                 <td>{token.chainId}</td>
                                                 <td>{token.tokenID}</td>
                                                 <td>{token.contractAddress.slice(0,4)+"..."+token.contractAddress.slice(-4)}</td>
-                                                <td>{token.description.slice(0,7)+"..."}</td>
+                                                <td>{token.description.length > 7 ? token.description.slice(0,7)+"..." : token.description }</td>
                                             </tr>        
                                         ))
                                         }
