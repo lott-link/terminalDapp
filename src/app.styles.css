@@ -25,8 +25,8 @@
   --main-bg-color: #020227;
 }
 #app-container {
-  min-height: 700px;
-  min-width: 1050px;
+  min-height: 750px;
+  min-width: 1250px;
   height: 100%;
   margin: 30px;
   border: 7px double white;

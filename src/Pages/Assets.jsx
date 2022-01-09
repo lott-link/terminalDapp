@@ -9,11 +9,6 @@ const Assets = () => {
     const [tokens,setTokens] = useState([])
     const [show,setShow] = useState(false)
     const [modal,setModal] = useState()
-    const getERC20 = async ()=>{
-        if(!active) return;
-        axios.get(`https://api-testnet.polygonscan.com/api?module=account&action=tokentx&address=${account}&startblock=0&endblock=19999999&sort=asc&apikey=YourApiKeyToken`)
-        .then(res=>console.log(res.data.result))
-    }
     const getERC721 = async ()=>{
         if(!active) return;
         // axios.get(`https://api-testnet.polygonscan.com/api?module=account&action=tokennfttx&startblock=0&endblock=999999999&sort=asc&address=${account}`)
@@ -48,7 +43,6 @@ const Assets = () => {
     },[])
     return (
         <div>
-            <button onClick={getERC20}>getERC20</button>
             <button onClick={getERC721}>getERC721</button>
             <div className="d-flex flex-column align-items-center">
                 {

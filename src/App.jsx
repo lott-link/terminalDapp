@@ -5,13 +5,13 @@ import Navbar from "./Components/Navbar";
 import Sidebar from "./Components/Sidebar";
 import useWidth from './Hooks/useWidth'
 import "./app.styles.css";
-import { addresses } from './addresses';
+import { addresses, chains } from './addresses';
 export const context = createContext()
 function App() {
   const width = useWidth()
   const [network,setNetwork] = useState('mumbai')
   return (
-    <context.Provider value={{addresses,network,setNetwork}}>
+    <context.Provider value={{addresses,network,setNetwork,chains}}>
     <div className="h-100" style={{ position: "relative" }}>
       <h3 className="text-white px-3" id="title">
         Lott.Link

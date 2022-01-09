@@ -1,0 +1,203 @@
+import React, { useState , useEffect , useContext , useRef } from 'react'
+import styles from './NFTCrossChain.module.css'
+import Button from '../Components/styled/Button'
+import Input from '../Components/styled/input'
+import { context } from '../App'
+import { useWeb3React } from '@web3-react/core'
+import axios from 'axios'
+const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"approved","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getApproved","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"operator","type":"address"}],"name":"isApprovedForAll","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"privateFileHash","outputs":[{"internalType":"string","name":"_privateFileHash","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"privateInfo","outputs":[{"internalType":"string","name":"_privateInfo","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"publicFileHash","outputs":[{"internalType":"string","name":"_publicFileHash","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"publicInfo","outputs":[{"internalType":"string","name":"_publicInfo","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"string","name":"uri","type":"string"},{"internalType":"string","name":"publicInfo","type":"string"},{"internalType":"string","name":"privateInfo","type":"string"},{"internalType":"string","name":"publicFileHash","type":"string"},{"internalType":"string","name":"privateFileHash","type":"string"}],"name":"safeMint","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"bytes","name":"_data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"name":"setApprovalForAll","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"transferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"}]
+
+const NFTCrossChain = () => {
+    const { active, account, library,chainId } = useWeb3React()
+    const data = useContext(context)
+    const [tokens,setTokens] = useState([])
+    const [selectedToken,setSelectedToken] = useState("")
+    const [selectedIndex,setSelectedIndex] = useState("")
+    const [targetChain,setTargetChain] = useState("")
+    const [value,setValue] = useState("")
+    const [loading,setLoading] = useState(false)
+    const handleNetworkChange = (e)=>{
+        data.setNetwork(e.target.value)
+        if(window.ethereum){
+            window.ethereum
+                .request({
+                  method: "wallet_addEthereumChain",
+                  params: data.chains[e.target.value]["params"]
+            })
+            let chainId = data.chains[e.target.value]["chainIdHex"]
+            window.ethereum.request({
+              method: 'wallet_switchEthereumChain',
+              params: [{ chainId}],
+            })
+        }
+    }
+    const getERC721 = async ()=>{
+        if(!active) return;
+        setTokens([])
+        setLoading(true)
+        const array = await axios.get(`${data.addresses[data.network]["erc721API"]}${account}`).then(res=>res.data.result)
+        console.log(array)
+        let ids = array.map(token=>token.tokenID+token.contractAddress)
+        ids = Array.from(new Set(ids))
+        const counts = new Array(ids.length).fill(0)
+        for(let i = 0; i < array.length; i++){
+          for(let j = 0; j < ids.length; j++){
+            if(array[i].tokenID + array[i].contractAddress === ids[j])
+              counts[j]++
+          }
+        }
+        const idsToShow = [] 
+        counts.forEach((id,index)=> {if(id%2!==0) idsToShow.push(ids[index])})
+        idsToShow.forEach(async id=>{
+          const token = await getToken(id.split('0x')[0],"0x"+id.split('0x')[1])
+          setTokens(prev=>[...prev,token])
+        })
+        setLoading(false)
+    }
+    const getToken = async (tokenID,contractAddress) => {
+      if(!active) return;
+      const token = localStorage.getItem(contractAddress+tokenID)
+      if(token){
+        return JSON.parse(token)
+      }
+      else{
+        const contract = new library.eth.Contract(contractABI,contractAddress)
+        const tokenURI = await contract.methods.tokenURI(tokenID).call(res=>res)
+        const tokenJson = await axios.get(tokenURI).then(res=>res.data)
+        const data = {
+          name:tokenJson.name,
+          description:tokenJson.description,
+          image:tokenJson.image,
+          tokenID,
+          contractAddress,
+          chainId
+        }
+        localStorage.setItem(contractAddress+tokenID,JSON.stringify(data))
+        return data
+      } 
+    }
+    const firstApprove = ()=>{
+        const tokenContract = new library.eth.Contract(contractABI,selectedToken.contractAddress)
+        tokenContract.methods.approve(data.addresses[data.network]["crossChain"],selectedToken.tokenID).send({from:account})
+    }
+    const transfer = ()=>{
+        const abi = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"approved","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"chainId","type":"uint256"},{"indexed":false,"internalType":"address","name":"contAddr","type":"address"},{"indexed":false,"internalType":"uint256","name":"tokenId","type":"uint256"},{"indexed":false,"internalType":"address","name":"to","type":"address"}],"name":"RelayerCallRedeem","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"targetChainId","type":"uint256"},{"indexed":false,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"chainId","type":"uint256"},{"indexed":false,"internalType":"address","name":"contAddr","type":"address"},{"indexed":false,"internalType":"uint256","name":"tokenId","type":"uint256"},{"indexed":false,"internalType":"string","name":"uri","type":"string"}],"name":"RelayerCallSafeMintWrappedToken","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"wTokenId","type":"uint256"}],"name":"TokenWrapped","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"wTokenId","type":"uint256"}],"name":"WTokenBurned","type":"event"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"burn","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"wTokenId","type":"uint256"}],"name":"burnWrappedToken","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getApproved","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"targetChainId","type":"uint256"}],"name":"getFee","outputs":[{"internalType":"uint256","name":"fee","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"operator","type":"address"}],"name":"isApprovedForAll","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"bytes","name":"","type":"bytes"}],"name":"onERC721Received","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"contAddr","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"address","name":"to","type":"address"}],"name":"redeem","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"relayer","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"chainId","type":"uint256"},{"internalType":"address","name":"contAddr","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"string","name":"uri","type":"string"}],"name":"safeMintWrappedToken","outputs":[{"internalType":"uint256","name":"wTokenId","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"bytes","name":"_data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"name":"setApprovalForAll","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"targetChainId","type":"uint256"},{"internalType":"uint256","name":"fee","type":"uint256"}],"name":"setFee","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256[]","name":"targetChainIds","type":"uint256[]"},{"internalType":"uint256[]","name":"fees","type":"uint256[]"}],"name":"setFees","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newRelayer","type":"address"}],"name":"setRelayer","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"contAddr","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"targetChainId","type":"uint256"}],"name":"transferCrossChainRequest","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"transferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"wTokenId","type":"uint256"},{"internalType":"address","name":"to","type":"address"}],"name":"wReturnCrossChainRequest","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address payable","name":"to","type":"address"}],"name":"withdrawCash","outputs":[],"stateMutability":"nonpayable","type":"function"}]
+        const contract = new library.eth.Contract(abi,data.addresses[data.network]["crossChain"])
+        console.log("params",selectedToken,account,data.addresses[data.network]["crossChain"],targetChain)
+        contract.methods.transferCrossChainRequest(
+        selectedToken.contractAddress,selectedToken.tokenID,
+        account,data.addresses[data.network]["crossChain"],targetChain).send({from:account,value:parseInt(value)})
+    }
+    const handleTarget = (e)=>{
+        setTargetChain(
+            data.chaind[e.target.value]["chainIdDecimal"]
+        )
+    }
+    const ref = useRef(null)
+    const ref2 = useRef(null)
+    useEffect(()=>{
+        ref.current.value = data.network;
+        ref2.current.value = data.network;
+    },[data.network])
+    useEffect(()=>{ 
+        if(active)
+          getERC721()
+      },[chainId])
+    return (
+        <div className='w-100 h-100' style={{display:'flex',flexFlow:'column'}} >
+            <div className='d-flex justify-content-between py-2' style={{borderBottom:"1px solid white"}}>
+                <div className='mx-4'>back</div>
+                <div>Cross Chain NFT</div>
+                <div className='mx-4'>
+                    <select ref={ref} onChange={handleNetworkChange} name="" className={styles.select}>
+                        <option value="polygon">polygon</option>
+                        <option value="ethereum">ethereum</option>
+                        <option value="mumbai">mumbai</option>
+                    </select>
+                </div>
+            </div>
+            <div className='py-2 px-4' style={{borderBottom:"1px solid white"}}>
+            In this contract you can mint a Wrap token from your NFT in any EVM network, 
+            your token will lock in CRN contract. 
+            any one that has the Wrapped token of your NFT can unlock the NFT from contract.
+             you can read more about thin contract HERE.
+            </div>
+            <div className='d-flex' style={{flexGrow:"1"}}>
+                <div className='w-50 h-100 p-2' style={{borderRight:"1px solid white"}}>
+                    <div className='w-100 h-100' style={{border:"1px solid white"}}>
+                        <div className='text-center py-4' style={{borderBottom:"1px solid white",fontSize:"22px"}}>
+                            Select Your NFT
+                        </div>
+                        <div className='px-4'>{console.log(tokens)}
+                            <div className='py-4 px-4 text-center'>select NFT you want to bridge to other network</div> 
+                            <div className='text-center' style={{overflow:"auto",maxHeight:"16rem"}}>
+                                <table className="w-100">
+                                    <thead>
+                                      <tr className={`${styles.tr} ${styles.head}`}>
+                                        <th>chainId</th>
+                                        <th>tokenId</th>
+                                        <th>contract Address</th>
+                                        <th>description</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                        tokens.map((token,index)=>(
+                                            <tr onClick={()=>{setSelectedToken(token);setSelectedIndex(index)}} 
+                                            key={index} className={`${styles.tr} ${selectedIndex===index ? styles.selected : ""}`}>
+                                                <td>{token.chainId}</td>
+                                                <td>{token.tokenID}</td>
+                                                <td>{token.contractAddress.slice(0,4)+"..."+token.contractAddress.slice(-4)}</td>
+                                                <td>{token.description.slice(0,7)+"..."}</td>
+                                            </tr>        
+                                        ))
+                                        }
+                                    </tbody>{console.log(selectedIndex)}
+                                </table>
+                            </div>
+                            <div className='text-center py-2' style={{color:"#FF00FF"}}>
+                            for brifging your NFT you must set approve to the contract, that contract change
+                            </div>
+                            <div className="text-center">
+                                <Button onClick={firstApprove}
+                                className="w-75" secondary>APPROVE</Button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className='w-50 h-100 p-2'>
+                    <div className='w-100 h-100' style={{border:"1px solid white"}}>
+                        <div className='text-center py-4' style={{borderBottom:"1px solid white",fontSize:"22px"}}>
+                            Cross Chainin
+                        </div>
+                        <div className='py-3 px-4 text-center'>
+                            write the destination Address and select the destination network,
+                             your NFT will appear in your destination address in few minetrs.
+                        </div> 
+                        <div className='text-center py-2 px-4' style={{color:"#FF00FF"}}>
+                        becurfull your destination address must be on your destination network
+                        </div>
+                        <div>
+                            <Input style={{width:'24rem'}} value={value} onChange={e=>setValue(e.target.value)} title="value" className="" name="value"  type="text" />
+                            <div className='text-center' >
+                                <select  name="" className={`${styles.select} text-center`} 
+                                onChange={handleTarget} ref={ref2}
+                                style={{width:'24rem'}}>
+                                    <option value="polygon">polygon</option>
+                                    <option value="ethereum">ethereum</option>
+                                    <option value="mumbai">mumbai</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div className="text-center">
+                            <Button onClick={transfer}
+                            className="w-75" primary>APPROVE</Button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+export default NFTCrossChain

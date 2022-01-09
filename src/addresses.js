@@ -9,6 +9,50 @@ export const addresses = {
        factory:"0xe88f4Ba9F8fe1701F3463A6244dcd7d3538a3b3F",
        register:"0x92c3f3b2122b61a50b218df446e2799535fcb519",
        NFT:"0xd2Ad56D684A211b5Ee5a2aFb6e8E7a6e6F642d67",
-       erc721API:"https://api-testnet.polygonscan.com/api?module=account&action=tokennfttx&startblock=0&endblock=999999999&sort=asc&address="                
+       erc721API:"https://api-testnet.polygonscan.com/api?module=account&action=tokennfttx&startblock=0&endblock=999999999&sort=asc&address=",
+       crossChain:"0x226f03db392131BAd315eFcE0D78BdaC12fD4497"                
     }
+}
+export const chains = {
+   mumbai:{
+      chainIdDecimal:80001,
+      chainIdHex:"0x13881",
+      icon:'/polygon/Preview.png',
+      params:[
+         {
+           chainId: "0x13881",
+           chainName: "Mumbai Testnet",
+           nativeCurrency: {
+             name: "MATIC",
+             symbol: "MATIC",
+             decimals: 18,
+           },
+           rpcUrls: ["https://rpc-mumbai.maticvigil.com"],
+           blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
+         },
+       ]
+   },
+   polygon:{
+      chainIdDecimal:137,
+      chainIdHex:"0x89",
+      icon:'/polygon/Preview.png',
+      params:[
+         {
+           chainId: "0x89",
+           chainName: "Polygon",
+           nativeCurrency: {
+             name: "MATIC",
+             symbol: "MATIC",
+             decimals: 18,
+           },
+           rpcUrls: ["https://rpc-mainnet.matic.network"],
+           blockExplorerUrls: ["https://polygonscan.com/"],
+         },
+       ]
+   },
+   ethereum:{
+      chainIdDecimal:1,
+      chainIdHex:"0x1",
+      icon:'/eth/Preview.png'
+   }
 }

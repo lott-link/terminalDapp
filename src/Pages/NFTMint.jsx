@@ -50,7 +50,7 @@ const NFTMint = () => {
         console.log(uri)
       }
       const contract = new library.eth.Contract(contractABI,data.addresses[data.network]["NFT"])
-      contract.methods.safeMint(input.to,uri,input.publicInfo,
+      contract.methods["safeMint"](input.to,uri,input.publicInfo,
       input.privateInfo,input.publicFileHash,input.privateFileHash).send({from:account})
     }
   return (

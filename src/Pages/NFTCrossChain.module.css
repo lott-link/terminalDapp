@@ -1,0 +1,36 @@
+.head{
+    background-color:#C0C0C0;
+    color:#040457;
+    text-align: center;
+}
+.tr {
+    text-align: center;
+}
+.tr:hover {
+    background-color: rgb(71, 71, 71);
+    transition: 0.2s;
+}
+.tr:hover td {
+    color:#e7e7e7;
+}
+.tr th {
+    padding:8px;
+    position: sticky;
+    top:0;
+    background-color:#C0C0C0;
+}
+.tr td {
+    padding:8px;
+    color:#C0C0C0;
+}
+.select {
+    background-color: #020227;
+    color:white;
+    border: 6px double white;
+}
+.select:hover {
+    border:6px solid white;
+}
+.selected {
+    background-color: rgba(255, 0, 0, 0.692);
+}

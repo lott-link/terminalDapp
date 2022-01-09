@@ -94,7 +94,17 @@ const Sidebar = () => {
       data.setNetwork('mumbai')
     }
   }
-
+  useEffect(()=>{
+    console.log("chainID",chainId)
+    if(chainId){
+      if(chainId===1)
+        data.setNetwork('ethereum')
+      else if(chainId===137)
+        data.setNetwork('polygon')
+      else if(chainId===80001)
+        data.setNetwork('mumbai')
+    }
+  },[chainId])
    // handle logic to recognize the connector currently being activated
    const [activatingConnector, setActivatingConnector] = React.useState()
    React.useEffect(() => {
@@ -110,7 +120,7 @@ const Sidebar = () => {
    useInactiveListener(!triedEager || !!activatingConnector)
 
   return (
-    <div className="w-100 h-100">
+    <div className="w-100 h-100">{console.log(data)}
       <div style={{height:'40%',position:'relative',}} className="d-flex flex-column">
         <div style={{width:'90%',margin:'0.5rem auto',fontSize:'1.3rem'}}>{active ? "Wallet" : "Connect Wallet"}</div>
         {!active && <div className="w-100 text-center">
