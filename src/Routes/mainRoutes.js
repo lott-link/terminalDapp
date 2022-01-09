@@ -7,6 +7,6 @@ const mainRoutes = [
     {path:"/",exact:true,component:HomePage,title:"HomePage",type:'directory'},
     {path:"/contract",exact:false,component:Contract,title:"Contract",type:'directory'},
     {path:"/nft",exact:false,component:NFT,title:"NFT",type:'directory'},
-    {path:"/ctosschain",exact:true,component:NFTCrossChain,title:"Cross chain",type:'link'},
+    {path:"/crosschain",exact:true,component:NFTCrossChain,title:"Cross chain",type:'link'},
 ]
 export default mainRoutes;
