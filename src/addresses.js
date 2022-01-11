@@ -10,8 +10,7 @@ export const addresses = {
        register:"0x92c3f3b2122b61a50b218df446e2799535fcb519",
        NFT:"0xd2Ad56D684A211b5Ee5a2aFb6e8E7a6e6F642d67",
        erc721API:"https://api-testnet.polygonscan.com/api?module=account&action=tokennfttx&startblock=0&endblock=999999999&sort=asc&address=",
-       crossChain:"0x226f03db392131BAd315eFcE0D78BdaC12fD4497"                
-      //  crossChain:"0xDC50C371423395A964A7067eb874c0C0C2086Bdc"                
+       crossChain:"0xDC50C371423395A964A7067eb874c0C0C2086Bdc"                
     },
     rinkeby:{
        erc721API:"https://api-rinkeby.etherscan.io/api?module=account&action=tokennfttx&startblock=0&endblock=999999999&sort=asc&apikey=WPZTIVDHXFF48WJ7UDAIE893S7WAVG6DSU&address=",
