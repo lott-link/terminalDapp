@@ -45,7 +45,7 @@ const NFTCrossChain = () => {
     const getERC721 = async ()=>{
         if(!active) return;
         setTokens([])
-        if(!data.addresses[data.network]["erc721API"]) return
+        if(!data.network) return
         const array = await axios.get(`${data.addresses[data.network]["erc721API"]}${account}`).then(res=>res.data.result)
         console.log("array",array)
         let ids = array.map(token=>token.tokenID+token.contractAddress)
