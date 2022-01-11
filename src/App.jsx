@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react'; 
+import React, { createContext, useState, useEffect } from 'react'; 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import mainRoutes from "./Routes/mainRoutes";
 import Navbar from "./Components/Navbar";
@@ -9,7 +9,7 @@ import { addresses, chains } from './addresses';
 export const context = createContext()
 function App() {
   const width = useWidth()
-  const [network,setNetwork] = useState('mumbai')
+  const [network,setNetwork] = useState('')
   return (
     <context.Provider value={{addresses,network,setNetwork,chains}}>
     <div className="h-100" style={{ position: "relative" }}>

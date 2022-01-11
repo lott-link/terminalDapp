@@ -25,6 +25,7 @@ const Sidebar = () => {
     await activate(injected)
   }
   const addressToUser = async (address)=>{
+    if(!data.network) return
     setLoadingProfile(true)
     const registerContract = new library.eth.Contract(registerContractABI,data.addresses[data.network]['register'])
     const registered = await registerContract.methods.registered(account).call(res=>res)
@@ -43,6 +44,7 @@ const Sidebar = () => {
     }
   }
   const getUserInfo = async ()=>{
+    if(!data.network) return
     const registerContract = new library.eth.Contract(registerContractABI,data.addresses[data.network]['register'])
     const registered = await registerContract.methods.registered(account).call(res=>res)
     if(registered){
@@ -74,7 +76,7 @@ const Sidebar = () => {
     }else{
       setUserInfo('')
     }
-  },[active,account,chainId])
+  },[active,account,chainId,data.network])
 
   const changeToPolygon = ()=>{
     if(window.ethereum){
@@ -95,7 +97,6 @@ const Sidebar = () => {
     }
   }
   useEffect(()=>{
-    console.log("chainID",chainId)
     if(chainId){
       if(chainId===1)
         data.setNetwork('ethereum')
@@ -103,6 +104,8 @@ const Sidebar = () => {
         data.setNetwork('polygon')
       else if(chainId===80001)
         data.setNetwork('mumbai')
+      else if(chainId===4)
+        data.setNetwork('rinkeby')
     }
   },[chainId])
    // handle logic to recognize the connector currently being activated
@@ -120,7 +123,7 @@ const Sidebar = () => {
    useInactiveListener(!triedEager || !!activatingConnector)
 
   return (
-    <div className="w-100 h-100">{console.log(data)}
+    <div className="w-100 h-100">
       <div style={{height:'40%',position:'relative',}} className="d-flex flex-column">
         <div style={{width:'90%',margin:'0.5rem auto',fontSize:'1.3rem'}}>{active ? "Wallet" : "Connect Wallet"}</div>
         {!active && <div className="w-100 text-center">

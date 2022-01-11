@@ -5,16 +5,19 @@ import Input from '../Components/styled/input'
 import { context } from '../App'
 import { useWeb3React } from '@web3-react/core'
 import axios from 'axios'
+import { OverlayTrigger, Tooltip} from 'react-bootstrap'
 const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"approved","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getApproved","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"operator","type":"address"}],"name":"isApprovedForAll","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"privateFileHash","outputs":[{"internalType":"string","name":"_privateFileHash","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"privateInfo","outputs":[{"internalType":"string","name":"_privateInfo","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"publicFileHash","outputs":[{"internalType":"string","name":"_publicFileHash","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"publicInfo","outputs":[{"internalType":"string","name":"_publicInfo","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"string","name":"uri","type":"string"},{"internalType":"string","name":"publicInfo","type":"string"},{"internalType":"string","name":"privateInfo","type":"string"},{"internalType":"string","name":"publicFileHash","type":"string"},{"internalType":"string","name":"privateFileHash","type":"string"}],"name":"safeMint","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"bytes","name":"_data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"name":"setApprovalForAll","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"transferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"}]
 const NFTCrossChain = () => {
-    const { active, account, library,chainId } = useWeb3React()
+    const { active, account, library, chainId } = useWeb3React()
     const data = useContext(context)
     const [tokens,setTokens] = useState([])
     const [selectedToken,setSelectedToken] = useState("")
     const [selectedIndex,setSelectedIndex] = useState("")
     const [targetChain,setTargetChain] = useState("")
     const [value,setValue] = useState("")
-    const [address,setAddress] = useState(account)
+    const [address,setAddress] = useState("")
+    const [now,setNow] = useState(0)
+    const estimatedTime = 10;
     const [approveBtn,setApproveBtn] = useState({
         disabled:false,loading:false,approving:false,msg:""
     })
@@ -23,6 +26,7 @@ const NFTCrossChain = () => {
     })
     const [approves,setApproves] = useState({first:false,second:true})
     const [availableChains,setAvailableChains] = useState([])
+    const [allChains,setAllChains] = useState([])
     const handleNetworkChange = (e)=>{
         data.setNetwork(e.target.value)
         if(window.ethereum){
@@ -34,7 +38,7 @@ const NFTCrossChain = () => {
             let chainId = data.chains[e.target.value]["chainIdHex"]
             window.ethereum.request({
               method: 'wallet_switchEthereumChain',
-              params: [{ chainId}],
+              params: [{ chainId }],
             })
         }
     }
@@ -42,7 +46,7 @@ const NFTCrossChain = () => {
         if(!active) return;
         setTokens([])
         const array = await axios.get(`${data.addresses[data.network]["erc721API"]}${account}`).then(res=>res.data.result)
-        console.log(array)
+        console.log("array",array)
         let ids = array.map(token=>token.tokenID+token.contractAddress)
         ids = Array.from(new Set(ids))
         const counts = new Array(ids.length).fill(0)
@@ -81,22 +85,32 @@ const NFTCrossChain = () => {
         return data
       } 
     }
-    const firstApprove = ()=>{
+    const firstApprove = async ()=>{
         setApproves({...approves,first:true})
         setApproveBtn({...approveBtn,disabled:true,approving:true})
         const tokenContract = new library.eth.Contract(contractABI,selectedToken.contractAddress)
+        const isApprovedBefore = await tokenContract.methods.getApproved(selectedToken.tokenID).call()
+        const isApproveForAllBefore = await tokenContract.methods.isApprovedForAll(account,selectedToken.contractAddress).call()
+        if(isApprovedBefore!=="0x0000000000000000000000000000000000000000" || isApproveForAllBefore){
+            setApproveBtn({disabled:false,approving:false,loading:false,msg:""})
+            setApproves({first:true,second:false})
+            return; 
+        }
         tokenContract.methods.approve(data.addresses[data.network]["crossChain"],selectedToken.tokenID).send({from:account})
         .on("transactionHash",transactionHash=>{
             setApproveBtn({...approveBtn,loading:true,approving:false})
+            progress()
         })
         .on("receipt",receipt=>{
             setApproveBtn({disabled:false,approving:false,loading:false,msg:""})
             setApproves({first:true,second:false})
+            setNow(0)
         })
         .on("error",error=>{
             setApproveBtn({disabled:false,approving:false,loading:false,msg:error.msg})
             console.log("error in sending info",error)
             setApproves({first:false,second:true})
+            setNow(0)
         })
     }
     const transfer = ()=>{
@@ -110,15 +124,19 @@ const NFTCrossChain = () => {
         account,data.addresses[data.network]["crossChain"],targetChain).send({from:account,value:parseInt(value)})
         .on("transactionHash",transactionHash=>{
             setTransferBtn({...approveBtn,loading:true,approving:false})
+            progress()
         })
         .on("receipt",receipt=>{
             setTransferBtn({disabled:false,approving:false,loading:false,msg:""})
-            setApproves({first:true,second:false})
+            setApproveBtn({disabled:false,approving:false,loading:false,msg:""})
+            setApproves({first:false,second:true})
+            setNow(0)
         })
         .on("error",error=>{
             setTransferBtn({disabled:false,approving:false,loading:false,msg:error.msg})
             console.log("error in sending info",error)
             setApproves({first:true,second:false})
+            setNow(0)
         })
     }
     const handleTarget = (e)=>{
@@ -126,53 +144,111 @@ const NFTCrossChain = () => {
             data.chains[e.target.value]["chainIdDecimal"]
         )
     }
+    const setApproveForAll = async ()=>{
+        setApproves({...approves,first:true})
+        setApproveBtn({...approveBtn,disabled:true,approving:true})
+        const tokenContract = new library.eth.Contract(contractABI,selectedToken.contractAddress)
+        const isApproveForAllBefore = await tokenContract.methods.isApprovedForAll(account,selectedToken.contractAddress).call()
+        console.log(isApproveForAllBefore)
+        if(isApproveForAllBefore){
+            setApproveBtn({disabled:false,approving:false,loading:false,msg:""})
+            setApproves({first:true,second:false})
+            return; 
+        }
+        tokenContract.methods.setApprovalForAll(selectedToken.contractAddress,1).send({from:account})
+        .on("transactionHash",transactionHash=>{
+            setApproveBtn({...approveBtn,loading:true,approving:false})
+        })
+        .on("receipt",receipt=>{
+            setApproveBtn({disabled:false,approving:false,loading:false,msg:""})
+            setApproves({first:true,second:false})
+        })
+        .on("error",error=>{
+            setApproveBtn({disabled:false,approving:false,loading:false,msg:error.msg})
+            console.log("error in sending info",error)
+            setApproves({first:false,second:true})
+        })
+    }
     const ref = useRef(null)
     const ref2 = useRef(null)
     useEffect(()=>{
         ref.current.value = data.network;
         ref2.current.value = data.network;
+        data.network &&
+        setTargetChain(data.chains[data.network]["chainIdDecimal"])
     },[data.network])
     useEffect(()=>{ 
-        if(active)
-          getERC721()
-      },[chainId])
+        if(active){
+           getERC721()
+           setAddress(account)
+        }
+      },[data.network])
     useEffect(()=>{
         const tempChains = []
+        const tempAllChains = []
         for(let key in data.addresses){
             if(data.addresses[key].crossChain && data.addresses[key].crossChain.length!==0)
                 tempChains.push(key)
+            tempAllChains.push(key)
         }
         setAvailableChains(tempChains)
+        setAllChains(tempAllChains)
     },[])
+    const progress = ()=>{
+        const interval = setInterval(()=>{
+            let state;
+            setNow(prev => state=prev)
+            if(state+100/estimatedTime>=100){
+                setNow(100)
+                clearInterval(interval)
+            }
+            else
+                setNow(prevState => Math.floor(prevState+100/estimatedTime))
+        },1000)
+    }
     return (
         <div className='w-100 h-100' style={{display:'flex',flexFlow:'column'}} >
             <div className='d-flex justify-content-between py-2' style={{borderBottom:"1px solid white"}}>
-                <div className='mx-4'>back</div>
-                <div>Cross Chain NFT</div>
+                <div className='mx-4 my-auto'>back</div>
+                <div className='my-auto'>
+                Cross Chain NFT
+                <OverlayTrigger key={"bottom"} placement={"bottom"}
+                overlay={
+                <Tooltip >
+                  In this contract you can mint a Wrap token from your NFT in any EVM network, 
+                    your token will lock in CRN contract. 
+                    any one that has the Wrapped token of your NFT can unlock the NFT from contract.
+                     you can read more about thin contract HERE.
+                </Tooltip>
+              }
+            >
+              <img className='mx-2 m-1' src="/info.svg" alt="" />
+            </OverlayTrigger>
+                </div>
                 <div className='mx-4'>
                     <select ref={ref} onChange={handleNetworkChange} name="" className={styles.select}>
-                        {availableChains.map(item=>(<option value={item}>{item}</option>))}
+                        {availableChains.map(item=>(<option key={item} value={item}>{item}</option>))}
                     </select>
                 </div>
             </div>
-            <div className='py-2 px-4' style={{borderBottom:"1px solid white"}}>
+            {/* <div className='py-2 px-4' style={{borderBottom:"1px solid white"}}>
             In this contract you can mint a Wrap token from your NFT in any EVM network, 
             your token will lock in CRN contract. 
             any one that has the Wrapped token of your NFT can unlock the NFT from contract.
              you can read more about thin contract HERE.
-            </div>
+            </div> */}
             <div className='d-flex' style={{flexGrow:"1"}}>
                 <div className='w-50 h-100 p-2' style={{borderRight:"1px solid white",position:"relative"}}>
                     {approves.first && 
                     <div  className="d-flex justify-content-center align-items-center" 
                     style={{width:'100%',height:"100%",position:'absolute',top:"0",left:"0",zIndex:'10',backgroundColor:"rgba(0,0,255,0.5)"}}>
-                        <h1 className='bg-white text-danger'>{approveBtn.approving?"wating to confirm...":approveBtn.loading?"approving...":""}</h1>        
+                        <h1 className='bg-white text-danger'>{approveBtn.approving?"wating to confirm...":approveBtn.loading?<ProgressBar now={now}/>:""}</h1>        
                     </div>} 
                     <div className='w-100 h-100' style={{border:"1px solid white"}}>
                         <div className='text-center py-4' style={{borderBottom:"1px solid white",fontSize:"22px"}}>
                             Select Your NFT
                         </div>
-                        <div className='px-4'>{console.log(tokens)}
+                        <div className='px-4'>
                             <div className='py-4 px-4 text-center'>select NFT you want to bridge to other network</div> 
                             <div className='text-center' style={{overflow:"auto",maxHeight:"16rem"}}>
                                 <table className="w-100">
@@ -196,15 +272,17 @@ const NFTCrossChain = () => {
                                             </tr>        
                                         ))
                                         }
-                                    </tbody>{console.log(selectedIndex)}
+                                    </tbody>
                                 </table>
                             </div>
                             <div className='text-center py-2' style={{color:"#FF00FF"}}>
                             for brifging your NFT you must set approve to the contract, that contract change
                             </div>
-                            <div className="text-center">
+                            <div className="text-center d-flex">
                                 <Button onClick={firstApprove} disabled={approveBtn.disabled}
-                                className="w-75" secondary>APPROVE</Button>
+                                className="w-50" secondary>APPROVE</Button>
+                                <Button onClick={setApproveForAll}  disabled={approveBtn.disabled}
+                                className="w-50" secondary>Approve For All</Button>
                             </div>
                         </div>
                     </div>
@@ -213,7 +291,7 @@ const NFTCrossChain = () => {
                     {approves.second && 
                     <div  className="d-flex justify-content-center align-items-center" 
                     style={{width:'100%',height:"100%",position:'absolute',top:"0",left:"0",zIndex:'10',backgroundColor:"rgba(0,0,255,0.5)"}}>
-                        <h1 className='bg-white text-danger'>{transferBtn.approving?"wating to confirm...":transferBtn.loading?"approving...":""}</h1>        
+                        <h1 className='bg-white text-danger'>{transferBtn.approving?"wating to confirm...":transferBtn.loading?<ProgressBar now={now} />:""}</h1>        
                     </div>} 
                     <div className='w-100 h-100' style={{border:"1px solid white"}}>
                         <div className='text-center py-4' style={{borderBottom:"1px solid white",fontSize:"22px"}}>
@@ -227,15 +305,18 @@ const NFTCrossChain = () => {
                         becurfull your destination address must be on your destination network
                         </div>
                         <div>
-                            <Input style={{width:'24rem'}} value={address} onChange={e=>setAddress(e.target.value)} title="address" className="" name="value"  type="text" />
-                            <Input style={{width:'24rem'}} value={value} onChange={e=>setValue(e.target.value)} title="value" className="" name="value"  type="text" />
+                            <Input style={{width:'24rem'}} value={address} onChange={e=>setAddress(e.target.value)} title="address" className="" name="address"  type="text" />
+                            <Input style={{width:'24rem'}} value={value} onChange={e=>setValue(e.target.value)} title="getfee" className="" name="value"  type="text" />
                             <div className='text-center m-4' >
                                 <select  name="" className={`${styles.select} p-1 text-center`} 
                                 onChange={handleTarget} ref={ref2}
                                 style={{width:'24rem'}}>
-                                    <option value="polygon">polygon</option>
+                                    {
+                                    allChains.map(item=><option key={item} value={item}>{item}</option>)
+                                    }
+                                    {/* <option value="polygon">polygon</option>
                                     <option value="ethereum">ethereum</option>
-                                    <option value="mumbai">mumbai</option>
+                                    <option value="mumbai">mumbai</option> */}
                                 </select>
                             </div>
                         </div>
@@ -251,3 +332,15 @@ const NFTCrossChain = () => {
 }
 
 export default NFTCrossChain
+
+const ProgressBar = ({now})=>{
+    return (
+        <div className="w-100 h-100 d-flex flex-column justify-content-center align-items-center" style={{position:'absolute',top:'0',left:'0',zIndex:"20"}}>
+             <div className="w-25 my-2" style={{background:'white'}}>
+                <div style={{width:now+"%",color:"white",backgroundColor:'red',transition:'0.2s',fontSize:'smaller' }}>
+                    <span className="d-flex ejustify-content-center">{`${now}%`}</span>
+                </div>
+            </div>
+        </div>
+    )
+}
