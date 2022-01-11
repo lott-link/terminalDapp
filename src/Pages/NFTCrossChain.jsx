@@ -90,11 +90,11 @@ const NFTCrossChain = () => {
         setApproveBtn({...approveBtn,disabled:true,approving:true})
         const tokenContract = new library.eth.Contract(contractABI,selectedToken.contractAddress)
         const isApprovedBefore = await tokenContract.methods.getApproved(selectedToken.tokenID).call()
-        // const isApproveForAllBefore = await tokenContract.methods.isApprovedForAll(account,selectedToken.contractAddress).call()
+        // const isApproveForAllBefore = await tokenContract.methods.isApprovedForAll(account,data.addresses[data.network]["crossChain"]).call()
         console.log("isApprovedBefore",isApprovedBefore)
         // console.log("isApproveForAllBefore",isApproveForAllBefore)
-        // if(isApprovedBefore!=="0x0000000000000000000000000000000000000000" || isApproveForAllBefore){
-        if(isApprovedBefore!=="0x0000000000000000000000000000000000000000"){
+        // if(isApprovedBefore===data.addresses[data.network]["crossChain"] || isApproveForAllBefore){
+        if(isApprovedBefore===data.addresses[data.network]["crossChain"]){
             setApproveBtn({disabled:false,approving:false,loading:false,msg:""})
             setApproves({first:true,second:false})
             return; 
@@ -151,7 +151,7 @@ const NFTCrossChain = () => {
         setApproves({...approves,first:true})
         setApproveBtn({...approveBtn,disabled:true,approving:true})
         const tokenContract = new library.eth.Contract(contractABI,selectedToken.contractAddress)
-        const isApproveForAllBefore = await tokenContract.methods.isApprovedForAll(account,selectedToken.contractAddress).call()
+        const isApproveForAllBefore = await tokenContract.methods.isApprovedForAll(account,data.addresses[data.network]["crossChain"]).call()
         console.log(isApproveForAllBefore)
         if(isApproveForAllBefore){
             setApproveBtn({disabled:false,approving:false,loading:false,msg:""})
