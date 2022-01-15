@@ -55,7 +55,7 @@ const NFTMint = () => {
     }
   return (
     <div className="w-100 h-100 d-flex justify-content-center align-items-center">
-      <div className="d-flex flex-column">
+      <div className="d-flex flex-column align-items-center">
           <div className="w-50">
             <Input
               type="text"
@@ -66,7 +66,7 @@ const NFTMint = () => {
               value={input.to}
           />
           </div>
-          <div className="d-flex">
+          <div className="d-flex " style={{position:'relative',left:'62px'}}>
           <Input
             className=""
             type="text"
@@ -82,7 +82,7 @@ const NFTMint = () => {
             {uriDisabled ? "enable" : "disable"}
           </Button>
         </div>
-        <div className="d-flex justify-content-center">
+        <div className="d-flex flex-column justify-content-center">
           {
             ['publicInfo','privateInfo'].map((item,index)=>(
               <Input
@@ -97,7 +97,7 @@ const NFTMint = () => {
             ))
           }
         </div>
-        <div className="d-flex justify-content-center">
+        <div className="d-flex flex-column align-items-center">
             <div className="d-flex align-items-center"> 
               <input type="file" 
               name="publicFileHash"

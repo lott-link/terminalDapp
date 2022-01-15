@@ -5,6 +5,7 @@
 }
 .tr {
     text-align: center;
+    cursor: pointer;
 }
 .tr:hover {
     background-color: rgb(71, 71, 71);
@@ -33,4 +34,15 @@
 }
 .selected {
     background-color: rgba(255, 0, 0, 0.692);
+}
+.animation-in {
+    animation: inAnimation 350ms ease-in;
+}
+@keyframes inAnimation {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 100%;
+    }
 }

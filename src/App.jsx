@@ -5,13 +5,13 @@ import Navbar from "./Components/Navbar";
 import Sidebar from "./Components/Sidebar";
 import useWidth from './Hooks/useWidth'
 import "./app.styles.css";
-import { addresses, chains } from './addresses';
+import { addresses, chains, converChainIDToName } from './addresses';
 export const context = createContext()
 function App() {
   const width = useWidth()
   const [network,setNetwork] = useState('')
   return (
-    <context.Provider value={{addresses,network,setNetwork,chains}}>
+    <context.Provider value={{addresses,network,setNetwork,chains,converChainIDToName}}>
     <div className="h-100" style={{ position: "relative" }}>
       <h3 className="text-white px-3" id="title">
         Lott.Link
