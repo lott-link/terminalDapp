@@ -175,7 +175,8 @@ const Sidebar = () => {
             </div>
         }
       </div>
-      {!loadingProfile ? <div className="w-100 p-3" style={{height:"60%",borderTop:'2px solid white',position:'relative'}}>
+      {!loadingProfile ? <div className="w-100 p-3" 
+      style={{height:"60%",borderTop:'2px solid white',position:'relative',overflow:'auto'}}>
         {active && signedIn && <div className="d-flex">
           <div style={{width:'50px',height:'50px',borderRadius:'50%',backgroundColor:'gray'}}></div>
           <div className="mx-3">
@@ -189,7 +190,7 @@ const Sidebar = () => {
             {userInfo.map((item,index)=>{
               return <div key={index} className="d-flex align-items-center">
                 <div className="circle"></div>
-                <div className="mx-1">{item.key}:{item.value}</div>
+                <div className="mx-1" style={{wordBreak:"break-word"}}>{item.key}:{item.value}</div>
               </div>
             })}
           </div>)

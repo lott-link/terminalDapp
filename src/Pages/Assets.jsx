@@ -4,7 +4,8 @@ import { useWeb3React } from "@web3-react/core";
 import { context } from '../App'
 import Button from '../Components/styled/Button';
 import Spinner from 'react-bootstrap/Spinner'
-
+import Accordion from 'react-bootstrap/Accordion'
+import { useAccordionButton } from 'react-bootstrap';
 import '../../node_modules/react-loading-skeleton/dist/skeleton.css'
 import ContentLoader from '../../node_modules/react-loading-skeleton'
 
@@ -100,33 +101,18 @@ const Assets = () => {
         data.network && getERC721()
     },[data.network])
     return (
-        <div className='w-100 h-100'>{console.log(tokens)}
-            {/* <div className="h-100 d-flex flex-column align-items-center" style={{overflowY:"auto"}}>
-                {
-                tokens.map((token,index)=>(
-                    <div key={index} className="m-2 p-2" 
-                    style={{border:'1px solid white',cursor:"pointer"}}
-                    // onClick={()=>showTokenData(token.tokenID,token.contractAddress)}
-                    onClick={()=>{setModal(token);setShow(true)}}
-                    >
-                        <div>{token.tokenID}</div>
-                        <div>{token.tokenName}</div>
-                        <div>{token.contractAddress}</div>
-                    </div>
-                ))
-                }
-                
-            </div> */}
-            <div className='d-flex flex-wrap gap-2 justify-content-center p-1'>
+        <div className='w-100 h-100' style={{overflowY:"auto"}}>{console.log(tokens)}
+            {/* <div className='d-flex flex-wrap gap-3 justify-content-start p-2'> */}
+            <div className='grid p-4'>
             {
             tokens.map((token,index)=><NFTCard key={index} description={token.description}
                 image={token.image}
             />)
             }
-            {loading && <div style={{position:'absolute',top:'45%'}}>
-                <Spinner style={{width:"5rem",height:"5rem"}} animation="grow" variant="light" />
-                <Spinner className='mx-2' style={{width:"5rem",height:"5rem"}} animation="grow" variant="light" />
-                <Spinner style={{width:"5rem",height:"5rem"}} animation="grow" variant="light" />
+            {loading && <div style={{position:'absolute',top:'45%',left:'55%'}}>
+                <Spinner style={{width:"3rem",height:"3rem"}} animation="grow" variant="light" />
+                <Spinner className='mx-2' style={{width:"3rem",height:"3rem"}} animation="grow" variant="light" />
+                <Spinner style={{width:"3rem",height:"3rem"}} animation="grow" variant="light" />
             </div>
             }
             </div>
@@ -151,15 +137,24 @@ const NFTCard = ({description="there is no description",image,NFTName="no nmae"}
     const [loading,setLoading] = useState(true)
     const handleLoad = ()=> setLoading(false)
     return (
-        <div className='w-25' style={{minHeight:"12rem"}}>
-            <div className='w-100 h-50 bg-light'>
+        <div style={{width:'275px'}}>
+            <div style={{width:'275px',height:'225px',backgroundColor:"#C4C4C4"}}>
                  <img className='w-100 h-100' onLoad={handleLoad} style={{objectFit:"contain",display:loading?"none":"initial"}} src={image} alt="" />
                 {loading && <LazyImage className='w-100 h-100' />}
             </div>
-            <div className='w-100 bg-white text-dark p-4'>
+            <div className='bg-white text-dark p-4' style={{width:"275px",minHeight:'143px'}}>
                 <div><strong>{NFTName}</strong></div>
-                <div>{description}</div>
-                <div className='d-flex justify-content-between my-3'>
+                <div style={{height:"80px",overflowY:"auto"}}>{description}</div>
+                <Accordion defaultActiveKey="1">
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>Description</Accordion.Header>
+                {/* <CustomToggle eventKey="0">description</CustomToggle> */}
+                <Accordion.Body>
+                  {description}
+              </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
+                {/* <div className='d-flex justify-content-between my-3'>
                     <div>Balance</div>
                     <div className='d-flex align-items-center'>
                         <div className='mx-1'><img src="/eth/Preview.png" alt="" /></div>
@@ -168,7 +163,7 @@ const NFTCard = ({description="there is no description",image,NFTName="no nmae"}
                 </div>
                 <div className='w-100'>
                     <Button className='w-100 m-0' secondary>Withdraw</Button>
-                </div>
+                </div> */}
             </div>
         </div>
     )
@@ -177,7 +172,7 @@ const NFTCard = ({description="there is no description",image,NFTName="no nmae"}
 const LazyImage = props => {
     return (
       <ContentLoader 
-        speed={2}
+        speed={5}
         viewBox="0 0 400 160"
         backgroundColor="#d9d9d9"
         foregroundColor="#ededed"
@@ -193,3 +188,17 @@ const LazyImage = props => {
     )
   }
   
+function CustomToggle({ children, eventKey }) {
+  const decoratedOnClick = useAccordionButton(eventKey, () =>
+    console.log('totally custom!'),
+  );
+  return (
+    <div
+      type="button"
+      // style={{  }}
+      onClick={decoratedOnClick}
+    >
+      {children}
+    </div>
+  );
+}
