@@ -144,7 +144,7 @@ const NFTCard = ({description="there is no description",image,NFTName="no nmae"}
             </div>
             <div className='bg-white text-dark p-4' style={{width:"275px",minHeight:'143px'}}>
                 <div><strong>{NFTName}</strong></div>
-                <div style={{height:"80px",overflowY:"auto"}}>{description}</div>
+                <div style={{maxHeight:"80px",overflowY:"auto"}}>{description}</div>
                 <Accordion defaultActiveKey="1">
               <Accordion.Item eventKey="0">
                 <Accordion.Header>Description</Accordion.Header>
