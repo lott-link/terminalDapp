@@ -186,7 +186,7 @@ const Sidebar = () => {
         </div>}
         {/* {active && (userName && userName.username ? <div>username:{userName.username}</div> : loadingProfile ? <div>loading...</div> : <div>you are not signed in <div className="w-100 text-center"><button className="wallet-button" onClick={()=>history.push('/contract')}>Sign in</button></div></div>)} */}
         {userInfo && userInfo.length !== 0 ? 
-          (<div className="my-2" style={{overflowY:"auto"}}>
+          (<div className="my-2 h-75" style={{overflowY:"auto"}}>
             {userInfo.map((item,index)=>{
               return <div key={index} className="d-flex align-items-center">
                 <div className="circle"></div>
@@ -197,7 +197,7 @@ const Sidebar = () => {
           : <div>there is no info</div>
         } 
         {userInfo && 
-        <div className="w-100" style={{position:'relative',bottom:'0',left:'0'}}>
+        <div className="w-100" style={{position:'absolute',bottom:'0',left:'0'}}>
           <Button primary style={{width:'90%'}}>more</Button>
         </div>
         }
