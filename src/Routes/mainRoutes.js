@@ -1,6 +1,5 @@
 import React from 'react'
-import HomePage from '../Pages/HomePage'
-// const HomePage = React.lazy(()=>import('../Pages/HomePage'))
+const HomePage = React.lazy(()=>import('../Pages/HomePage'))
 const Contract =  React.lazy(()=>import('../Pages/Contract'))
 const NFT = React.lazy(()=>import('../Pages/NFT'))
 const NFTCrossChain = React.lazy(()=>import('../Pages/NFTCrossChain'))
