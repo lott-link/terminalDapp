@@ -41,12 +41,12 @@ const Assets = () => {
         let idsToShow = [] 
         counts.forEach((id,index)=> {if(id%2!==0) idsToShow.push(ids[index])})
         const tempTokens = []
-        idsToShow.forEach(async id=>{
+        idsToShow.forEach(async (id,index)=>{
           const token = await getToken(id.split('0x')[0],"0x"+id.split('0x')[1])
           tempTokens.push(token)
-            setTokens(prev=>[...prev,token])
+          setTokens(prev=>[...prev,token])
+          if(index===idsToShow.length-1)  setLoading(false)
         })
-        setLoading(false)
     }
     const getToken = async (tokenID,contractAddress) => {
         if(!active) return;
