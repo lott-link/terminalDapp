@@ -236,8 +236,8 @@ const DropDownComponent = ({token})=>{
         ...
       </Dropdown.Toggle>
       <Dropdown.Menu>
-        <Dropdown.Item href="#">transfer</Dropdown.Item>
-        <Dropdown.Item onClick={()=>history.push({pathname:"/crosschain",state:token})}>cross chain</Dropdown.Item>
+        <Dropdown.Item onClick={()=>history.push({pathname:"/crosschain",state:{token,type:"transfer"}})}>transfer</Dropdown.Item>
+        <Dropdown.Item onClick={()=>history.push({pathname:"/crosschain",state:{token,tyep:"crossChain"}})}>cross chain</Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
   )

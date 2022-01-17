@@ -14,6 +14,7 @@ const NFTCrossChain = ({props}) => {
     const [circles,setCircles] = useState([true,false,false])
     const [selectedToken,setSelectedToken] = useState("")
     const [selectedWay,setSelectedWay] = useState()
+    const [isSafeTransfer,setIsSafeTransfer] = useState(false)
     const [approveBtn,setApproveBtn] = useState({
         disabled:false,loading:false,approving:false,msg:""
     })
@@ -39,16 +40,23 @@ const NFTCrossChain = ({props}) => {
         setAvailableChains(tempChains)
 
         if(location.state){
-            setSelectedToken(location.state)
-            console.log(location.state.contractAddress.toLowerCase(),data.addresses[data.network]["crossChain"].toLowerCase())
-            if(location.state.contractAddress.toLowerCase() !== data.addresses[data.network]["crossChain"].toLowerCase()){
-                setCircles([true,true,false])
-                setStages([false,true,false])
+            setSelectedToken(location.state.token)
+            if(location.state.type === "crossChain"){
+                if(location.state.token.contractAddress.toLowerCase() !== data.addresses[data.network]["crossChain"].toLowerCase()){
+                    setCircles([true,true,false])
+                    setStages([false,true,false])
+                    setSelectedWay(true)
+                }else{
+                    setCircles([true,true,false])
+                    setStages([false,true,false])
+                    setSelectedWay(false)
+                }
+            }
+            else if(location.state.type === "transfer"){
+                setIsSafeTransfer(true)
+                setCircles([true,true,true])
+                setStages([false,false,true])
                 setSelectedWay(true)
-            }else{
-                setCircles([true,true,false])
-                setStages([false,true,false])
-                setSelectedWay(false)
             }
         }
     },[])
@@ -96,7 +104,7 @@ const NFTCrossChain = ({props}) => {
                 {stages[1] && <SelectNFT setSelectedToken={setSelectedToken} selectedToken={selectedToken}
                  approveBtn={approveBtn} setApproveBtn={setApproveBtn} setCircles={setCircles} 
                 setStages={setStages} selectedWay={selectedWay} />}
-                {stages[2] && <TransferNFT transferBtn={transferBtn} setTransferBtn={setTransferBtn}
+                {stages[2] && <TransferNFT transferBtn={transferBtn} setTransferBtn={setTransferBtn} isSafeTransfer={isSafeTransfer}
                 selectedToken={selectedToken} setStages={setStages} setCircles={setCircles} selectedWay={selectedWay} />}
             </div>
         </div>
