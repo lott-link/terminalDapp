@@ -5,8 +5,10 @@ import { OverlayTrigger, Tooltip} from 'react-bootstrap'
 import SelectNFT from './CrossChainNFT/SelectNFT'
 import TransferNFT from './CrossChainNFT/TransferNFT'
 import InfoPage from './CrossChainNFT/InfoPage'
-const NFTCrossChain = () => {
+import { useLocation } from 'react-router-dom' 
+const NFTCrossChain = ({props}) => {
     const data = useContext(context)
+    const location = useLocation()
     const [availableChains,setAvailableChains] = useState([])
     const [stages,setStages] = useState([true,false,false])
     const [circles,setCircles] = useState([true,false,false])
@@ -18,21 +20,6 @@ const NFTCrossChain = () => {
     const [transferBtn,setTransferBtn] = useState({
         disabled:false,loading:false,approving:false,msg:""
     })
-    const handleNetworkChange = (e)=>{
-        data.setNetwork(e.target.value)
-        if(window.ethereum){
-            window.ethereum
-                .request({
-                  method: "wallet_addEthereumChain",
-                  params: data.chains[e.target.value]["params"]
-            })
-            let chainId = data.chains[e.target.value]["chainIdHex"]
-            window.ethereum.request({
-              method: 'wallet_switchEthereumChain',
-              params: [{ chainId }],
-            })
-        }
-    }
     const back = ()=>{
         const index = stages.findIndex(item=>item=== true )
         const tempStages = stages;
@@ -43,10 +30,6 @@ const NFTCrossChain = () => {
         setStages([...tempStages])
         setCircles([...tempCircles])
     }
-    const ref = useRef(null)
-    useEffect(()=>{
-        ref.current.value = data.network;
-    },[data.network])
     useEffect(()=>{
         const tempChains = []
         for(let key in data.addresses){
@@ -54,9 +37,23 @@ const NFTCrossChain = () => {
                 tempChains.push(key)
         }
         setAvailableChains(tempChains)
+
+        if(location.state){
+            setSelectedToken(location.state)
+            console.log(location.state.contractAddress.toLowerCase(),data.addresses[data.network]["crossChain"].toLowerCase())
+            if(location.state.contractAddress.toLowerCase() !== data.addresses[data.network]["crossChain"].toLowerCase()){
+                setCircles([true,true,false])
+                setStages([false,true,false])
+                setSelectedWay(true)
+            }else{
+                setCircles([true,true,false])
+                setStages([false,true,false])
+                setSelectedWay(false)
+            }
+        }
     },[])
     return (
-        <div className='w-100 h-100' style={{display:'flex',flexFlow:'column'}} >
+        <div className='w-100 h-100' style={{display:'flex',flexFlow:'column'}} >{console.log(location)}
             <div className='d-flex justify-content-between py-2' style={{borderBottom:"1px solid white"}}>
                 <div onClick={back} style={{cursor:"pointer"}} className='mx-4 my-auto'>{!stages[0] && "back"}</div>
                 <div className='my-auto'>
@@ -76,11 +73,7 @@ const NFTCrossChain = () => {
               <img className='mx-2 m-1' src="/info.svg" alt="" />
             </OverlayTrigger>
                 </div>
-                <div className='mx-4'>
-                    <select ref={ref} onChange={handleNetworkChange} name="" className={styles.select}>
-                        {availableChains.map(item=>(<option key={item} value={item}>{item}</option>))}
-                    </select>
-                </div>
+                <div>{/* this isn't a useless div don't delete it */}</div>
             </div>
             <div style={{borderRight:"1px solid white",borderLeft:"1px solid white",position:"relative",
             backgroundColor:(approveBtn.loading || approveBtn.approving || transferBtn.loading || transferBtn.approving)?"rgba(2,117,216,0.5)":""}}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react'
+import React , { useState, useEffect, useContext } from 'react'
 import axios from 'axios'
 import { useWeb3React } from "@web3-react/core";
 import { context } from '../App'
@@ -6,9 +6,10 @@ import Button from '../Components/styled/Button';
 import Spinner from 'react-bootstrap/Spinner'
 import Accordion from 'react-bootstrap/Accordion'
 import { useAccordionButton } from 'react-bootstrap';
+import {Dropdown} from 'react-bootstrap'
 import '../../node_modules/react-loading-skeleton/dist/skeleton.css'
 import ContentLoader from '../../node_modules/react-loading-skeleton'
-
+import { useHistory } from 'react-router-dom';
 const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"approved","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getApproved","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"operator","type":"address"}],"name":"isApprovedForAll","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"privateFileHash","outputs":[{"internalType":"string","name":"_privateFileHash","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"privateInfo","outputs":[{"internalType":"string","name":"_privateInfo","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"publicFileHash","outputs":[{"internalType":"string","name":"_publicFileHash","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"publicInfo","outputs":[{"internalType":"string","name":"_publicInfo","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"string","name":"uri","type":"string"},{"internalType":"string","name":"publicInfo","type":"string"},{"internalType":"string","name":"privateInfo","type":"string"},{"internalType":"string","name":"publicFileHash","type":"string"},{"internalType":"string","name":"privateFileHash","type":"string"}],"name":"safeMint","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"bytes","name":"_data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"name":"setApprovalForAll","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"transferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"}]
 const Assets = () => {
     const data = useContext(context);
@@ -151,6 +152,9 @@ const NFTCard = ({token})=>{
     },[])
     return (
         <div style={{width:'275px'}}>{console.log("info",info)}
+            <div style={{backgroundColor:"#C4C4C4"}}><h4 className='m-0'>
+              <DropDownComponent token={token} />
+            </h4></div>
             <div style={{width:'275px',height:'225px',backgroundColor:"#C4C4C4"}}>
                  <img className='w-100 h-100' onLoad={handleLoad} style={{objectFit:"contain",display:loading?"none":"initial"}} src={token.image} alt="" />
                 {loading && <LazyImage className='w-100 h-100' />}
@@ -216,5 +220,26 @@ const AccordionComponent = ({property})=>{
       </Accordion.Item>
     </Accordion>
     )
+}
+const DropDownComponent = ({token})=>{
+  const history = useHistory()
+  const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
+    <a href="" ref={ref} onClick={(e) => {e.preventDefault();onClick(e);}}
+    style={{textDecoration:'none',color:'gray'}}
+    >
+      {children}
+    </a>
+  ));
+  return (
+    <Dropdown className="d-inline mx-2">
+      <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components">
+        ...
+      </Dropdown.Toggle>
+      <Dropdown.Menu>
+        <Dropdown.Item href="#">transfer</Dropdown.Item>
+        <Dropdown.Item onClick={()=>history.push({pathname:"/crosschain",state:token})}>cross chain</Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown>
+  )
 }
 // {"image":"https://ipfs.infura.io/ipfs/QmZd1dPLWNofQ2DGE2sak4wkPAnavbyMKeANiMcgT6r8Eh","name":"Assembly","description":"an assembly program","attributes":[{"trait_type":"type","value":"8086"},{"trait_type":"model ","value":"com"}]}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { walletconnect, injected } from "../Wallet/connectors";
 import { useWeb3React } from "@web3-react/core";
 import { registerContractABI} from '../Contracts/ContractsABI'
@@ -8,6 +8,7 @@ import metamaskIcon from '../Assetes/icons/metamask/medium.png'
 import walletConnectIcon from '../Assetes/icons/walletconnect/medium.png'
 import { useEagerConnect, useInactiveListener } from '../Hooks/hooks'
 import { context } from '../App' 
+import styles from './sidebar.styles.module.css'
 const Sidebar = () => {
   const {activate,account,chainId,active,connector,library,deactivate} = useWeb3React()
   const [loadingProfile,setLoadingProfile] = useState(false)
@@ -16,8 +17,10 @@ const Sidebar = () => {
   const [userInfo,setUserInfo] = useState()
   const [error,setError] = useState()
   const [signedIn,setSignedIn] = useState(false)
+  const [availableChains,setAvailableChains] = useState([])
   const history = useHistory()
   const data = useContext(context)
+  const ref = useRef(null)
   const walletConnect = async ()=>{
     await activate(walletconnect)
   }
@@ -78,24 +81,32 @@ const Sidebar = () => {
     }
   },[active,account,chainId,data.network])
 
-  const changeToPolygon = ()=>{
+  const handleNetworkChange = (e)=>{
     if(window.ethereum){
-      window.ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: '0x89' }],
-      })
-      data.setNetwork('polygon')
+        window.ethereum
+            .request({
+              method: "wallet_addEthereumChain",
+              params: data.chains[e.target.value]["params"]
+        })
+
+        let chainId = data.chains[e.target.value]["chainIdHex"]
+        window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId }],
+        }).then(()=>data.setNetwork(e.target.value))
     }
   }
-  const changeToMumbai = ()=>{
-    if(window.ethereum){
-      window.ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: '0x13881' }],
-      })
-      data.setNetwork('mumbai')
+  useEffect(()=>{
+    const tempChains = []
+    for(let key in data.addresses){
+        if(data.addresses[key].crossChain && data.addresses[key].crossChain.length!==0)
+            tempChains.push(key)
     }
-  }
+    setAvailableChains(tempChains)
+  },[])
+  useEffect(()=>{
+    ref.current.value = data.network;
+  },[data.network])
   useEffect(()=>{
     if(chainId){
       if(chainId===1)
@@ -157,16 +168,13 @@ const Sidebar = () => {
           </div>}
           {chainId && (chainId === 80001 ? <div>{chainId}</div> : <div style={{color:'red'}}>please change your network to polygon</div>)}
         </div>
-          { 
-            <div className="w-100" style={{position:'absolute',bottom:'15%',left:'0'}}>
-              <Button primary className="my-2" onClick={changeToPolygon}>
-                Polygon
-              </Button>
-              <Button primary className="my-2" onClick={changeToMumbai}>
-                Mumbai
-              </Button>
+          <div className="w-100" style={{position:'absolute',bottom:'15%',left:'0'}}>
+            <div className='w-100 px-4'>
+              <select ref={ref} onChange={handleNetworkChange} className={`w-100 ${styles.select}`}>
+                  {availableChains.map(item=>(<option key={item} value={item}>{item}</option>))}
+              </select>
             </div>
-          }
+          </div>
           {active && 
             <div className="w-100" style={{position:'absolute',bottom:'0',left:'0'}}>
               <Button primary  onClick={deactivate} className="my-2 wallet-button">
