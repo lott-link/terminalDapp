@@ -15,6 +15,7 @@ const NFTMint = () => {
     const { active, account, library } = useWeb3React();
     const [uriDisabled,setUriDisabled] = useState(false);
     const [contractAddress,setContractAddress] = useState(mumbaiAddress)
+    const [inputFields,setInputFields] = useState([{property:'',value:''}])
     const data = useContext(context) 
     const [uploadStatus,setUploadStatus] = useState({
       publicFileHash:false,
@@ -23,10 +24,11 @@ const NFTMint = () => {
     const [input,setInput] = useState({
         to:"",
         uri:"",
-        publicInfo:"",
+        description:"",
         privateInfo:"",
         publicFileHash:"",
-        privateFileHash:""
+        privateFileHash:"",
+        name:""
     })
     const handleFileChange = async e =>{
       setUploadStatus({...uploadStatus,[e.target.name]:true})
@@ -37,26 +39,57 @@ const NFTMint = () => {
       const fileUrl = `https://ipfs.infura.io/ipfs/${added.path}`
       console.log(fileUrl)
     }
+    const handleInputChange = (index, event) => {
+      const values = [...inputFields];
+      if (event.target.name === "property") {
+        values[index].property = event.target.value;
+      } else {
+        values[index].value = event.target.value;
+      }
+      if(values[index].property && values[index].value ){
+          if(!values[index+1])
+              values.push({property:'',value:''})
+      }
+      if(values[index].property=== "" || values[index].value=== "" )
+          if(values[index+1])
+              values.pop()   
+      setInputFields(values);
+  };
     const safeMint = async ()=>{
       console.log(data)
       if(!active) return;
       let uri = input.uri;
       if(uriDisabled){
+        inputFields.pop()
+        const attributes = inputFields.map(field=>{return {trait_type:field.property,value:field.value} })
         const json = await client.add(JSON.stringify({
-          description:input.publicInfo,
-          image:"https://ipfs.infura.io/ipfs/"+input.publicFileHash
+          description:input.description,
+          image:"https://ipfs.infura.io/ipfs/"+input.publicFileHash,
+          name:input.name,
+          attributes
         }))
         uri = `https://ipfs.infura.io/ipfs/${json.path}`
         console.log(uri)
       }
       const contract = new library.eth.Contract(contractABI,data.addresses[data.network]["NFT"])
-      contract.methods["safeMint"](input.to,uri,input.publicInfo,
+      contract.methods["safeMint"](input.to,uri,input.description,
       input.privateInfo,input.publicFileHash,input.privateFileHash).send({from:account})
     }
   return (
-    <div className="w-100 h-100 d-flex justify-content-center align-items-center">
+    <div className="w-100 h-100 d-flex flex-column align-items-center">
+      <div className="my-2 w-100 d-flex justify-content-center" style={{borderBottom:"1px solid white"}}>
+        <h1>Mint</h1>
+      </div>
       <div className="d-flex flex-column align-items-center">
-          <div className="w-50">
+          <div className="w-50 d-flex justify-content-center">
+            <Input
+                type="text"
+                name="name"
+                onChange={(e)=>setInput({...input,[e.target.name]:e.target.value})}
+                title={"name"}
+                style={{ width: "21rem" }}
+                value={input.name}
+            />
             <Input
               type="text"
               name="to"
@@ -66,7 +99,7 @@ const NFTMint = () => {
               value={input.to}
           />
           </div>
-          <div className="d-flex " style={{position:'relative',left:'62px'}}>
+          <div className="d-flex justify-content-start w-100">
           <Input
             className=""
             type="text"
@@ -82,9 +115,9 @@ const NFTMint = () => {
             {uriDisabled ? "enable" : "disable"}
           </Button>
         </div>
-        <div className="d-flex flex-column justify-content-center">
+        <div className="d-flex  justify-content-center">
           {
-            ['publicInfo','privateInfo'].map((item,index)=>(
+            ['description','privateInfo'].map((item,index)=>(
               <Input
                 key={index}
                 type="text"
@@ -97,7 +130,7 @@ const NFTMint = () => {
             ))
           }
         </div>
-        <div className="d-flex flex-column align-items-center">
+        <div className="d-flex align-items-center">
             <div className="d-flex align-items-center"> 
               <input type="file" 
               name="publicFileHash"
@@ -114,6 +147,30 @@ const NFTMint = () => {
               />
               {uploadStatus.privateFileHash && <Spinner animation="border" variant="light" />}
             </div>
+        </div>
+        <div className="align-self-start mx-3 mt-2"><h4>attributes(optional)</h4></div>
+        <div className="w-100 d-flex flex-column justify-content-center" style={{maxHeight:"300px",overflowY:'auto'}}>
+        {
+        inputFields.map((inputField, index)=>{
+            return(
+            <div key={index} className="d-flex justify-content-center">
+            <Input 
+                type="text"  style={{width:"21rem"}}
+                onChange={event => handleInputChange(index, event)}
+                value={inputField.property}
+                name="property"
+                placeholder="Property"
+            />
+            <Input 
+                type="text"  style={{width:"21rem"}}
+                onChange={event => handleInputChange(index, event)}
+                value={inputField.value}
+                name="value"
+                placeholder="Value"
+            />
+            </div>)
+        })
+        }
         </div>
         <Button
           className="contract-button mx-auto"

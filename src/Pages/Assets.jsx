@@ -57,6 +57,7 @@ const Assets = () => {
         else{
           const contract = new library.eth.Contract(contractABI,contractAddress)
           const tokenURI = await contract.methods.tokenURI(tokenID).call(res=>res)
+          console.log(tokenURI)
           const tokenJson = await axios.get(tokenURI).then(res=>res.data)
           const data = {
             name:tokenJson.name,
@@ -64,7 +65,8 @@ const Assets = () => {
             image:tokenJson.image,
             tokenID,
             contractAddress,
-            chainId
+            chainId,
+            attributes:tokenJson.attributes
           }
           localStorage.setItem(contractAddress+tokenID,JSON.stringify(data))
           return data
@@ -106,7 +108,7 @@ const Assets = () => {
             <div className='grid p-4'>
             {
             tokens.map((token,index)=><NFTCard key={index} description={token.description}
-                image={token.image}
+                image={token.image} NFTName={token.name} attributes={token.attributes}
             />)
             }
             {loading && <div style={{position:'absolute',top:'45%',left:'55%'}}>
@@ -133,7 +135,7 @@ const Assets = () => {
 export default Assets
 
 
-const NFTCard = ({description="there is no description",image,NFTName="no nmae"})=>{
+const NFTCard = ({description="there is no description",image,NFTName="no nmae",attributes=[]})=>{
     const [loading,setLoading] = useState(true)
     const handleLoad = ()=> setLoading(false)
     return (
@@ -144,13 +146,14 @@ const NFTCard = ({description="there is no description",image,NFTName="no nmae"}
             </div>
             <div className='bg-white text-dark p-4' style={{width:"275px",minHeight:'143px'}}>
                 <div><strong>{NFTName}</strong></div>
-                <div style={{maxHeight:"80px",overflowY:"auto"}}>{description}</div>
+                <div className='pb-2' style={{maxHeight:"80px",overflowY:"auto"}}>{description}</div>
                 <Accordion defaultActiveKey="1">
               <Accordion.Item eventKey="0">
-                <Accordion.Header>Description</Accordion.Header>
+                <Accordion.Header>Attributes</Accordion.Header>
                 {/* <CustomToggle eventKey="0">description</CustomToggle> */}
                 <Accordion.Body>
-                  {description}
+                  {attributes.map(attr=><div>{attr.trait_type}:{attr.value}</div>)}
+                  {attributes.length === 0 && "there is no attributes!"}
               </Accordion.Body>
               </Accordion.Item>
             </Accordion>
@@ -202,3 +205,4 @@ function CustomToggle({ children, eventKey }) {
     </div>
   );
 }
+// {"image":"https://ipfs.infura.io/ipfs/QmZd1dPLWNofQ2DGE2sak4wkPAnavbyMKeANiMcgT6r8Eh","name":"Assembly","description":"an assembly program","attributes":[{"trait_type":"type","value":"8086"},{"trait_type":"model ","value":"com"}]}
