@@ -102,6 +102,11 @@ const Assets = () => {
     useEffect(()=>{
         data.network && getERC721()
     },[data.network])
+    if(tokens.length===0 && !loading) return (
+      <div className='w-100 h-100 d-flex justify-content-center align-items-center' > 
+        <h1>you don't have any tooken</h1>
+      </div>
+    )
     return (
         <div className='w-100 h-100' style={{overflowY:"auto"}}>{console.log(tokens)}
             {/* <div className='d-flex flex-wrap gap-3 justify-content-start p-2'> */}
@@ -152,7 +157,7 @@ const NFTCard = ({description="there is no description",image,NFTName="no nmae",
                 <Accordion.Header>Attributes</Accordion.Header>
                 {/* <CustomToggle eventKey="0">description</CustomToggle> */}
                 <Accordion.Body>
-                  {attributes.map(attr=><div>{attr.trait_type}:{attr.value}</div>)}
+                  {attributes.map((attr,index)=><div key={index}>{attr.trait_type}:{attr.value}</div>)}
                   {attributes.length === 0 && "there is no attributes!"}
               </Accordion.Body>
               </Accordion.Item>
