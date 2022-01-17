@@ -112,8 +112,7 @@ const Assets = () => {
             {/* <div className='d-flex flex-wrap gap-3 justify-content-start p-2'> */}
             <div className='grid p-4'>
             {
-            tokens.map((token,index)=><NFTCard key={index} description={token.description}
-                image={token.image} NFTName={token.name} attributes={token.attributes}
+            tokens.map((token,index)=><NFTCard key={index} token={token}
             />)
             }
             {loading && <div style={{position:'absolute',top:'45%',left:'55%'}}>
@@ -140,38 +139,26 @@ const Assets = () => {
 export default Assets
 
 
-const NFTCard = ({description="there is no description",image,NFTName="no nmae",attributes=[]})=>{
+const NFTCard = ({token})=>{
     const [loading,setLoading] = useState(true)
     const handleLoad = ()=> setLoading(false)
+    const [info,setInfo] = useState([])
+    useEffect(()=>{
+      for(let key in token){
+        if(key!=="chainId" && key!== "tokenID" && key!== "contractAddress" && key!=='image')
+          setInfo(prev=>[...prev,[key,token[key]]])
+      }
+    },[])
     return (
-        <div style={{width:'275px'}}>
+        <div style={{width:'275px'}}>{console.log("info",info)}
             <div style={{width:'275px',height:'225px',backgroundColor:"#C4C4C4"}}>
-                 <img className='w-100 h-100' onLoad={handleLoad} style={{objectFit:"contain",display:loading?"none":"initial"}} src={image} alt="" />
+                 <img className='w-100 h-100' onLoad={handleLoad} style={{objectFit:"contain",display:loading?"none":"initial"}} src={token.image} alt="" />
                 {loading && <LazyImage className='w-100 h-100' />}
             </div>
             <div className='bg-white text-dark p-4' style={{width:"275px",minHeight:'143px'}}>
-                <div><strong>{NFTName}</strong></div>
-                <div className='pb-2' style={{maxHeight:"80px",overflowY:"auto"}}>{description}</div>
-                <Accordion defaultActiveKey="1">
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>Attributes</Accordion.Header>
-                {/* <CustomToggle eventKey="0">description</CustomToggle> */}
-                <Accordion.Body>
-                  {attributes.map((attr,index)=><div key={index}>{attr.trait_type}:{attr.value}</div>)}
-                  {attributes.length === 0 && "there is no attributes!"}
-              </Accordion.Body>
-              </Accordion.Item>
-            </Accordion>
-                {/* <div className='d-flex justify-content-between my-3'>
-                    <div>Balance</div>
-                    <div className='d-flex align-items-center'>
-                        <div className='mx-1'><img src="/eth/Preview.png" alt="" /></div>
-                        <div>0.025</div>
-                    </div>
-                </div>
-                <div className='w-100'>
-                    <Button className='w-100 m-0' secondary>Withdraw</Button>
-                </div> */}
+            {
+              info.map((property,index)=> <AccordionComponent key={index} property={property} />)
+            }              
             </div>
         </div>
     )
@@ -196,18 +183,38 @@ const LazyImage = props => {
     )
   }
   
-function CustomToggle({ children, eventKey }) {
-  const decoratedOnClick = useAccordionButton(eventKey, () =>
-    console.log('totally custom!'),
-  );
+const AccordionComponent = ({property})=>{
+  const [info,setInfo] = useState([])
+  useEffect(()=>{
+    if(typeof property[1] !== "object") return
+    for(let key in property[1]){
+      if(key!=="chainId" && key!== "tokenID" && key!== "contractAddress" && key!=='image')
+        setInfo(prev=>[...prev,[property[1][key].trait_type,property[1][key].value]])
+    }
+  },[])
+  if(typeof property[1] !== "object")
   return (
-    <div
-      type="button"
-      // style={{  }}
-      onClick={decoratedOnClick}
-    >
-      {children}
-    </div>
-  );
+    <Accordion defaultActiveKey="1">
+      <Accordion.Item eventKey="0">
+        <Accordion.Header>{property[0]}</Accordion.Header>
+        <Accordion.Body>
+          {property[1]}
+      </Accordion.Body>
+      </Accordion.Item>
+    </Accordion>
+  )
+  else
+    return(
+      <Accordion defaultActiveKey="1">
+      <Accordion.Item eventKey="0">
+        <Accordion.Header>{property[0]}</Accordion.Header>
+        <Accordion.Body>
+        {
+              info.map((property,index)=> <AccordionComponent key={index} property={property} />)
+        }  
+      </Accordion.Body>
+      </Accordion.Item>
+    </Accordion>
+    )
 }
 // {"image":"https://ipfs.infura.io/ipfs/QmZd1dPLWNofQ2DGE2sak4wkPAnavbyMKeANiMcgT6r8Eh","name":"Assembly","description":"an assembly program","attributes":[{"trait_type":"type","value":"8086"},{"trait_type":"model ","value":"com"}]}
