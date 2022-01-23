@@ -140,3 +140,15 @@
   background-repeat: no-repeat;
   background-position: center;
 }
+
+
+.wallet-address {
+  width:min-content;
+}
+
+.accordion-button {
+  padding: 5px 20px !important;
+}
+.accordion-body {
+  padding: 5px 20px !important;
+}

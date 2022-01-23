@@ -1,0 +1,44 @@
+.growCircle {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background-color: blue;
+    animation: animation-grow 2s infinite;
+    margin: 4px;
+}
+.shrinkCircle {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background-color: blue;
+    animation: animation-shrink 2s infinite;
+    margin: 4px;
+}
+@keyframes animation-grow {
+    0% {
+        width: 15px;
+        height: 15px;
+    }
+    50% {
+        width: 25px;
+        height: 25px;
+    }
+    100% {
+        width: 15px;
+        height: 15px;
+    }
+}
+@keyframes animation-shrink {
+    0% {
+        width: 25px;
+        height: 25px;
+    }
+    50% {
+        width: 15px;
+        height: 15px;
+    }
+    100%{
+        width: 25px;
+        height: 25px;
+    }
+}

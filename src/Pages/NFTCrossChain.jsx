@@ -91,8 +91,10 @@ const NFTCrossChain = ({props}) => {
                 availableChains.map((chain,index)=> (
                     <OverlayTrigger key={index} placement={"bottom"}  overlay={<Tooltip >{chain}</Tooltip>}>
                     <div className="mx-1">
-                        <a href={data.chains[chain].params[0].blockExplorerUrls[0]+"/"+"address"+"/"+data.addresses[chain].crossChain}>
-                            <img src={data.chains[chain].icon} alt="" />  
+                        <a href={data.chains[chain].params[0].blockExplorerUrls[0]+"/"+"address"+"/"+data.addresses[chain].crossChain}
+                            target="_blank"
+                        >
+                            <img style={{width:'20px',height:'20px'}} src={data.chains[chain].icon} alt={chain+"icon"} />  
                         </a>
                     </div>
                     </OverlayTrigger>

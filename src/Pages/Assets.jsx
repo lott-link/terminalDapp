@@ -8,6 +8,7 @@ import {Dropdown} from 'react-bootstrap'
 import '../../node_modules/react-loading-skeleton/dist/skeleton.css'
 import ContentLoader from '../../node_modules/react-loading-skeleton'
 import { useHistory } from 'react-router-dom';
+import { OverlayTrigger, Tooltip} from 'react-bootstrap'
 const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"approved","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getApproved","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"operator","type":"address"}],"name":"isApprovedForAll","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"privateFileHash","outputs":[{"internalType":"string","name":"_privateFileHash","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"privateInfo","outputs":[{"internalType":"string","name":"_privateInfo","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"publicFileHash","outputs":[{"internalType":"string","name":"_publicFileHash","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"publicInfo","outputs":[{"internalType":"string","name":"_publicInfo","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"string","name":"uri","type":"string"},{"internalType":"string","name":"publicInfo","type":"string"},{"internalType":"string","name":"privateInfo","type":"string"},{"internalType":"string","name":"publicFileHash","type":"string"},{"internalType":"string","name":"privateFileHash","type":"string"}],"name":"safeMint","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"bytes","name":"_data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"name":"setApprovalForAll","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"transferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"}]
 const Assets = () => {
     const data = useContext(context);
@@ -66,21 +67,23 @@ const Assets = () => {
         return data
       } 
     }
-    const group = (tempTokens)=>{
-      const result = {}
+    const group = async (tempTokens)=>{
+      let result = {}
       tempTokens.forEach(token=>{
         if(result[token.contractAddress])
           result[token.contractAddress].push(token)
         else 
           result[token.contractAddress] = [token]
       })
-      // const result = tempTokens.reduce(function (prev, current) {
-      //   prev[current.contractAddress] = prev[current.contractAddress] || [];
-      //   prev[current.contractAddress].push(current);
-      //   return prev;
-      // }, []);
-      console.log(Object.entries(result)[0][0],Object.entries(result)[0][1])
-      setTokens(Object.entries(result))
+      const finalObj = {}
+      for(let key in result){
+        const contract = new library.eth.Contract(contractABI,key)
+        const contractName = await contract.methods.name().call()
+        finalObj[contractName + " " + key ] = result[key] 
+      }
+      console.log(result)
+      console.log(finalObj)
+      setTokens(Object.entries(finalObj))
     }
     useEffect(()=>{
         data.network && getERC721()
@@ -93,17 +96,23 @@ const Assets = () => {
     return (
         <div className='w-100 h-100' style={{overflowY:"auto"}}>
             {/* <div className='d-flex flex-wrap gap-3 justify-content-start p-2'> */}
-            <div className='d-flex flex-column p-4'>
-            {/* {
-            tokens.map((token,index)=><NFTCard key={index} token={token}
-            />)
-            } */}
+            <div className='d-flex flex-column flex-wrap px-3 py-4'>
             {
             tokens.map((group,index)=>{
               return (
-                <div key={group[0]}>
-                  <h4 className='my-4'>{group[0]}</h4> 
-                  <div className='grid'>
+                <div key={group[0]} className='px-4 pb-4 my-2'
+                 style={{border:'5px double white',overFlow:'auto',position:'relative'}}>
+                  <div className='px-2'
+                  style={{position:'absolute',top:"-1rem",zIndex:'20',backgroundColor:'black'}}>
+                    {group[0] && group[0].split(" ")[0]}
+                    <OverlayTrigger key={"index"} placement={"bottom"}  overlay={<Tooltip >explore block</Tooltip>}>
+                      <a href={data.chains[data.network].params[0].blockExplorerUrls[0]+"/"+"address"+"/"+ (group[0] && group[0].split(" ")[1])}
+                       target="_blank">
+                        <img className='mx-2 mb-1' src="/info.svg" alt="tooltip-info" />
+                      </a>
+                    </OverlayTrigger>
+                  </div> 
+                  <div className='d-flex flex-wrap gap-4' style={{marginTop:'2rem'}}>
                     {group[1] && group[1].map((token,indx)=><NFTCard key={indx} token={token}/>)}
                   </div>
                 </div>
@@ -143,7 +152,7 @@ const NFTCard = ({token})=>{
                  <img className='w-100 h-100' onLoad={handleLoad} style={{objectFit:"contain",display:loading?"none":"initial"}} src={token.image} alt="" />
                 {loading && <LazyImage className='w-100 h-100' />}
             </div>
-            <div className='bg-white text-dark p-4' style={{width:"275px",minHeight:'143px'}}>
+            <div className='bg-white text-dark px-2 py-3' style={{width:"275px",minHeight:'130px'}}>
             {
               info.map((property,index)=> <AccordionComponent key={index} property={property} />)
             }              
@@ -184,7 +193,7 @@ const AccordionComponent = ({property})=>{
   return (
     <Accordion defaultActiveKey="1">
       <Accordion.Item eventKey="0">
-        <Accordion.Header>{property[0]}</Accordion.Header>
+        <Accordion.Header as="h6">{property[0]}</Accordion.Header>
         <Accordion.Body>
           {property[1]}
       </Accordion.Body>
@@ -195,7 +204,7 @@ const AccordionComponent = ({property})=>{
     return(
       <Accordion defaultActiveKey="1">
       <Accordion.Item eventKey="0">
-        <Accordion.Header>{property[0]}</Accordion.Header>
+        <Accordion.Header as="h6">{property[0]}</Accordion.Header>
         <Accordion.Body>
         {
               info.map((property,index)=> <AccordionComponent key={index} property={property} />)
@@ -217,13 +226,13 @@ const DropDownComponent = ({token})=>{
   return (
     <Dropdown className="d-inline mx-2">
       <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components">
-        <span>...</span> 
-        <span style={{position:'relative',left:'200px'}}>{token.tokenID}</span>
+        <span style={{position:'relative',left:'20px',cursor:'default'}}>#{token.tokenID}</span> 
+        <span style={{position:'relative',left:'180px'}}>...</span>
+        <Dropdown.Menu align="end">
+          <Dropdown.Item onClick={()=>history.push({pathname:"/tools/crosschain",state:{token,type:"transfer"}})}>transfer</Dropdown.Item>
+          <Dropdown.Item onClick={()=>history.push({pathname:"/tools/crosschain",state:{token,tyep:"crossChain"}})}>cross chain</Dropdown.Item>
+        </Dropdown.Menu>
       </Dropdown.Toggle>
-      <Dropdown.Menu>
-        <Dropdown.Item onClick={()=>history.push({pathname:"/tools/crosschain",state:{token,type:"transfer"}})}>transfer</Dropdown.Item>
-        <Dropdown.Item onClick={()=>history.push({pathname:"/tools/crosschain",state:{token,tyep:"crossChain"}})}>cross chain</Dropdown.Item>
-      </Dropdown.Menu>
     </Dropdown>
   )
 }

@@ -1,13 +1,13 @@
 .option {
     /* min-width: 272px; */
     width: 100%;
-    background-color: #FFFF00;
+    background-color: #C4C4C4;
     padding: 12px;
     height: 40px;
     transition: 200ms;
-    color:black;
+    color:white;
 }
 .option:hover {
-    background-color: #C4C4C4;
-    color:white;
+    background-color: #FFFF00;
+    color:black;
 }

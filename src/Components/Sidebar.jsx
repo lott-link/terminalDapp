@@ -10,6 +10,7 @@ import { useEagerConnect, useInactiveListener } from '../Hooks/hooks'
 import { context } from '../App' 
 import styles from './sidebar.styles.module.css'
 import Select from "./Select";
+import { OverlayTrigger, Tooltip} from 'react-bootstrap'
 const Sidebar = () => {
   const {activate,account,chainId,active,connector,library,deactivate} = useWeb3React()
   const [loadingProfile,setLoadingProfile] = useState(false)
@@ -151,7 +152,11 @@ const Sidebar = () => {
         <div className="" style={{margin:'0.75rem'}}>
           {account && <div>
               <div>Wallet Address:</div>
-              <div>{account.slice(0,8)+ "..." + account.slice(-8)}</div>
+              <OverlayTrigger  placement={"bottom"}  overlay={<Tooltip >copy</Tooltip>}>
+                <div style={{cursor:"pointer"}} className="wallet-address" onClick={()=>navigator.clipboard.writeText(account)}>
+                  {account.slice(0,8)+ "..." + account.slice(-8)}
+                </div>    
+              </OverlayTrigger>
             </div>}
           {active && balance && 
           <div>
@@ -161,7 +166,6 @@ const Sidebar = () => {
               <div className="mx-1">{balance}</div>
             </div> 
           </div>}
-          {chainId && (chainId === 80001 ? <div>{chainId}</div> : <div style={{color:'red'}}>please change your network to polygon</div>)}
         </div>
           <div className="w-100" style={{position:'absolute',bottom:'15%',left:'0'}}>
             <div className='w-100 px-4'>
@@ -172,10 +176,10 @@ const Sidebar = () => {
             </div>
           </div>
           {active && 
-            <div className="w-100" style={{position:'absolute',bottom:'0',left:'0'}}>
-              <Button primary  onClick={deactivate} className="my-2 wallet-button">
+            <div className="w-100 px-4" style={{position:'absolute',bottom:'0',left:'0'}}>
+              <button primary  onClick={deactivate} className="my-2 w-100 wallet-button" style={{background:"#C4C4C4"}}>
                 disconecct
-              </Button>
+              </button>
             </div>
         }
       </div>

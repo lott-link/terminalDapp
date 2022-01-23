@@ -80,7 +80,7 @@ export const chains = {
    fuji:{
     chainIdDecimal:4313,
     chainIdHex:"0xa869",
-    icon:'/eth/Preview.png',
+    icon:'/avalanche.svg',
     params:[
       {
         chainId: '0xa869',
