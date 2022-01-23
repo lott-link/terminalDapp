@@ -1,21 +1,25 @@
 export const addresses = {
     polygon:{
        factory:"",
-       register:"",
+      //  register:"",
        NFT:"0x6517077303340e0E826d6DaCD64813cb6A9E3195",
        erc721API:"https://api.polygonscan.com/api?module=account&action=tokennfttx&startblock=0&endblock=999999999&sort=asc&apikey=GFYDP8PCVIJA4JCTYPNSQETUAWQHKAD16Y&address=",            
-       crossChain:"0xfB7f3939A0074C5155e1afEBAf148E9b4723D642"
+       //  crossChain:"0xfB7f3939A0074C5155e1afEBAf148E9b4723D642"
       },
     mumbai:{
        factory:"0xe88f4Ba9F8fe1701F3463A6244dcd7d3538a3b3F",
        register:"0x92c3f3b2122b61a50b218df446e2799535fcb519",
        NFT:"0xd2Ad56D684A211b5Ee5a2aFb6e8E7a6e6F642d67",
        erc721API:"https://api-testnet.polygonscan.com/api?module=account&action=tokennfttx&startblock=0&endblock=999999999&sort=asc&address=",
-       crossChain:"0x747B9900E1d77FAd241ed4C632b08B75bc45de8b"                
+       crossChain:"0xF3C5A7b8D8eFa685E946B3e4Ba51Ff267a580E0b"                
     },
     rinkeby:{
        erc721API:"https://api-rinkeby.etherscan.io/api?module=account&action=tokennfttx&startblock=0&endblock=999999999&sort=asc&apikey=WPZTIVDHXFF48WJ7UDAIE893S7WAVG6DSU&address=",
-       crossChain:"0xa8ED58AEea81B8ddcb17Bda7a1E05Cf8549578B9"
+       crossChain:"0x0cF0366e33F2225Cad6Bc3b61a4F699D6a85769D"
+    },
+    fuji:{
+      crossChain:"0x9F67c2FB92fba15c98F741A13441604f9083dcE7",
+      erc721API:"https://api-testnet.snowtrace.io/api?module=account&action=tokennfttx&startblock=0&endblock=999999999&sort=asc&address="
     }
 }
 export const chains = {
@@ -69,9 +73,26 @@ export const chains = {
              decimals: 18,
            },
            rpcUrls: ["https://rinkeby.infura.io/v3/f0362c1f5aea42abb1d875f7a0f8692d"],
-           blockExplorerUrls: ["https://rinkey.etherscan.io"],
+           blockExplorerUrls: ["https://rinkeby.etherscan.io/"],
          },
        ]
+   }, 
+   fuji:{
+    chainIdDecimal:4313,
+    chainIdHex:"0xa869",
+    icon:'/eth/Preview.png',
+    params:[
+      {
+        chainId: '0xa869',
+        chainName: "Fuji Testnet",
+        nativeCurrency: {
+        name: "AVAX",
+        symbol: "AVAX",
+        decimals: 18
+    },
+    rpcUrls: ['https://api.avax-test.network/ext/bc/C/rpc'],     
+    blockExplorerUrls: ['https://testnet.snowtrace.io/']
+    }]
    },
    ethereum:{
       chainIdDecimal:1,

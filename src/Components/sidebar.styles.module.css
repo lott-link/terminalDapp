@@ -1,9 +1,16 @@
 .select {
-    background-color: #FFFF00;
-    border: 6px double black;
+    background-color: #020227;
+    color:white;
+    border: 6px double white;
     padding-top: 4px ;
     padding-bottom: 4px ;
+    outline: none;
 }
 .select:hover {
-    border:6px solid black;
+    border:6px solid white;
+}
+.select option {
+    background-color: #FFFF00;
+    height: 100px;
+    padding: 1rem;
 }

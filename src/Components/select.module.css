@@ -1,0 +1,13 @@
+.option {
+    /* min-width: 272px; */
+    width: 100%;
+    background-color: #FFFF00;
+    padding: 12px;
+    height: 40px;
+    transition: 200ms;
+    color:black;
+}
+.option:hover {
+    background-color: #C4C4C4;
+    color:white;
+}

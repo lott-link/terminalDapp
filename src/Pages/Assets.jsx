@@ -2,10 +2,8 @@ import React , { useState, useEffect, useContext } from 'react'
 import axios from 'axios'
 import { useWeb3React } from "@web3-react/core";
 import { context } from '../App'
-import Button from '../Components/styled/Button';
 import Spinner from 'react-bootstrap/Spinner'
 import Accordion from 'react-bootstrap/Accordion'
-import { useAccordionButton } from 'react-bootstrap';
 import {Dropdown} from 'react-bootstrap'
 import '../../node_modules/react-loading-skeleton/dist/skeleton.css'
 import ContentLoader from '../../node_modules/react-loading-skeleton'
@@ -15,21 +13,13 @@ const Assets = () => {
     const data = useContext(context);
     const { active, account, library, chainId } = useWeb3React()
     const [tokens,setTokens] = useState([])
-    const [show,setShow] = useState(false)
-    const [modal,setModal] = useState()
     const [loading,setLoading] = useState(false)
-    // const getERC721 = async ()=>{
-    //     if(!active) return;
-    //     axios.get(`${data.addresses[data.network]["erc721API"]}${account}`)
-    //     .then(res=>{setTokens(res.data.result);console.log(res.data.result)})
-    // }
     const getERC721 = async ()=>{
         if(!active) return;
         setLoading(true)
         setTokens([])
         if(!data.network) return
         const array = await axios.get(`${data.addresses[data.network]["erc721API"]}${account}`).then(res=>res.data.result)
-        console.log("array",array)
         let ids = array.map(token=>token.tokenID+token.contractAddress)
         ids = Array.from(new Set(ids))
         const counts = new Array(ids.length).fill(0)
@@ -46,60 +36,52 @@ const Assets = () => {
           const token = await getToken(id.split('0x')[0],"0x"+id.split('0x')[1])
           tempTokens.push(token)
           setTokens(prev=>[...prev,token])
-          if(index===idsToShow.length-1)  setLoading(false)
+          if(index===idsToShow.length-1)  {
+            setLoading(false)
+            group(tempTokens)
+          }
         })
+        if(idsToShow.length === 0) setLoading(false)
     }
     const getToken = async (tokenID,contractAddress) => {
-        if(!active) return;
-        const token = localStorage.getItem(contractAddress+tokenID)
-        if(token){
-          return JSON.parse(token)
-        }
-        else{
-          const contract = new library.eth.Contract(contractABI,contractAddress)
-          const tokenURI = await contract.methods.tokenURI(tokenID).call(res=>res)
-          console.log(tokenURI)
-          const tokenJson = await axios.get(tokenURI).then(res=>res.data)
-          const data = {
-            name:tokenJson.name,
-            description:tokenJson.description,
-            image:tokenJson.image,
-            tokenID,
-            contractAddress,
-            chainId,
-            attributes:tokenJson.attributes
-          }
-          localStorage.setItem(contractAddress+tokenID,JSON.stringify(data))
-          return data
-        } 
+      if(!active) return;
+      const token = localStorage.getItem(contractAddress+tokenID)
+      if(token){
+        return JSON.parse(token)
       }
-    // const showTokenData = async (tokenID,contractAddress) => {
-    //     if(!active) return;
-    //     const token = localStorage.getItem(contractAddress+tokenID)
-    //     if(token){
-    //         setModal(JSON.parse(token))
-    //         setShow(true) 
-    //     }
-    //     else{
-    //         const contract = new library.eth.Contract(contractABI,contractAddress)
-    //         const tokenURI = await contract.methods.tokenURI(tokenID).call(res=>res)
-    //         const tokenJson = await axios.get(tokenURI).then(res=>res.data)
-    //         console.log("tokenURI",tokenURI)
-    //         console.log("tokenJson",tokenJson)
-    //         const data = {
-    //             author:tokenJson.author,
-    //             description:tokenJson.description,
-    //             image:tokenJson.image,
-    //             tokenID,
-    //             contractAddress,
-    //             chainId
-    //         }
-    //         setModal(data)
-    //         localStorage.setItem(contractAddress+tokenID,JSON.stringify(data))
-    //         setShow(true)
-    //     } 
-    // }
-    // const showTokenData = ()=>{}
+      else{
+        const contract = new library.eth.Contract(contractABI,contractAddress)
+        const tokenURI = await contract.methods.tokenURI(tokenID).call(res=>res)
+        const tokenJson = await axios.get(tokenURI).then(res=>res.data)
+        const data = {
+          name:tokenJson.name,
+          description:tokenJson.description,
+          image:tokenJson.image,
+          tokenID,
+          contractAddress,
+          chainId,
+          attributes:tokenJson.attributes
+        }
+        localStorage.setItem(contractAddress+tokenID,JSON.stringify(data))
+        return data
+      } 
+    }
+    const group = (tempTokens)=>{
+      const result = {}
+      tempTokens.forEach(token=>{
+        if(result[token.contractAddress])
+          result[token.contractAddress].push(token)
+        else 
+          result[token.contractAddress] = [token]
+      })
+      // const result = tempTokens.reduce(function (prev, current) {
+      //   prev[current.contractAddress] = prev[current.contractAddress] || [];
+      //   prev[current.contractAddress].push(current);
+      //   return prev;
+      // }, []);
+      console.log(Object.entries(result)[0][0],Object.entries(result)[0][1])
+      setTokens(Object.entries(result))
+    }
     useEffect(()=>{
         data.network && getERC721()
     },[data.network])
@@ -109,12 +91,24 @@ const Assets = () => {
       </div>
     )
     return (
-        <div className='w-100 h-100' style={{overflowY:"auto"}}>{console.log(tokens)}
+        <div className='w-100 h-100' style={{overflowY:"auto"}}>
             {/* <div className='d-flex flex-wrap gap-3 justify-content-start p-2'> */}
-            <div className='grid p-4'>
-            {
+            <div className='d-flex flex-column p-4'>
+            {/* {
             tokens.map((token,index)=><NFTCard key={index} token={token}
             />)
+            } */}
+            {
+            tokens.map((group,index)=>{
+              return (
+                <div key={group[0]}>
+                  <h4 className='my-4'>{group[0]}</h4> 
+                  <div className='grid'>
+                    {group[1] && group[1].map((token,indx)=><NFTCard key={indx} token={token}/>)}
+                  </div>
+                </div>
+              )
+            })
             }
             {loading && <div style={{position:'absolute',top:'45%',left:'55%'}}>
                 <Spinner style={{width:"3rem",height:"3rem"}} animation="grow" variant="light" />
@@ -123,16 +117,6 @@ const Assets = () => {
             </div>
             }
             </div>
-            {show && 
-                <div className="w-25 d-flex flex-column align-items-center"
-                 style={{position:'absolute',top:'40%',right:'25%',border:'7px double white',background:"lightgray"}} >
-                    {/* <div>author:{modal.author}</div> */}
-                    <div>description:{modal.description}</div>
-                    <div><img style={{width:"200px"}} 
-                    src={modal.image} alt="" /></div>
-                    <div style={{cursor:'pointer'}} onClick={()=>setShow(false)}>close</div>
-                </div>
-            }
         </div>
     )
 }
@@ -151,10 +135,10 @@ const NFTCard = ({token})=>{
       }
     },[])
     return (
-        <div style={{width:'275px'}}>{console.log("info",info)}
-            <div style={{backgroundColor:"#C4C4C4"}}><h4 className='m-0'>
+        <div style={{width:'275px'}}>
+            <div style={{backgroundColor:"#C4C4C4"}}>
               <DropDownComponent token={token} />
-            </h4></div>
+            </div>
             <div style={{width:'275px',height:'225px',backgroundColor:"#C4C4C4"}}>
                  <img className='w-100 h-100' onLoad={handleLoad} style={{objectFit:"contain",display:loading?"none":"initial"}} src={token.image} alt="" />
                 {loading && <LazyImage className='w-100 h-100' />}
@@ -233,13 +217,13 @@ const DropDownComponent = ({token})=>{
   return (
     <Dropdown className="d-inline mx-2">
       <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components">
-        ...
+        <span>...</span> 
+        <span style={{position:'relative',left:'200px'}}>{token.tokenID}</span>
       </Dropdown.Toggle>
       <Dropdown.Menu>
-        <Dropdown.Item onClick={()=>history.push({pathname:"/crosschain",state:{token,type:"transfer"}})}>transfer</Dropdown.Item>
-        <Dropdown.Item onClick={()=>history.push({pathname:"/crosschain",state:{token,tyep:"crossChain"}})}>cross chain</Dropdown.Item>
+        <Dropdown.Item onClick={()=>history.push({pathname:"/tools/crosschain",state:{token,type:"transfer"}})}>transfer</Dropdown.Item>
+        <Dropdown.Item onClick={()=>history.push({pathname:"/tools/crosschain",state:{token,tyep:"crossChain"}})}>cross chain</Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
   )
 }
-// {"image":"https://ipfs.infura.io/ipfs/QmZd1dPLWNofQ2DGE2sak4wkPAnavbyMKeANiMcgT6r8Eh","name":"Assembly","description":"an assembly program","attributes":[{"trait_type":"type","value":"8086"},{"trait_type":"model ","value":"com"}]}

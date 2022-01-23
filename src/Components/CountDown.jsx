@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 
 const CountDown = (props) => {
     const [timer,setTimer] = useState(props.time*1000 - new Date().getTime());

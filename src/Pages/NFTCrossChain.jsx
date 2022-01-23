@@ -59,13 +59,20 @@ const NFTCrossChain = ({props}) => {
                 setSelectedWay(true)
             }
         }
+        if(location.pathname === "/tools/transfer"){
+            setIsSafeTransfer(true)
+            setCircles([true,false])
+            setStages([false,true,false])
+            setSelectedWay(true)
+        }
     },[])
     return (
-        <div className='w-100 h-100' style={{display:'flex',flexFlow:'column'}} >{console.log(location)}
+        <div className='w-100 h-100' style={{display:'flex',flexFlow:'column'}} >
             <div className='d-flex justify-content-between py-2' style={{borderBottom:"1px solid white"}}>
                 <div onClick={back} style={{cursor:"pointer"}} className='mx-4 my-auto'>{!stages[0] && "back"}</div>
                 <div className='my-auto'>
-                Cross Chain NFT
+                {isSafeTransfer ? "Transfer" : "Cross Chain NFT"}
+                {!isSafeTransfer &&
                 <OverlayTrigger key={"bottom"} placement={"bottom"}
                 overlay={
                 <Tooltip >
@@ -75,13 +82,24 @@ const NFTCrossChain = ({props}) => {
                 any one that has the Wrapped token of your 
                 NFT can unlock the NFT from contract.
                  you can read more about thin contract HERE.
-                </Tooltip>
-              }
-            >
+                </Tooltip>}>
               <img className='mx-2 m-1' src="/info.svg" alt="" />
-            </OverlayTrigger>
+            </OverlayTrigger>}
                 </div>
-                <div>{/* this isn't a useless div don't delete it */}</div>
+                <div className='d-flex' style={{paddingRight:'10px'}}>
+                {
+                availableChains.map((chain,index)=> (
+                    <OverlayTrigger key={index} placement={"bottom"}  overlay={<Tooltip >{chain}</Tooltip>}>
+                    <div className="mx-1">
+                        <a href={data.chains[chain].params[0].blockExplorerUrls[0]+"/"+"address"+"/"+data.addresses[chain].crossChain}>
+                            <img src={data.chains[chain].icon} alt="" />  
+                        </a>
+                    </div>
+                    </OverlayTrigger>
+                    )
+                )
+                }
+                </div>
             </div>
             <div style={{borderRight:"1px solid white",borderLeft:"1px solid white",position:"relative",
             backgroundColor:(approveBtn.loading || approveBtn.approving || transferBtn.loading || transferBtn.approving)?"rgba(2,117,216,0.5)":""}}
@@ -103,7 +121,7 @@ const NFTCrossChain = ({props}) => {
                 {stages[0] && <InfoPage setCircles={setCircles} setStages={setStages} setSelectedWay={setSelectedWay}/>}
                 {stages[1] && <SelectNFT setSelectedToken={setSelectedToken} selectedToken={selectedToken}
                  approveBtn={approveBtn} setApproveBtn={setApproveBtn} setCircles={setCircles} 
-                setStages={setStages} selectedWay={selectedWay} />}
+                setStages={setStages} selectedWay={selectedWay} isSafeTransfer={isSafeTransfer} />}
                 {stages[2] && <TransferNFT transferBtn={transferBtn} setTransferBtn={setTransferBtn} isSafeTransfer={isSafeTransfer}
                 selectedToken={selectedToken} setStages={setStages} setCircles={setCircles} selectedWay={selectedWay} />}
             </div>

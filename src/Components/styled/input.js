@@ -40,8 +40,8 @@ const Input = (props)=>{
     return (
         <div style={{display:'flex',flexDirection:'column',alignItems:'center',position:'relative'}}>
             <TextInput {...props} onFocus={()=>setFocus(true)} onBlur={()=>setFocus(false)} />
-            <label style={{position:'absolute',left:`${props.title && (props.title.length > 10 ? "33%":"40%")}`,backgroundColor:props.disabled?"#C0C0C0":'#020227',top:`${(focus || props.value && props.value.length!==0) ?"3px":"24px"}`,paddingLeft:"4px",paddingRight:"4px",transition:'0.2s',pointerEvents:'none'}}>{props.title}</label>
-            {props.small && <Small style={{textAlign:'start',paddingLeft:"39px"}}>{props.small}</Small>}
+            <label style={{position:'absolute',left:`${props.title && (props.title.length > 10 ? "33%":"40%")}`,backgroundColor:props.disabled?"#C0C0C0":'#020227',top:`${(focus || (props.value && props.value.length!==0)) ?"3px":"24px"}`,paddingLeft:"4px",paddingRight:"4px",transition:'0.2s',pointerEvents:'none'}}>{props.title}</label>
+            {props.small && <Small style={{textAlign:'start',paddingLeft:"20px"}}>{props.small}</Small>}
         </div> 
     )
 }

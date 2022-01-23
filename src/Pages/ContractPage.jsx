@@ -128,8 +128,6 @@ const ContractPage = () => {
         const contractAddress = await factoryContract.methods.registerContract().call(res=>res)
         const registerContract = new library.eth.Contract(registerContractABI,contractAddress)
         const findUser = await registerContract.methods.userToAddr(input).call().then(res=>res)
-        console.log(findUser)
-        console.log(library.utils.hexToNumberString(findUser))
         if(library.utils.hexToNumberString(findUser)!== "0" ){
             setError("user already exists!")
             setSendInfoLoading(false)
@@ -139,7 +137,6 @@ const ContractPage = () => {
             let data = getInfoFieldsData()
             data = JSON.stringify(data).replaceAll("\"","\'")
             const value = mode === 0 ? 0 : payableAmount;
-            console.log(input,JSON.stringify(data),presenter,value)
             registerContract.methods.signIn(input,JSON.stringify(data),presenter).send({from:account,value})
             .on("transactionHash",transactionHash=>{
                 setLoadingMsg('Wating to comfirm')
@@ -213,7 +210,6 @@ const ContractPage = () => {
         const interval = setInterval(()=>{
             let state;
             setNow(prev => state=prev)
-            console.log(state)
             if(state+100/estimatedTime>=100){
                 setNow(100)
                 clearInterval(interval)
@@ -294,7 +290,7 @@ const ContractPage = () => {
                     {sendInfoLoading && loadingMsg==='Wating to comfirm' &&
                      <div className="w-25 my-2" style={{background:'white'}}>
                         <div style={{width:now+"%",color:"white",backgroundColor:'red',transition:'0.2s',fontSize:'smaller' }}>
-                            <span className="d-flex ejustify-content-center">{`${now}%`}</span>{console.log(now)}
+                            <span className="d-flex ejustify-content-center">{`${now}%`}</span>
                         </div>
                     </div> }
                     <h3 className="w-100 text-center">{sendInfoLoading ? loadingMsg : "loading"}...</h3>

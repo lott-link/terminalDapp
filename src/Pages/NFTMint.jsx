@@ -3,26 +3,26 @@ import Input from "../Components/styled/input";
 import Button from '../Components/styled/Button'
 import { create } from 'ipfs-http-client'
 import { useWeb3React } from "@web3-react/core";
-import { factoryContractAddress } from '../Contracts/ContractAddress'
-import { factoryContractABI,registerContractABI} from '../Contracts/ContractsABI'
+import { NFTContractABI as contractABI} from '../Contracts/ContractsABI'
 import { Spinner } from 'react-bootstrap'
 import { context } from '../App'
-const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"approved","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getApproved","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"operator","type":"address"}],"name":"isApprovedForAll","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"privateFileHash","outputs":[{"internalType":"string","name":"_privateFileHash","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"privateInfo","outputs":[{"internalType":"string","name":"_privateInfo","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"publicFileHash","outputs":[{"internalType":"string","name":"_publicFileHash","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"publicInfo","outputs":[{"internalType":"string","name":"_publicInfo","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"string","name":"uri","type":"string"},{"internalType":"string","name":"publicInfo","type":"string"},{"internalType":"string","name":"privateInfo","type":"string"},{"internalType":"string","name":"publicFileHash","type":"string"},{"internalType":"string","name":"privateFileHash","type":"string"}],"name":"safeMint","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"bytes","name":"_data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"name":"setApprovalForAll","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"transferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"}]
-const mumbaiAddress = "0xd2Ad56D684A211b5Ee5a2aFb6e8E7a6e6F642d67"
-const polygonAddress = "0x6517077303340e0E826d6DaCD64813cb6A9E3195"
+import ProgressBar from "../Components/ProgressBar";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const client = create('https://ipfs.infura.io:5001/api/v0')
 const NFTMint = () => {
     const { active, account, library } = useWeb3React();
-    const [uriDisabled,setUriDisabled] = useState(false);
-    const [contractAddress,setContractAddress] = useState(mumbaiAddress)
+    const [uriDisabled,setUriDisabled] = useState(true);
     const [inputFields,setInputFields] = useState([{property:'',value:''}])
+    const [mintBtn,setMintBtn] = useState({disabled:false,approved:false,loading:false})
     const data = useContext(context) 
+    const [toSmall,setToSmall] = useState("")
     const [uploadStatus,setUploadStatus] = useState({
       publicFileHash:false,
       privateFileHash:false
     })
     const [input,setInput] = useState({
-        to:"",
+        to:account,
         uri:"",
         description:"",
         privateInfo:"",
@@ -34,10 +34,8 @@ const NFTMint = () => {
       setUploadStatus({...uploadStatus,[e.target.name]:true})
       const added = await client.add(e.target.files[0])
       setUploadStatus({...uploadStatus,[e.target.name]:false})
-      console.log("uploaded",added)
       setInput({...input,[e.target.name]:added.path})
       const fileUrl = `https://ipfs.infura.io/ipfs/${added.path}`
-      console.log(fileUrl)
     }
     const handleInputChange = (index, event) => {
       const values = [...inputFields];
@@ -56,12 +54,16 @@ const NFTMint = () => {
       setInputFields(values);
   };
     const safeMint = async ()=>{
-      console.log(data)
       if(!active) return;
+      if(input.to.length===0){
+        setToSmall("to address can't be empty")
+        return
+      }
+      setMintBtn({loading:false,disabled:true,approving:true})
       let uri = input.uri;
       if(uriDisabled){
-        inputFields.pop()
-        const attributes = inputFields.map(field=>{return {trait_type:field.property,value:field.value} })
+        const tempFields = inputFields.slice(0,-1)
+        const attributes = tempFields.map(field=>{return {trait_type:field.property,value:field.value} })
         const json = await client.add(JSON.stringify({
           description:input.description,
           image:"https://ipfs.infura.io/ipfs/"+input.publicFileHash,
@@ -69,14 +71,35 @@ const NFTMint = () => {
           attributes
         }))
         uri = `https://ipfs.infura.io/ipfs/${json.path}`
-        console.log(uri)
       }
       const contract = new library.eth.Contract(contractABI,data.addresses[data.network]["NFT"])
       contract.methods["safeMint"](input.to,uri,input.description,
       input.privateInfo,input.publicFileHash,input.privateFileHash).send({from:account})
+      .on("transactionHash",transactionHash=>{
+        setMintBtn({loading:true,disabled:true,approving:false})
+      })
+      .on("receipt",receipt=>{
+          setMintBtn({loading:false,disabled:false,approving:false})
+          notify()
+      })
+      .on("error",error=>{
+          setMintBtn({loading:false,disabled:false,approving:false})
+          console.log("error in sending info",error)
+      })
+    }
+    const notify = ()=>{
+      toast.success('NFT Minted Successfully!', {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
     }
   return (
-    <div className="w-100 h-100 d-flex flex-column align-items-center">
+    <div className="w-100 h-100 d-flex flex-column align-items-center" style={{position:'relative'}}>
       <div className="my-2 w-100 d-flex justify-content-center" style={{borderBottom:"1px solid white"}}>
         <h1>Mint</h1>
       </div>
@@ -93,10 +116,12 @@ const NFTMint = () => {
             <Input
               type="text"
               name="to"
-              onChange={(e)=>setInput({...input,[e.target.name]:e.target.value})}
+              onChange={(e)=>setInput({...input,[e.target.name]:e.target.value},setToSmall(""))}
               title={"to"}
               style={{ width: "21rem" }}
               value={input.to}
+              small={toSmall}
+              success={toSmall.length !==0 ? true : false}
           />
           </div>
           <div className="d-flex justify-content-start w-100">
@@ -109,7 +134,7 @@ const NFTMint = () => {
             style={{ width: "21rem" }}
             value={input.uri}
             disabled={uriDisabled}
-            small="when disabled we use our defaults"
+            small="if you want to use your own uri enable this"
           />
           <Button secondary onClick={()=>setUriDisabled(!uriDisabled)}>
             {uriDisabled ? "enable" : "disable"}
@@ -176,10 +201,30 @@ const NFTMint = () => {
           className="contract-button mx-auto"
           onClick={safeMint}
           style={{ width: "24rem" }}
+          disabled={mintBtn.disabled}
         >
           Safe Mint
         </Button>
       </div>
+      {mintBtn.loading && <ProgressBar estimatedTime={10}/>}
+      {mintBtn.approving && 
+      <div className="w-100 h-100 d-flex flex-column justify-content-center align-items-center" 
+      style={{position:'absolute',top:'0',left:'0',zIndex:"20",backgroundColor:"rgba(2,117,216,0.5)"}}>
+           <h4 className='bg-white text-dark larger p-2'>wating for metamask comfirm...</h4>
+      </div>
+      }
+      <ToastContainer style={{position:'absolute', left:'50%',bottom:'3%'}}
+        position="bottom-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </div>
   );
 };

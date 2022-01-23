@@ -9,7 +9,7 @@ import { OverlayTrigger, Tooltip} from 'react-bootstrap'
 const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"approved","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getApproved","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"operator","type":"address"}],"name":"isApprovedForAll","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"privateFileHash","outputs":[{"internalType":"string","name":"_privateFileHash","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"privateInfo","outputs":[{"internalType":"string","name":"_privateInfo","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"publicFileHash","outputs":[{"internalType":"string","name":"_publicFileHash","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"publicInfo","outputs":[{"internalType":"string","name":"_publicInfo","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"string","name":"uri","type":"string"},{"internalType":"string","name":"publicInfo","type":"string"},{"internalType":"string","name":"privateInfo","type":"string"},{"internalType":"string","name":"publicFileHash","type":"string"},{"internalType":"string","name":"privateFileHash","type":"string"}],"name":"safeMint","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"bytes","name":"_data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"name":"setApprovalForAll","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"transferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"}]
 const SelectNFT = ({approveBtn,setApproveBtn,setCircles,setStages
                     ,selectedToken,setSelectedToken,
-                    selectedWay})=>{
+                    selectedWay,isSafeTransfer})=>{
     const { active, account, library, chainId } = useWeb3React()
     const data = useContext(context)
     const [tokens,setTokens] = useState([])
@@ -24,7 +24,6 @@ const SelectNFT = ({approveBtn,setApproveBtn,setCircles,setStages
         setTokens([])
         if(!data.network) return
         const array = await axios.get(`${data.addresses[data.network]["erc721API"]}${account}`).then(res=>res.data.result)
-        console.log("array",array)
         let ids = array.map(token=>token.tokenID+token.contractAddress)
         ids = Array.from(new Set(ids))
         const counts = new Array(ids.length).fill(0)
@@ -75,7 +74,6 @@ const SelectNFT = ({approveBtn,setApproveBtn,setCircles,setStages
         const tokenContract = new library.eth.Contract(contractABI,selectedToken.contractAddress)
         const isApprovedBefore = await tokenContract.methods.getApproved(selectedToken.tokenID).call()
         // const isApproveForAllBefore = await tokenContract.methods.isApprovedForAll(account,data.addresses[data.network]["crossChain"]).call()
-        console.log("isApprovedBefore",isApprovedBefore)
         // console.log("isApproveForAllBefore",isApproveForAllBefore)
         // if(isApprovedBefore===data.addresses[data.network]["crossChain"] || isApproveForAllBefore){
         if(isApprovedBefore===data.addresses[data.network]["crossChain"]){
@@ -100,7 +98,6 @@ const SelectNFT = ({approveBtn,setApproveBtn,setCircles,setStages
         setApproveBtn({...approveBtn,disabled:true,approving:true})
         const tokenContract = new library.eth.Contract(contractABI,selectedToken.contractAddress)
         const isApproveForAllBefore = await tokenContract.methods.isApprovedForAll(account,data.addresses[data.network]["crossChain"]).call()
-        console.log(isApproveForAllBefore)
         if(isApproveForAllBefore){
             setApproveBtn({disabled:false,approving:false,loading:false,msg:""})
             next()
@@ -136,13 +133,17 @@ const SelectNFT = ({approveBtn,setApproveBtn,setCircles,setStages
         }
     },[data.network])
     const onChangeToken = async (token,index)=>{
+        if(isSafeTransfer){
+            setSelectedToken(token);
+            setSelectedIndex(index);
+            return;
+        }
         setConditionLoading(true)
         setSelectedToken(token);
         setSelectedIndex(index);
         setShowBtns(true)
         const tokenContract = new library.eth.Contract(contractABI,token.contractAddress)
         const isApprovedBefore = await tokenContract.methods.getApproved(token.tokenID).call()
-        console.log("isApprovedBefore",isApprovedBefore)
         if(isApprovedBefore===data.addresses[data.network]["crossChain"]){
             setApproveCheck(true)
         }else{
@@ -177,7 +178,7 @@ const SelectNFT = ({approveBtn,setApproveBtn,setCircles,setStages
                 </div>
                 }
                 <div className='px-4'>
-                    <div className='py-4 px-4 text-center'>select NFT you want to bridge to other network</div> 
+                    <div className='py-4 px-4 text-center'>select NFT you want to {isSafeTransfer? "transfer" :"bridge"} to other {isSafeTransfer? "address" : "network"}</div> 
                     <div className='text-center' style={{overflow:"auto",maxHeight:"16rem"}}>
                         <table className="w-100">
                             <thead>
@@ -206,7 +207,7 @@ const SelectNFT = ({approveBtn,setApproveBtn,setCircles,setStages
                         </table>
                     </div>
                     <div className='text-center py-2' style={{color:"#FF00FF"}}>
-                    for brifging your NFT you must set approve to the contract, that contract change
+                    for brigifing your NFT you must set approve to the contract, that contract change
                     </div>
                     {showBtns && (    
                         selectedWay ? 
@@ -220,6 +221,10 @@ const SelectNFT = ({approveBtn,setApproveBtn,setCircles,setStages
                         :
                         <div className='d-flex justify-content-center'><Button primary className="w-50" onClick={next}>next</Button></div>
                         )
+                    } 
+                    {
+                        isSafeTransfer && selectedToken && 
+                        <div className='d-flex justify-content-center'><Button primary className="w-50" onClick={next}>next</Button></div>
                     }
                 </div>
             </div>

@@ -7,12 +7,12 @@ import useWidth from "../Hooks/useWidth";
 import MobileSidebar from "./MobileSidebar";
 import play from '../Assetes/play.svg'
 import menu from '../Assetes/menu.svg'
+import toolsRoutes from "../Routes/toolsRoutes";
 const Navbar = () => {
   //sidebar
   const width = useWidth()
   const [show,setShow] = useState(false)
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
   //sidebar
   const [navItems, setNavItems] = useState();
   const [pathName, setPathName] = useState();
@@ -29,10 +29,14 @@ const Navbar = () => {
       case "/nft":
         setNavItems([...nftRoutes]);
         break;
+      case "/tools":
+        setNavItems([...toolsRoutes]);
+        break;
+      default:
+        break;
     }
   });
   const handleNav = (path)=>{
-    console.log("path",path)
     if(path==="Contract"){
       setNavItems(contractRoutes.filter(route=>route.display===true))
     }
@@ -40,6 +44,8 @@ const Navbar = () => {
       setNavItems([...mainRoutes])
     if(path==="NFT")
       setNavItems([...nftRoutes])
+    if(path==="tools")
+      setNavItems([...toolsRoutes])
 
   }
   useEffect(() => {
@@ -47,7 +53,7 @@ const Navbar = () => {
   }, []);
   return (
     <nav className="d-flex" id="navbar">
-      {width < 500 && <div onClick={()=>setShow(!show)} className="text-white d-flex align-items-center"><img style={{background:"white"}} src={menu}/></div>}
+      {width < 500 && <div onClick={()=>setShow(!show)} className="text-white d-flex align-items-center"><img style={{background:"white"}} alt="menu-icon" src={menu}/></div>}
       {show && <div style={{background:'white'}}>sidebar</div>}
       {navItems &&
         navItems.map((item, index) => (
@@ -55,7 +61,7 @@ const Navbar = () => {
             {item.type==="directory" && index === 0 &&
             <Link style={{color:'white'}} to='/'
               className={`${index===0 && item.title!=="HomePage"  && "trapezoid py-1  "} mx-1`}
-              onClick={()=>handleNav("HomePage")}>{item.title!=="HomePage" && <img src={play} style={{transform:"rotate(180deg)"}} />}{" "}{item.title}</Link>
+              onClick={()=>handleNav("HomePage")}>{item.title!=="HomePage" && <img src={play} alt="play-icon" style={{transform:"rotate(180deg)"}} />}{" "}{item.title}</Link>
             }
             {item.type==="directory" && index !== 0 &&
             <a style={{color:'white'}} 

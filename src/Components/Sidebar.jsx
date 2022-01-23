@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { walletconnect, injected } from "../Wallet/connectors";
 import { useWeb3React } from "@web3-react/core";
 import { registerContractABI} from '../Contracts/ContractsABI'
@@ -9,6 +9,7 @@ import walletConnectIcon from '../Assetes/icons/walletconnect/medium.png'
 import { useEagerConnect, useInactiveListener } from '../Hooks/hooks'
 import { context } from '../App' 
 import styles from './sidebar.styles.module.css'
+import Select from "./Select";
 const Sidebar = () => {
   const {activate,account,chainId,active,connector,library,deactivate} = useWeb3React()
   const [loadingProfile,setLoadingProfile] = useState(false)
@@ -17,10 +18,8 @@ const Sidebar = () => {
   const [userInfo,setUserInfo] = useState()
   const [error,setError] = useState()
   const [signedIn,setSignedIn] = useState(false)
-  const [availableChains,setAvailableChains] = useState([])
   const history = useHistory()
   const data = useContext(context)
-  const ref = useRef(null)
   const walletConnect = async ()=>{
     await activate(walletconnect)
   }
@@ -28,7 +27,7 @@ const Sidebar = () => {
     await activate(injected)
   }
   const addressToUser = async (address)=>{
-    if(!data.network) return
+    if(!data.network || account) return
     setLoadingProfile(true)
     const registerContract = new library.eth.Contract(registerContractABI,data.addresses[data.network]['register'])
     const registered = await registerContract.methods.registered(account).call(res=>res)
@@ -47,7 +46,7 @@ const Sidebar = () => {
     }
   }
   const getUserInfo = async ()=>{
-    if(!data.network) return
+    if(!data.network || account) return
     const registerContract = new library.eth.Contract(registerContractABI,data.addresses[data.network]['register'])
     const registered = await registerContract.methods.registered(account).call(res=>res)
     if(registered){
@@ -71,7 +70,6 @@ const Sidebar = () => {
   useEffect(()=>{
     if(active && chainId === 80001){
       addressToUser(account)
-      console.log(account)
       library.eth.getBalance(account)
       .then(res=>setBalance(res))
       .catch(err=>setBalance("cant' get balance"))
@@ -81,32 +79,23 @@ const Sidebar = () => {
     }
   },[active,account,chainId,data.network])
 
-  const handleNetworkChange = (e)=>{
-    if(window.ethereum){
-        window.ethereum
-            .request({
-              method: "wallet_addEthereumChain",
-              params: data.chains[e.target.value]["params"]
-        })
+  // const handleNetworkChange = (e)=>{
+  //   if(window.ethereum){
+  //       window.ethereum
+  //           .request({
+  //             method: "wallet_addEthereumChain",
+  //             params: data.chains[e.target.value]["params"]
+  //       })
 
-        let chainId = data.chains[e.target.value]["chainIdHex"]
-        window.ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId }],
-        }).then(()=>data.setNetwork(e.target.value))
-    }
-  }
-  useEffect(()=>{
-    const tempChains = []
-    for(let key in data.addresses){
-        if(data.addresses[key].crossChain && data.addresses[key].crossChain.length!==0)
-            tempChains.push(key)
-    }
-    setAvailableChains(tempChains)
-  },[])
-  useEffect(()=>{
-    ref.current.value = data.network;
-  },[data.network])
+  //       let chainId = data.chains[e.target.value]["chainIdHex"]
+  //       window.ethereum.request({
+  //         method: 'wallet_switchEthereumChain',
+  //         params: [{ chainId }],
+  //       }).then(()=>data.setNetwork(e.target.value))
+  //   }
+  // }
+  
+  
   useEffect(()=>{
     if(chainId){
       if(chainId===1)
@@ -119,6 +108,12 @@ const Sidebar = () => {
         data.setNetwork('rinkeby')
     }
   },[chainId])
+  useEffect(()=>{
+    if(window.ethereum){
+      window.ethereum.on('accountsChanged', ()=>window.location.reload())
+    }
+  },[])
+
    // handle logic to recognize the connector currently being activated
    const [activatingConnector, setActivatingConnector] = React.useState()
    React.useEffect(() => {
@@ -170,9 +165,10 @@ const Sidebar = () => {
         </div>
           <div className="w-100" style={{position:'absolute',bottom:'15%',left:'0'}}>
             <div className='w-100 px-4'>
-              <select ref={ref} onChange={handleNetworkChange} className={`w-100 ${styles.select}`}>
+              {/* <select ref={ref} onChange={handleNetworkChange} className={`w-100 ${styles.select}`}>
                   {availableChains.map(item=>(<option key={item} value={item}>{item}</option>))}
-              </select>
+              </select> */}
+              <Select />
             </div>
           </div>
           {active && 

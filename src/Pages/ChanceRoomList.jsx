@@ -51,7 +51,6 @@ const ChanceRoomList = () => {
     &address=${data.addresses[data.network]['factory']}&apikey=YourApiKeyToken
     &topic0=${topic}`)
     .then(res=>{
-      console.log("data is ",res.data.result);
       const data = res.data.result;
       let info = []
       data.map(event=>{
@@ -66,7 +65,6 @@ const ChanceRoomList = () => {
         timeLimit:Web3.utils.toDecimal(timeLimit),
       })}
       )
-      console.log("new Data",info)
       setList(info)
       setCList(info)
     })
@@ -78,7 +76,6 @@ const ChanceRoomList = () => {
         topics: [library.utils.sha3("NewChanceRoom(address,address,uint256,uint256,uint256,uint256)")]
       }, function(error, result){
           if (!error){
-            console.log(result)
             const userLimit = "0x"+result.data.slice(260,322);
             const timeLimit = "0x"+result.data.slice(322,458);
             const commission = "0x"+result.data.slice(208,258);
