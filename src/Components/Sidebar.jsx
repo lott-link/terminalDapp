@@ -80,23 +80,6 @@ const Sidebar = () => {
     }
   },[active,account,chainId,data.network])
 
-  // const handleNetworkChange = (e)=>{
-  //   if(window.ethereum){
-  //       window.ethereum
-  //           .request({
-  //             method: "wallet_addEthereumChain",
-  //             params: data.chains[e.target.value]["params"]
-  //       })
-
-  //       let chainId = data.chains[e.target.value]["chainIdHex"]
-  //       window.ethereum.request({
-  //         method: 'wallet_switchEthereumChain',
-  //         params: [{ chainId }],
-  //       }).then(()=>data.setNetwork(e.target.value))
-  //   }
-  // }
-  
-  
   useEffect(()=>{
     if(chainId){
       if(chainId===1)
@@ -107,6 +90,8 @@ const Sidebar = () => {
         data.setNetwork('mumbai')
       else if(chainId===4)
         data.setNetwork('rinkeby')
+      else if(chainId===4313)
+        data.setNetwork('fuji')
     }
   },[chainId])
   useEffect(()=>{
@@ -151,7 +136,19 @@ const Sidebar = () => {
         </div>}
         <div className="" style={{margin:'0.75rem'}}>
           {account && <div>
-              <div>Wallet Address:</div>
+              <div className="d-flex align-items-center">
+                <div>Wallet Address:</div> 
+                <OverlayTrigger  placement={"bottom"}  overlay={<Tooltip >explore block</Tooltip>}>
+                  <div>
+                    {data.network &&
+                    <a href={data.chains[data.network].params[0].blockExplorerUrls[0]+"/"+"address"+"/"+account} 
+                    target="_blank">
+                      <img src="/explore.svg" className="mx-2" style={{width:'30px',height:'30px'}} alt="explore-icon" />
+                    </a>
+                    }
+                  </div>
+                </OverlayTrigger>
+              </div>
               <OverlayTrigger  placement={"bottom"}  overlay={<Tooltip >copy</Tooltip>}>
                 <div style={{cursor:"pointer"}} className="wallet-address" onClick={()=>navigator.clipboard.writeText(account)}>
                   {account.slice(0,8)+ "..." + account.slice(-8)}
@@ -169,15 +166,12 @@ const Sidebar = () => {
         </div>
           <div className="w-100" style={{position:'absolute',bottom:'15%',left:'0'}}>
             <div className='w-100 px-4'>
-              {/* <select ref={ref} onChange={handleNetworkChange} className={`w-100 ${styles.select}`}>
-                  {availableChains.map(item=>(<option key={item} value={item}>{item}</option>))}
-              </select> */}
               <Select />
             </div>
           </div>
           {active && 
             <div className="w-100 px-4" style={{position:'absolute',bottom:'0',left:'0'}}>
-              <button primary  onClick={deactivate} className="my-2 w-100 wallet-button" style={{background:"#C4C4C4"}}>
+              <button onClick={deactivate} className="my-2 w-100 wallet-button" style={{background:"#C4C4C4"}}>
                 disconecct
               </button>
             </div>

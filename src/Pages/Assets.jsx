@@ -87,7 +87,7 @@ const Assets = () => {
     }
     useEffect(()=>{
         data.network && getERC721()
-    },[data.network])
+    },[data.network,chainId])
     if(tokens.length===0 && !loading) return (
       <div className='w-100 h-100 d-flex justify-content-center align-items-center' > 
         <h1>you don't have any tooken</h1>
@@ -100,7 +100,7 @@ const Assets = () => {
             {
             tokens.map((group,index)=>{
               return (
-                <div key={group[0]} className='px-4 pb-4 my-2'
+                <div key={index} className='px-4 pb-4 my-2'
                  style={{border:'5px double white',overFlow:'auto',position:'relative'}}>
                   <div className='px-2'
                   style={{position:'absolute',top:"-1rem",zIndex:'20',backgroundColor:'black'}}>
@@ -108,7 +108,7 @@ const Assets = () => {
                     <OverlayTrigger key={"index"} placement={"bottom"}  overlay={<Tooltip >explore block</Tooltip>}>
                       <a href={data.chains[data.network].params[0].blockExplorerUrls[0]+"/"+"address"+"/"+ (group[0] && group[0].split(" ")[1])}
                        target="_blank">
-                        <img className='mx-2 mb-1' src="/info.svg" alt="tooltip-info" />
+                        <img className='mx-2 mb-1' style={{width:'31px',height:"31px"}} src="/explore.svg" alt="tooltip-info" />
                       </a>
                     </OverlayTrigger>
                   </div> 

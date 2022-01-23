@@ -10,8 +10,10 @@ export const context = createContext()
 function App() {
   const width = useWidth()
   const [network,setNetwork] = useState('')
+  const [supportedChains,setSupportedChains] = useState([])
   return (
-    <context.Provider value={{addresses,network,setNetwork,chains,converChainIDToName}}>
+    <context.Provider value={{addresses,network,setNetwork,supportedChains,
+      setSupportedChains,chains,converChainIDToName}}>
     <div className="h-100" style={{ position: "relative" }}>
       <h3 className="text-white px-3" id="title">
         Lott.Link

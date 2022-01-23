@@ -41,13 +41,14 @@ const Select = () => {
         break;
       case '/contract/createchanceroom':
         setAvailableChains(checkNetworkSupport("factory"))
+        data.setSupportedChains(checkNetworkSupport("factory"))
         break;
       case '/contract/chanceroomlist':
         break;
       case '/nft/mint':
         setAvailableChains(checkNetworkSupport("NFT"))
         break;
-      case '/nft/asset':
+      case '/assets':
         setAvailableChains(checkNetworkSupport("erc721API"))
         break;
       case '/tools/crosschain':

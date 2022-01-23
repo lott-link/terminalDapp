@@ -8,7 +8,7 @@ import styles from './chanceRoomList.module.css'
 import axios from 'axios'
 import Web3 from "web3";
 const ChanceRoomList = () => {
-  const { active,account,library} = useWeb3React()
+  const { active,account,library, chainId} = useWeb3React()
   const data = useContext(context)
   const [clicked, setClicked] = useState(1);
   const [list,setList] = useState([]);
@@ -46,6 +46,10 @@ const ChanceRoomList = () => {
   //     setEvents(allEvents)
   // }
   const getAllTransactions = ()=>{
+    const currentChain = data.converChainIDToName(chainId)
+    const chains = data.supportedChains.filter(item=> item.chain === currentChain)
+    if(chains.length === 0) return 
+    console.log("chains",chains)
     const topic = Web3.utils.sha3("NewChanceRoom(address,address,uint256,uint256,uint256,uint256)")
     axios.get(`https://api-testnet.polygonscan.com/api?module=logs&action=getLogs&fromBlock=21122189&toBlock=31122189
     &address=${data.addresses[data.network]['factory']}&apikey=YourApiKeyToken
@@ -70,6 +74,9 @@ const ChanceRoomList = () => {
     })
   }
   const subscribe = ()=>{
+    const currentChain = data.converChainIDToName(chainId)
+    const chains = data.supportedChains.filter(item=> item.chain === currentChain)
+    if(chains.length === 0) return 
     library.setProvider(new Web3.providers.WebsocketProvider("wss://rpc-mumbai.maticvigil.com/ws/v1/c94e97b70a9c2127c529d948ce9229b844c4dbdb"))    
     library.eth.subscribe('logs', {
         address: data.addresses[data.network]['factory'],

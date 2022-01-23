@@ -110,5 +110,7 @@ export const converChainIDToName = (chainID)=>{
       return "polygon" 
     case "0x13881":
       return "mumbai"
+    case "0xa869":
+      return "fuji"
   }
 }
