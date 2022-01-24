@@ -43,3 +43,11 @@ body {
     grid-template-columns: 1fr 1fr;
   }
 }
+
+
+/* rect:nth-child(2){
+  rx:20px;
+} */
+.filter {
+  filter: invert(72%) sepia(65%) saturate(5387%) hue-rotate(150deg) brightness(97%) contrast(89%);
+}

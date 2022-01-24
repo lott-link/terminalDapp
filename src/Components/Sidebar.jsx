@@ -143,7 +143,7 @@ const Sidebar = () => {
                     {data.network &&
                     <a href={data.chains[data.network].params[0].blockExplorerUrls[0]+"/"+"address"+"/"+account} 
                     target="_blank">
-                      <img src="/explore.svg" className="mx-2" style={{width:'30px',height:'30px'}} alt="explore-icon" />
+                      <img src="/info2.svg" className="mx-2" alt="explore-icon" />
                     </a>
                     }
                   </div>

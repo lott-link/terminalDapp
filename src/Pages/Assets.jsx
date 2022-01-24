@@ -90,7 +90,7 @@ const Assets = () => {
     },[data.network,chainId])
     if(tokens.length===0 && !loading) return (
       <div className='w-100 h-100 d-flex justify-content-center align-items-center' > 
-        <h1>you don't have any tooken</h1>
+        <h1>you don't have any token</h1>
       </div>
     )
     return (
@@ -108,7 +108,7 @@ const Assets = () => {
                     <OverlayTrigger key={"index"} placement={"bottom"}  overlay={<Tooltip >explore block</Tooltip>}>
                       <a href={data.chains[data.network].params[0].blockExplorerUrls[0]+"/"+"address"+"/"+ (group[0] && group[0].split(" ")[1])}
                        target="_blank">
-                        <img className='mx-2 mb-1' style={{width:'31px',height:"31px"}} src="/explore.svg" alt="tooltip-info" />
+                        <img className='mx-2 mb-1' src="/info2.svg" alt="tooltip-info" />
                       </a>
                     </OverlayTrigger>
                   </div> 

@@ -1,0 +1,12 @@
+.qr-container {
+    width: 350px;
+    height: 350px;
+    background: url('../Assetes/tel_lottlink2.svg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+.svg-parent rect:nth-child(2){
+    rx:20px;
+}
