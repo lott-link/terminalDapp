@@ -19,15 +19,12 @@ const NFTMint = () => {
     const [toSmall,setToSmall] = useState("")
     const [uploadStatus,setUploadStatus] = useState({
       publicFileHash:false,
-      privateFileHash:false
     })
     const [input,setInput] = useState({
         to:account,
         uri:"",
         description:"",
-        privateInfo:"",
         publicFileHash:"",
-        privateFileHash:"",
         name:""
     })
     const handleFileChange = async e =>{
@@ -73,8 +70,7 @@ const NFTMint = () => {
         uri = `https://ipfs.infura.io/ipfs/${json.path}`
       }
       const contract = new library.eth.Contract(contractABI,data.addresses[data.network]["NFT"])
-      contract.methods["safeMint"](input.to,uri,input.description,
-      input.privateInfo,input.publicFileHash,input.privateFileHash).send({from:account})
+      contract.methods["safeMint"](input.to,uri).send({from:account})
       .on("transactionHash",transactionHash=>{
         setMintBtn({loading:true,disabled:true,approving:false})
       })
@@ -141,37 +137,21 @@ const NFTMint = () => {
           </Button>
         </div>
         <div className="d-flex  justify-content-center">
-          {
-            ['description','privateInfo'].map((item,index)=>(
-              <Input
-                key={index}
-                type="text"
-                name={item}
-                onChange={(e)=>setInput({...input,[e.target.name]:e.target.value})}
-                title={item}
-                style={{ width: "21rem" }}
-                value={input[item]}
-              />
-            ))
-          }
-        </div>
-        <div className="d-flex align-items-center">
-            <div className="d-flex align-items-center"> 
+          <Input
+            type="text" name="description"
+            onChange={(e)=>setInput({...input,[e.target.name]:e.target.value})}
+            title="description"
+            style={{ width: "21rem" }}
+            value={input.description}
+          />
+          <div className="d-flex align-items-center"> 
               <input type="file" 
               name="publicFileHash"
               style={{width:'21rem',margin:'1rem',border:'7px double white'}} 
               onChange={handleFileChange}
               />
               {uploadStatus.publicFileHash &&<Spinner animation="border" variant="light" />}
-            </div>
-            <div className="d-flex align-items-center">
-              <input type="file" 
-              name="privateFileHash"
-              style={{width:'21rem',margin:'1rem',border:'7px double white'}}
-              onChange={handleFileChange}
-              />
-              {uploadStatus.privateFileHash && <Spinner animation="border" variant="light" />}
-            </div>
+            </div>  
         </div>
         <div className="align-self-start mx-3 mt-2"><h4>attributes(optional)</h4></div>
         <div className="w-100 d-flex flex-column justify-content-center" style={{maxHeight:"300px",overflowY:'auto'}}>

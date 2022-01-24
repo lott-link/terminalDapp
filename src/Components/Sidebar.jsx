@@ -81,6 +81,7 @@ const Sidebar = () => {
   },[active,account,chainId,data.network])
 
   useEffect(()=>{
+    console.log(chainId)
     if(chainId){
       if(chainId===1)
         data.setNetwork('ethereum')
@@ -90,7 +91,7 @@ const Sidebar = () => {
         data.setNetwork('mumbai')
       else if(chainId===4)
         data.setNetwork('rinkeby')
-      else if(chainId===4313)
+      else if(chainId===43113)
         data.setNetwork('fuji')
     }
   },[chainId])

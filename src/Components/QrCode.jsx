@@ -2,10 +2,10 @@ import React, { useState, useEffect ,useRef } from 'react'
 import QRCodeStyling from "qr-code-styling";
 import styles from './QrCode.styles.module.css'
 import domtoimage from 'dom-to-image';
-const QrCode = ({ profile, background,firstColor,secondColor,rotation,corner,setLink,data}) => {
+const QrCode = ({ profile, background,firstColor,secondColor,rotation,setLink,data}) => {
     const [options, setOptions] = useState({
       width: 252,
-      height: 252,
+      height: 282,
       type: "svg",
       data,
       // image: "/lottlink-cropped.svg",
@@ -30,14 +30,14 @@ const QrCode = ({ profile, background,firstColor,secondColor,rotation,corner,set
       backgroundOptions: {
         color: "white",
       },
-      cornersSquareOptions: {
-        color:corner,
-        type: "square",
-      },
-      cornersDotOptions: {
-        color: corner,
-        type: "square",
-      },
+      // cornersSquareOptions: {
+      //   color:corner,
+      //   type: "square",
+      // },
+      // cornersDotOptions: {
+      //   color: corner,
+      //   type: "square",
+      // },
     });
     const [qrCode] = useState(new QRCodeStyling(options));
     const ref = useRef(null);
@@ -67,7 +67,7 @@ const QrCode = ({ profile, background,firstColor,secondColor,rotation,corner,set
           </div>
           <div ref={ref} className={styles["svg-parent"]} />
         </div>
-        <div style={{ position: "absolute",bottom:'50px'}}>
+        <div style={{ position: "absolute",bottom:'45px'}}>
             <div className={`d-flex align-items-center`}>
               <img style={{width:'30px',height:'30px'}} className='filter' src="/lottlinkSingle-cropped.svg" alt="" />
               <div style={{color:"#0eb2cc"}} className='mx-2'>

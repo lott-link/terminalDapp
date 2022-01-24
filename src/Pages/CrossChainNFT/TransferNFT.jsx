@@ -16,16 +16,21 @@ const TransferNFT = ({selectedToken,transferBtn,setTransferBtn,
     const [addressSmall,setAddressSmall] = useState("")
     const [targetChain,setTargetChain] = useState("")
     const ref2 = useRef(null)
-    const transfer = ()=>{
+    const transfer = async ()=>{
         if(address.length===0){
             setAddressSmall("address can't be empty")
             return
         }
+        console.log("targetchain",targetChain)
+        const tempContract = new library.eth.Contract(abi,data.addresses[data.network]["crossChain"])
+        const tempFee = await tempContract.methods.mintFee(targetChain).call();
+        console.log("tempFee",tempFee)
+
         setTransferBtn({...transferBtn,disabled:true,approving:true})
         const contract = new library.eth.Contract(abi,data.addresses[data.network]["crossChain"])
         contract.methods.requestTransferCrossChain(
         selectedToken.contractAddress,account,targetChain,address
-        ,selectedToken.tokenID,0).send({from:account,value:parseInt(fee)})
+        ,selectedToken.tokenID,account).send({from:account,value:parseInt(tempFee)})
         .on("transactionHash",transactionHash=>{
             setTransferBtn({...transferBtn,loading:true,approving:false})
         })
@@ -85,28 +90,32 @@ const TransferNFT = ({selectedToken,transferBtn,setTransferBtn,
     }
     const handleTarget = (e)=>{
         setTargetChain(
-            data.chains[e.target.value]["chainIdDecimal"]
+            data.chains[e.target.value]["chainIdHex"]
         )
     }
-    const getFee = async ()=>{
-        // if(!active) return;
-        // if(!data.network) return;
-        // const contract = new library.eth.Contract(abi,data.addresses[data.network]["crossChain"])
-        // const tempFee = await contract.methods.getFee(targetChain).call();
-        setFee(0)
+    const mintFee = async ()=>{
+        if(!active) return;
+        if(!data.network || data.chains) return;
+        const contract = new library.eth.Contract(abi,data.addresses[data.network]["crossChain"])
+        const tempFee = await contract.methods.mintFee(data.chains[targetChain]["chainIdHex"]).call();
+        console.log("tempfee",tempFee)
+        setFee(tempFee)
     }
     const setTarget = ()=>{
         if(selectedWay===false){
             const contract = new library.eth.Contract(abi,data.addresses[data.network]["crossChain"])
-            contract.methods.getLockedTokenData(selectedToken.tokenID).then(res=>{
-                setTargetChain(res.chainId)
+            contract.methods.getLockedTokenData(selectedToken.tokenID).call().then(res=>{
+                console.log(res)
+                if(res.chainId==='4')
+                    setTargetChain("0x4")
+                // if(res.chainId==='4')
                 ref2.current.value = data.converChainIDToName(res.chainId)
             })
         }
         else {
             ref2.current.value = data.network;
             data.network &&
-            setTargetChain(data.chains[data.network]["chainIdDecimal"])
+            setTargetChain(data.chains[data.network]["chainIdHex"])
         }
     }
     useEffect(()=>{
@@ -117,7 +126,7 @@ const TransferNFT = ({selectedToken,transferBtn,setTransferBtn,
         }
     },[data.network])
     useEffect(()=>{
-        if(targetChain) getFee()
+        if(targetChain) mintFee()
     },[targetChain])
     useEffect(()=>{
         const tempAllChains = []
