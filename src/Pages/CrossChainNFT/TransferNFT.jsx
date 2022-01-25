@@ -21,16 +21,16 @@ const TransferNFT = ({selectedToken,transferBtn,setTransferBtn,
             setAddressSmall("address can't be empty")
             return
         }
-        console.log("targetchain",targetChain)
-        const tempContract = new library.eth.Contract(abi,data.addresses[data.network]["crossChain"])
-        const tempFee = await tempContract.methods.mintFee(targetChain).call();
-        console.log("tempFee",tempFee)
+        // console.log("targetchain",targetChain)
+        // const tempContract = new library.eth.Contract(abi,data.addresses[data.network]["crossChain"])
+        // const tempFee = await tempContract.methods.mintFee(targetChain).call();
+        // console.log("tempFee",tempFee)
 
         setTransferBtn({...transferBtn,disabled:true,approving:true})
         const contract = new library.eth.Contract(abi,data.addresses[data.network]["crossChain"])
         contract.methods.requestTransferCrossChain(
         selectedToken.contractAddress,account,targetChain,address
-        ,selectedToken.tokenID,account).send({from:account,value:parseInt(tempFee)})
+        ,selectedToken.tokenID,account).send({from:account,value:parseInt(fee)})
         .on("transactionHash",transactionHash=>{
             setTransferBtn({...transferBtn,loading:true,approving:false})
         })
@@ -52,7 +52,7 @@ const TransferNFT = ({selectedToken,transferBtn,setTransferBtn,
         setTransferBtn({...transferBtn,disabled:true,approving:true})
         const contract = new library.eth.Contract(abi,data.addresses[data.network]["crossChain"])
         contract.methods.requestReleaseLockedToken(
-        selectedToken.tokenID,address,0).send({from:account,value:parseInt(fee)})
+        selectedToken.tokenID,address,account).send({from:account,value:parseInt(fee)})
         .on("transactionHash",transactionHash=>{
             setTransferBtn({...transferBtn,loading:true,approving:false})
         })
@@ -92,13 +92,16 @@ const TransferNFT = ({selectedToken,transferBtn,setTransferBtn,
         setTargetChain(
             data.chains[e.target.value]["chainIdHex"]
         )
+        console.log("some shit changed")
+        mintFee()
     }
     const mintFee = async ()=>{
-        if(!active) return;
-        if(!data.network || data.chains) return;
+        if(!active || !selectedWay) return;
+        if(!data.network || !data.chains) return;
+        console.log(targetChain)
         const contract = new library.eth.Contract(abi,data.addresses[data.network]["crossChain"])
-        const tempFee = await contract.methods.mintFee(data.chains[targetChain]["chainIdHex"]).call();
-        console.log("tempfee",tempFee)
+        console.log("some shit happens here",targetChain)
+        const tempFee = await contract.methods.mintFee(data.chains[data.converChainIDToName(targetChain)]["chainIdHex"]).call();
         setFee(tempFee)
     }
     const setTarget = ()=>{
@@ -106,10 +109,10 @@ const TransferNFT = ({selectedToken,transferBtn,setTransferBtn,
             const contract = new library.eth.Contract(abi,data.addresses[data.network]["crossChain"])
             contract.methods.getLockedTokenData(selectedToken.tokenID).call().then(res=>{
                 console.log(res)
-                if(res.chainId==='4')
-                    setTargetChain("0x4")
-                // if(res.chainId==='4')
-                ref2.current.value = data.converChainIDToName(res.chainId)
+                setTargetChain(data.converChainIDToName(parseInt(res.chainId)))
+                console.log(data.converChainIDToName(parseInt(res.chainId)))
+                setFee(res.releaseGasFee)
+                ref2.current.value = data.converChainIDToName(parseInt(res.chainId))
             })
         }
         else {
@@ -168,12 +171,12 @@ const TransferNFT = ({selectedToken,transferBtn,setTransferBtn,
                 <div className="text-center text-dark">
                     {!isSafeTransfer &&
                     <div className="bg-white d-flex justify-content-around align-items-center " style={{margin:"0 40px"}}>
-                        <div className='d-flex w-50'>
+                        <div className='d-flex '>
                             <div className="mx-4">{fee}</div>
-                            <div><img  style={{width:'25px',height:'25px'}}
+                            <div><img  style={{minWidth:'25px',minHeight:'25px'}}
                             src={data.network && data.chains[data.network].icon} alt="" /></div>
                         </div>
-                        <div className="w-50">
+                        <div className="">
                         { selectedWay ?
                         <Button onClick={transfer} secondary>
                         Safe Mint CrossChain

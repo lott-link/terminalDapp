@@ -103,16 +103,26 @@ export const chains = {
    }
 }
 export const converChainIDToName = (chainID)=>{
-  switch(chainID){
-    case "0x1":
-      return "ethereum"
-    case "0x4":
-      return "rinkeby"
-    case "0x89":
-      return "polygon" 
-    case "0x13881":
-      return "mumbai"
-    case "0xa869":
-      return "fuji"
-  }
+  if(["0x1",1].includes(chainID))
+    return "ethereum"
+  else if(["0x4",4].includes(chainID))
+    return "rinkeby"
+  else if(["0x89",137].includes(chainID))
+    return "polygon" 
+  else if(["0x13881",80001].includes(chainID))
+    return "mumbai"
+  else if(["0xa869",4313].includes(chainID))
+    return "fuji"
+  // switch(chainID){
+  //   case "0x1":
+  //     return "ethereum"
+  //   case "0x4":
+  //     return "rinkeby"
+  //   case "0x89":
+  //     return "polygon" 
+  //   case "0x13881":
+  //     return "mumbai"
+  //   case "0xa869":
+  //     return "fuji"
+  // }
 }

@@ -21,7 +21,6 @@ const Assets = () => {
         setTokens([])
         if(!data.network) return
         const array = await axios.get(`${data.addresses[data.network]["erc721API"]}${account}`).then(res=>res.data.result)
-        console.log(array)
         let ids = array.map(token=>token.tokenID+token.contractAddress)
         ids = Array.from(new Set(ids))
         const counts = new Array(ids.length).fill(0)
@@ -82,8 +81,6 @@ const Assets = () => {
         const contractName = await contract.methods.name().call()
         finalObj[contractName + " " + key ] = result[key] 
       }
-      console.log(result)
-      console.log(finalObj)
       setTokens(Object.entries(finalObj))
     }
     useEffect(()=>{
@@ -218,11 +215,11 @@ const AccordionComponent = ({property})=>{
 const DropDownComponent = ({token})=>{
   const history = useHistory()
   const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
-    <a href="" ref={ref} onClick={(e) => {e.preventDefault();onClick(e);}}
+    <span href="" ref={ref} onClick={(e) => {e.preventDefault();onClick(e);}}
     style={{textDecoration:'none',color:'gray'}}
     >
       {children}
-    </a>
+    </span>
   ));
   return (
     <Dropdown className="d-inline mx-2">
@@ -231,7 +228,7 @@ const DropDownComponent = ({token})=>{
         <span style={{position:'relative',left:'180px'}}>...</span>
         <Dropdown.Menu align="end">
           <Dropdown.Item onClick={()=>history.push({pathname:"/tools/crosschain",state:{token,type:"transfer"}})}>transfer</Dropdown.Item>
-          <Dropdown.Item onClick={()=>history.push({pathname:"/tools/crosschain",state:{token,tyep:"crossChain"}})}>cross chain</Dropdown.Item>
+          <Dropdown.Item onClick={()=>history.push({pathname:"/tools/crosschain",state:{token,type:"crossChain"}})}>cross chain</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown.Toggle>
     </Dropdown>

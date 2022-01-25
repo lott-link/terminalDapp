@@ -43,16 +43,22 @@ const NFTCrossChain = ({props}) => {
             setSelectedToken(location.state.token)
             if(location.state.type === "crossChain"){
                 if(location.state.token.contractAddress.toLowerCase() !== data.addresses[data.network]["crossChain"].toLowerCase()){
+                    //when the nft is from another contract
+                    //and we want to mint it with our crosschain contract
                     setCircles([true,true,false])
                     setStages([false,true,false])
                     setSelectedWay(true)
                 }else{
+                    //when nft is from crosschain contract and we
+                    //want to release it give it back to it's last
+                    //contract
                     setCircles([true,true,false])
                     setStages([false,true,false])
                     setSelectedWay(false)
                 }
             }
             else if(location.state.type === "transfer"){
+                //coming from asset page
                 setIsSafeTransfer(true)
                 setCircles([true,true,true])
                 setStages([false,false,true])
@@ -60,6 +66,7 @@ const NFTCrossChain = ({props}) => {
             }
         }
         if(location.pathname === "/tools/transfer"){
+            //coming from transfer standAlone page
             setIsSafeTransfer(true)
             setCircles([true,false])
             setStages([false,true,false])

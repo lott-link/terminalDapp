@@ -11,7 +11,7 @@ const HomePage = () => {
                 <div style={{whiteSpace:'pre'}}>  ███████  ██████     ██       ██    ██ ███████ ██ ██   ████ ██   ██    </div>
                 <div style={{whiteSpace:'pre'}}></div>
                 <div style={{whiteSpace:'pre'}}> ================ Open source smart contract on EVM ===================</div>
-                <div style={{whiteSpace:'pre'}}>  =============== Verify Random Function by ChanLink ================</div>
+                <div style={{whiteSpace:'pre'}}>  =============== Verify Random Function by ChainLink ================</div>
             </div>
         </div>
     )
