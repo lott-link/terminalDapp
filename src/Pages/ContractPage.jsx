@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useWeb3React } from "@web3-react/core";
 import { factoryContractAddress } from '../Contracts/ContractAddress'
 import { factoryContractABI,registerContractABI } from '../Contracts/ContractsABI'
 import Button from '../Components/styled/Button'
 import Input from '../Components/styled/input';
+import { OverlayTrigger, Tooltip} from 'react-bootstrap'
+import { context } from '../App';
 const ContractPage = () => {
     const {account,chainId,active,library} = useWeb3React()
     const [buttonDisabled, setButtonDisabled] = useState(true)
@@ -15,23 +17,21 @@ const ContractPage = () => {
     const [infoFields,setInfoFields] = useState([])
     const [userInfo,setUserInfo] = useState()
     const [now,setNow] = useState(0)
-    const [mode, setMode] = useState(0)
     const [error,setError] = useState()
     const [signedIn,setSignedIn] = useState(false)
     const [payableAmount,setPayableAmount] = useState(0)
     const [presenter,setPresenter] = useState()
     const [loadingMsg,setLoadingMsg] = useState()
+    const data = useContext(context)
     const estimatedTime = 15;
       const parseUserInfo = (info)=>{
         if(info){
             let data = info.replaceAll("\'","\"")
             data = JSON.parse(data.slice(1,data.length-1))
+            console.log(data)
             const fields = []
-            for(const key in data){
-                if (infoOptions.includes(key)){
-                    fields.push({key,value:data[key]})
-                }
-            }
+            for(const key in data)
+                fields.push({key,value:data[key]})
             setInfoFields(fields)
         }
       }
@@ -53,12 +53,7 @@ const ContractPage = () => {
         values.splice(index,1)
         setInfoFields(values)
     }
-    const infoOptions = ['telegram', 'phone number', 'email']
-    const optionPlaceholder = {
-        telegram:"Enter telegram id",
-        'phone number':"Enter phone number",
-        email:'Enter email address'
-    }
+    const infoOptions = ['Telegram', 'Phone number', 'Email','Website','Facebook','Instagram']
     const addOptionInput = (option)=>{
         const values = [...infoFields]
         const keys = values.map(item => item.key)
@@ -71,6 +66,11 @@ const ContractPage = () => {
         const data = {}
         infoFields.forEach(item=>data[item.key] = item.value)
         return data;
+    }
+    const hanleOption = (option)=>{
+        const index = infoFields.findIndex(item=>item.key.toLowerCase() === option.toLowerCase())
+        if(index!==-1) handleRempveField(index)
+        else addOptionInput(option)
     }
     //****** Contract Read methods start********/
     const addressToUser = async (address)=>{
@@ -136,7 +136,7 @@ const ContractPage = () => {
         }else{
             let data = getInfoFieldsData()
             data = JSON.stringify(data).replaceAll("\"","\'")
-            const value = mode === 0 ? 0 : payableAmount;
+            const value = payableAmount;
             registerContract.methods.signIn(input,JSON.stringify(data),presenter).send({from:account,value})
             .on("transactionHash",transactionHash=>{
                 setLoadingMsg('Wating to comfirm')
@@ -187,19 +187,8 @@ const ContractPage = () => {
     }
     //****** Contract Write methods end********/
     const handleUserName = (e)=>{
-        if(mode===0){
-            if(e.target.value[0]!=='_')
-                setInput("_"+e.target.value)
-            else
-                setInput(e.target.value)
-        }
-        else{
-            setInput(e.target.value)
-        }
+        setInput(e.target.value)
     }
-    useEffect(()=>{
-        setInput("")
-    },[mode])
     useEffect(()=>{
         setInfoFields([])
         if(active){
@@ -232,52 +221,65 @@ const ContractPage = () => {
                 </div>
             </div>
             <div style={{height:'80%',overflowY:"auto"}} className="px-4 text-center">
-                {active && !signedIn && <div>
-                    <button onClick={()=>setMode(0)} className="select-button" style={{backgroundColor:mode === 0 ? "#1919b8":"#020227",transition:'0.2s'}}>_Regular</button>
-                    <button onClick={()=>setMode(1)} className="select-button" style={{backgroundColor:mode === 1 ? "#1919b8":"#020227",transition:'0.2s'}}>Pure</button>
-                </div>}
                 {active && (signedIn ? 
                     <div className="my-2">username:{userName}</div> : loadingProfile ? 
                         <div>loading...</div> : 
                             <div className="my-2">
                                 <div className="d-flex flex-column align-items-center">
-                                        {/* <Input style={{width:'24rem'}} small={`enter a name${mode===0 ? ", it automatically start with _":""}`}
-                                        value={input}  placeholder="Enter username" type="text" onChange={handleUserName} /> */}
-                                        <Input style={{width:'24rem'}} small={`enter a name${mode===0 ? ", it automatically start with _":""}`}
-                                        value={input}  title="Enter username" type="text" onChange={handleUserName} />
-                                        <Input style={{width:"24rem"}} small="enter username of your presenter, as default Lott.Link" 
-                                        value={presenter} title="presenter" type="text" onChange={e=>setPresenter(e.target.value)}/>
-                                        <Input style={{width:"24rem"}} className="text-center my-1" type="text" disabled={true} value={`Payable Amount:${mode===0 ? "0":payableAmount}`} />
+                                    <Input style={{width:'24rem'}} small={`enter a name`}
+                                    value={input}  title="Enter username" type="text" onChange={handleUserName} />
+                                    <Input style={{width:"24rem"}} small="enter username of your presenter, as default Lott.Link" 
+                                    value={presenter} title="presenter" type="text" onChange={e=>setPresenter(e.target.value)}/>
+                                    <Input style={{width:"24rem"}} className="text-center my-1" type="text" disabled={true} value={`Payable Amount:${payableAmount}`} />
                                 </div>
                                 {sendInfoLoading && <span>loading...</span>}
                             </div>)
                 }            
-                <div className="my-2">{infoOptions.map((option,index)=><Button primary className="mx-1" disabled={buttonDisabled} onClick={()=>addOptionInput(option)} key={index}>{option}</Button>)}</div>
-                
                 {active && (infoFields.length===0 && <div>there is no info</div>)}
-                <div className="container">
+                <div className="container">{console.log("infoFields",infoFields)}
                     {infoFields.map((item,index)=>{
                         return (
-                            <div key={index} className="d-flex justify-content-center my-3">
-                                <div className=""></div>
-                                <div style={{width:'13%'}} className=" d-flex justify-content-end align-items-center">{item.key}:</div>
+                            <div key={index} className="d-flex justify-content-center">
                                 <div>
-                                    <Input style={{width:'24rem'}} title={optionPlaceholder[item.key]} className=""  onChange={event=>handleInputChange(index,event)} name="value" value={item.value} type="text" />
+                                    <Input style={{width:'24rem'}} title={item.key.slice(0,1).toUpperCase()+item.key.slice(1,item.key.length)} className=""  onChange={event=>handleInputChange(index,event)} name="value" value={item.value} type="text" />
                                 </div>
-                                <div className="d-flex align-items-center"><Button primary  onClick={()=>handleRempveField(index)}>remove</Button></div>
                             </div>
                         )
                     })}
                     {/* button when user not signed in */}
+                     <div className="my-2 mx-auto" style={{width:'24rem'}}>
+                         {infoOptions.map((option,index)=><Button primary className="mx-1" disabled={buttonDisabled} onClick={()=>hanleOption(option)} key={index}>{option}</Button>)}
+                    </div>
                     { active && !signedIn && !loadingProfile &&
-                        <div className="d-flex flex-column align-items-center">
-                            <Button secondary style={{width:'24rem'}} className="" onClick={signIn} disabled={sendInfoDisabled} >
-                            sign in and setInfo
-                            </Button>
+                    <div className="d-flex flex-column align-items-center">
+                        <div className="bg-white text-dark d-flex justify-content-around align-items-center " style={{margin:"0 40px"}}>
+                            <div className='d-flex '>
+                                <OverlayTrigger  placement={"bottom"}  overlay={<Tooltip >{payableAmount} wei</Tooltip>}>
+                                    <div className="mx-4">{(payableAmount/10e18).toFixed(4)}</div>
+                                </OverlayTrigger>
+                                <div>
+                                    <img  style={{width:'25px',weight:'25px'}}
+                                    src={data.network && data.chains[data.network].icon} alt="" />
+                                </div>
+                            </div>
+                            <div>
+                                <Button secondary style={{width:'16rem'}} className="" onClick={signIn} disabled={sendInfoDisabled} >
+                                sign in and setInfo
+                                </Button>
+                            </div>
                         </div>
+                    </div>
                     }
                     {/* button when user signed in and want to send info */}
-                    {infoFields.length !== 0 && signedIn && <div><Button secondary style={{width:'272px'}} disabled={sendInfoDisabled} onClick={sendInfo}>send info</Button>{sendInfoLoading && <span>loading...</span>}</div>}
+                    {infoFields.length !== 0 && signedIn && 
+                    <div className="d-flex flex-column align-items-center">  
+                        <div>
+                            <Button secondary style={{width:'222px'}} disabled={sendInfoDisabled} onClick={sendInfo}>
+                            send info
+                            </Button>
+                        </div>{sendInfoLoading && <span>loading...</span>}
+                    </div>
+                    }
                     {error && 
                         <div>
                             <div className="text-danger">{error}</div>
