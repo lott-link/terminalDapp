@@ -6,6 +6,7 @@ import { context } from '../../App'
 import { useWeb3React } from '@web3-react/core'
 import ProgressBar from '../../Components/ProgressBar'
 import { crossChainNFTABI as abi, NFTContractABI } from '../../Contracts/ContractsABI'
+import { OverlayTrigger, Tooltip} from 'react-bootstrap'
 const TransferNFT = ({selectedToken,transferBtn,setTransferBtn,
                         setStages,setCircles,selectedWay,isSafeTransfer})=>{
     const { active, account, library } = useWeb3React()
@@ -172,8 +173,10 @@ const TransferNFT = ({selectedToken,transferBtn,setTransferBtn,
                     {!isSafeTransfer &&
                     <div className="bg-white d-flex justify-content-around align-items-center " style={{margin:"0 40px"}}>
                         <div className='d-flex '>
-                            <div className="mx-4">{fee}</div>
-                            <div><img  style={{minWidth:'25px',minHeight:'25px'}}
+                            <OverlayTrigger  placement={"bottom"}  overlay={<Tooltip >{fee} wei</Tooltip>}>
+                                <div className="mx-4">{(fee/10e18).toFixed(4)}</div>
+                            </OverlayTrigger>
+                            <div><img  style={{width:'25px',weight:'25px'}}
                             src={data.network && data.chains[data.network].icon} alt="" /></div>
                         </div>
                         <div className="">

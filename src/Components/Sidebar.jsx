@@ -69,10 +69,12 @@ const Sidebar = () => {
     }
   }
   useEffect(()=>{
-    if(active && chainId === 80001){
-      addressToUser(account)
+    if(active){
       library.eth.getBalance(account)
       .then(res=>setBalance(res))
+    }
+    if(active && chainId === 80001){
+      addressToUser(account)
       .catch(err=>setBalance("cant' get balance"))
         getUserInfo()
     }else{
@@ -161,7 +163,9 @@ const Sidebar = () => {
             <div>balance:</div>
             <div className="d-flex align-items-center">
               <div className="circle"></div>
-              <div className="mx-1">{balance}</div>
+              <OverlayTrigger  placement={"bottom"}  overlay={<Tooltip >{balance} wei</Tooltip>}>
+                <div className="mx-1">{(balance/10E18).toFixed(4)}</div>
+              </OverlayTrigger>
             </div> 
           </div>}
         </div>
