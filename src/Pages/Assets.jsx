@@ -54,6 +54,7 @@ const Assets = () => {
         const contract = new library.eth.Contract(contractABI,contractAddress)
         const tokenURI = await contract.methods.tokenURI(tokenID).call(res=>res)
         const tokenJson = await axios.get(tokenURI).then(res=>res.data)
+        console.log("tokenJSON",tokenJson)
         const data = {
           name:tokenJson.name,
           description:tokenJson.description,
@@ -61,7 +62,8 @@ const Assets = () => {
           tokenID,
           contractAddress,
           chainId,
-          attributes:tokenJson.attributes
+          attributes:tokenJson.attributes,
+          interaction:tokenJson.interaction ? tokenJson.interaction : "noInteraction"
         }
         localStorage.setItem(contractAddress+tokenID,JSON.stringify(data))
         return data
@@ -132,15 +134,45 @@ export default Assets
 
 
 const NFTCard = ({token})=>{
+    const { library , account} = useWeb3React()
     const [loading,setLoading] = useState(true)
     const handleLoad = ()=> setLoading(false)
     const [info,setInfo] = useState([])
     useEffect(()=>{
       for(let key in token){
-        if(key!=="chainId" && key!== "tokenID" && key!== "contractAddress" && key!=='image')
-          setInfo(prev=>[...prev,[key,token[key]]])
+        // if(key!=="chainId" && key!== "tokenID" && key!== "contractAddress" && key!=='image')
+        if(!["chainId","tokenID","contractAddress","image","interaction"].includes(key))
+        setInfo(prev=>[...prev,[key,token[key]]])
       }
     },[])
+    const handleChange = (e, item) => {
+      console.log(item)
+      if (item.params) {
+        item.params = { ...item.params, [e.target.name]: e.target.value };
+      } else {
+        item.params = { [e.target.name]: e.target.value };
+      }
+    };
+    const call = (item) => {
+      const args = paramOrder(item);
+      console.log(args, item);
+      const contract = new library.eth.Contract([item], token.contractAddress);
+      contract.methods[item.name](...args)
+        .call()
+        .then((res) => console.log(res));
+    };
+    const write = (item) => {
+      const contract = new library.eth.Contract([item], token.contractAddress);
+      contract.methods[item.name]()
+        .send({ from: account })
+        .then((res) => console.log(res));
+    };
+    const paramOrder = (item) => {
+      const arr = [];
+      for (let i = 0; i < item.inputs.length; i++)
+        arr.push(item.params[item.inputs[i].name]);
+      return arr;
+    };
     return (
         <div style={{width:'275px'}}>
             <div style={{backgroundColor:"#C4C4C4"}}>
@@ -153,7 +185,53 @@ const NFTCard = ({token})=>{
             <div className='bg-white text-dark px-2 py-3' style={{width:"275px",minHeight:'130px'}}>
             {
               info.map((property,index)=> <AccordionComponent key={index} property={property} />)
-            }              
+            }     
+            {token.interaction !=="noInteraction" &&
+            <>
+              <div>
+                {token.interaction.read.map((item, index) => {
+                return (
+                  <div key={index}>
+                    <div>
+                      <label htmlFor="">{item.name}</label>
+                    </div>
+                    {item.inputs.map((element, index2) => {
+                      return (
+                        <input
+                          key={index2 * 1000}
+                          type="text"
+                          placeholder={element.name}
+                          name={element.name}
+                          onChange={(e) => handleChange(e, item)} />);
+                            })}
+                        <button onClick={() => call(item)}>call</button>
+                  </div>
+                  );
+                  })}
+              </div>
+              <div>
+              {token.interaction.write.map((item, index) => {
+                return (
+                  <div key={index * -1}>
+                    <label htmlFor="">{item.name}</label>
+                    {item.inputs.map((element, index2) => {
+                      return (
+                        <input
+                          key={index2 * 1000}
+                          type="text"
+                          placeholder={element.name}
+                          name={element.name}
+                          onChange={(e) => handleChange(e, item)}
+                        />
+                      );
+                    })}
+                    <button onClick={() => write(item)}>write</button>
+                  </div>
+                );
+              })}
+            </div>
+              </>
+              }         
             </div>
         </div>
     )
@@ -183,7 +261,8 @@ const AccordionComponent = ({property})=>{
   useEffect(()=>{
     if(typeof property[1] !== "object") return
     for(let key in property[1]){
-      if(key!=="chainId" && key!== "tokenID" && key!== "contractAddress" && key!=='image')
+      // if(key!=="chainId" && key!== "tokenID" && key!== "contractAddress" && key!=='image')
+      if(!["chainId","tokenID","contractAddress","image","interaction"].includes(key))
         setInfo(prev=>[...prev,[property[1][key].trait_type,property[1][key].value]])
     }
   },[])

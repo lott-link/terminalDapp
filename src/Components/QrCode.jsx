@@ -2,7 +2,7 @@ import React, { useState, useEffect ,useRef } from 'react'
 import QRCodeStyling from "qr-code-styling";
 import styles from './QrCode.styles.module.css'
 import domtoimage from 'dom-to-image';
-const QrCode = ({ profile, background,firstColor,secondColor,rotation,data,qr}) => {
+const QrCode = ({ profile, background,firstColor,secondColor,rotation,data,qr,text}) => {
     const [options, setOptions] = useState({
       width: 252,
       height: 282,
@@ -61,7 +61,7 @@ const QrCode = ({ profile, background,firstColor,secondColor,rotation,data,qr}) 
             <div className={`d-flex align-items-center`}>
               <img style={{width:'30px',height:'30px'}} className='filter' src="/lottlinkSingle-cropped.svg" alt="" />
               <div style={{color:"#0eb2cc"}} className='mx-2'>
-                {data}
+                {text}
               </div>
             </div>
         </div>

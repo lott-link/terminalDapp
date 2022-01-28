@@ -32,6 +32,7 @@ const ContractPage = () => {
     const [link,setLink] = useState("")
     const [userValid,setUserValid] = useState(false)
     const [showQr,setShowQr] = useState(false)
+    const [availableChains,setAvailableChains] = useState([])
     const data = useContext(context)
     const estimatedTime = 15;
       const parseUserInfo = (info)=>{
@@ -146,8 +147,8 @@ const ContractPage = () => {
         //creating uri object
         const obj = {
             image:baseUrl + qrImage.path,
-            name:input.split("@")[0],
-            attributes:[{trait_type:"dapp",value:"tapp v1.0"},{time:new Date().getTime()}],
+            name:"@" + input.split("@")[0],
+            attributes:[{trait_type:"dapp",value:"tapp v1.0"},{trait_type:"time",value:new Date().getTime()}],
             interaction:interaction
         }
         const uri = await client.add(JSON.stringify(obj))
@@ -263,6 +264,15 @@ const ContractPage = () => {
         setInput("@" + data.converChainIDToName(chainId))
     },[chainId])
 
+    useEffect(()=>{
+        const tempChains = []
+        for(let key in data.addresses){
+            if(data.addresses[key].register && data.addresses[key].register.length!==0)
+                tempChains.push(key)
+        }
+        setAvailableChains(tempChains)
+    },[])
+
     const qr = useRef(null)
 
     if(!active)
@@ -274,8 +284,20 @@ const ContractPage = () => {
                 <div></div>{console.log(data)}
                 <div>Sign In</div>
                 <div className="d-flex">
-                    <div className="circle mx-1"></div>
-                    <div className="circle"></div>
+                {
+                availableChains.map((chain,index)=> (
+                    <OverlayTrigger key={index} placement={"bottom"}  overlay={<Tooltip >{chain}</Tooltip>}>
+                    <div className="mx-1">
+                        <a href={data.chains[chain].params[0].blockExplorerUrls[0]+"/"+"address"+"/"+data.addresses[chain].crossChain}
+                            target="_blank"
+                        >
+                            <img style={{width:'20px',height:'20px'}} src={data.chains[chain].icon} alt={chain+"icon"} />  
+                        </a>
+                    </div>
+                    </OverlayTrigger>
+                    )
+                )
+                }
                 </div>
             </div>
             <div style={{height:'80%',overflowY:"auto"}} className="px-4 text-center">
@@ -288,7 +310,6 @@ const ContractPage = () => {
                                     value={input}  title="Enter username" type="text" onChange={handleUserName} />
                                     <Input style={{width:"24rem"}} small="enter username of your referral, as default Lott.Link" 
                                     value={referral} title="referral" type="text" onChange={e=>setReferral(e.target.value)}/>
-                                    <Input style={{width:"24rem"}} className="text-center my-1" type="text" disabled={true} value={`Payable Amount:${payableAmount}`} />
                                 </div>
                                 {sendInfoLoading && <span>loading...</span>}
                             </div>)
@@ -362,13 +383,13 @@ const ContractPage = () => {
                 }
                 <div className='d-flex justify-content-center mt-4' style={{position:"absolute",top:'30%',left:'32%',zIndex:showQr?1:-1}}>
                     {chainId === 43113 &&
-                         <QrCode profile="/avalanche.svg" background="avalanche" qr={qr}
-                        firstColor="#8E292F" secondColor="#F35C64"  data={input}
+                         <QrCode profile="/avalanche.svg" background="avalanche" qr={qr} text={input}
+                        firstColor="#8E292F" secondColor="#F35C64"  data={"https://lott.link/"+input.split("@")[1]+ "/" +input.split("@")[0]}
                         rotation="90"/>
                     }
                     {chainId === 4 &&
-                        <QrCode profile="/eth.svg" background="eth" qr={qr} 
-                        firstColor="#7F7F7F" secondColor="#010101"  data={input}
+                        <QrCode profile="/eth.svg" background="eth" qr={qr} text={input} 
+                        firstColor="#7F7F7F" secondColor="#010101"  data={"https://lott.link/"+input.split("@")[1]+ "/" +input.split("@")[0]}
                         rotation="225"/>
                     }
                 </div>
@@ -389,15 +410,6 @@ export default ContractPage
 const interaction = {
     read:[
         {
-            "inputs": [],
-            "name": "withdraw",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        }
-    ],
-    write:[
-        {
             "inputs": [
                 {
                     "internalType": "uint256",
@@ -414,6 +426,15 @@ const interaction = {
                 }
             ],
             "stateMutability": "view",
+            "type": "function"
+        } 
+    ],
+    write:[
+        {
+            "inputs": [],
+            "name": "withdraw",
+            "outputs": [],
+            "stateMutability": "nonpayable",
             "type": "function"
         }
     ]
