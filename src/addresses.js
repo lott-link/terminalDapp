@@ -16,12 +16,14 @@ export const addresses = {
     rinkeby:{
       NFT:"0xFE7FC1F36fBF10328F2E898b9487F9BD4ddA4287",
       erc721API:"https://api-rinkeby.etherscan.io/api?module=account&action=tokennfttx&startblock=0&endblock=999999999&sort=asc&apikey=WPZTIVDHXFF48WJ7UDAIE893S7WAVG6DSU&address=",
-      crossChain:"0x64DfA1B8A8392E3c93f6Df96b5EbB01A1bB13e94"
+      crossChain:"0x64DfA1B8A8392E3c93f6Df96b5EbB01A1bB13e94",
+      register:"0xe415F45062C387faa1d09F73C3c3b49438C149E2"
     },
     fuji:{
       NFT:"0xc1A9ee55b5E915E72BfED9DBEcc27d0834d2f2b6",
       crossChain:"0x16539214c06b69b3bc4c2613cFE8a6BCf6d2A4aC",
-      erc721API:"https://api-testnet.snowtrace.io/api?module=account&action=tokennfttx&startblock=0&endblock=999999999&sort=asc&address="
+      erc721API:"https://api-testnet.snowtrace.io/api?module=account&action=tokennfttx&startblock=0&endblock=999999999&sort=asc&address=",
+      register:"0xf17817Da2C8c3EB6d5EF6611ED70C478C98bF77c"
     }
 }
 export const chains = {
@@ -111,7 +113,7 @@ export const converChainIDToName = (chainID)=>{
     return "polygon" 
   else if(["0x13881",80001].includes(chainID))
     return "mumbai"
-  else if(["0xa869",4313].includes(chainID))
+  else if(["0xa869",43113].includes(chainID))
     return "fuji"
   // switch(chainID){
   //   case "0x1":

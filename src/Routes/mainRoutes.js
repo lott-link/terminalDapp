@@ -5,8 +5,10 @@ const NFT = React.lazy(()=>import('../Pages/NFT'))
 const Tools = React.lazy(()=>import('../Pages/Tools'))
 const Dev = React.lazy(()=>import('../Pages/Dev'))
 const Assets = React.lazy(()=>import('../Pages/Assets'))
+const ContractPage = React.lazy(()=>import('../Pages/ContractPage'))
 const mainRoutes = [
     {path:"/",exact:true,component:HomePage,title:"HomePage",type:'directory'},
+    {path:'/signin',exact:true,component:ContractPage,title:"Sign_In",type:'link',render:true,display:true},
     {path:"/contract",exact:false,component:Contract,title:"Contract",type:'directory'},
     {path:"/nft",exact:false,component:NFT,title:"NFT",type:'directory'},
     {path:"/tools",exact:false,component:Tools,title:"tools",type:'directory'},

@@ -2,7 +2,7 @@ import React, { useState, useEffect ,useRef } from 'react'
 import QRCodeStyling from "qr-code-styling";
 import styles from './QrCode.styles.module.css'
 import domtoimage from 'dom-to-image';
-const QrCode = ({ profile, background,firstColor,secondColor,rotation,setLink,data}) => {
+const QrCode = ({ profile, background,firstColor,secondColor,rotation,data,qr}) => {
     const [options, setOptions] = useState({
       width: 252,
       height: 282,
@@ -30,34 +30,24 @@ const QrCode = ({ profile, background,firstColor,secondColor,rotation,setLink,da
       backgroundOptions: {
         color: "white",
       },
-      // cornersSquareOptions: {
-      //   color:corner,
-      //   type: "square",
-      // },
-      // cornersDotOptions: {
-      //   color: corner,
-      //   type: "square",
-      // },
     });
     const [qrCode] = useState(new QRCodeStyling(options));
     const ref = useRef(null);
     useEffect(() => {
       if (ref.current) {
         qrCode.append(ref.current);
-        exportDom()
       }
     }, [qrCode, ref]);
-    const qr = useRef(null)
-    const exportDom = ()=>{
-      console.log("generating your profile")
-      domtoimage.toBlob(qr.current)
-    .then(function (blob) {
-        setLink(blob)
-        console.log("profile generated")
-        console.log(blob)
-    });
-  };
     
+    
+  useEffect(() => {
+    if (!qrCode) return;
+    qrCode.update(options);
+  }, [qrCode, options]);
+
+  useEffect(()=>{
+    setOptions({...options,data:data})
+  },[data])
   return (
     <div ref={qr} className={`${styles[background]}  d-flex flex-column justify-content-center align-items-center`}>
         <div style={{ position: "relative"}}>

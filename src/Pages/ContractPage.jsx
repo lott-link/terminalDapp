@@ -1,14 +1,21 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect ,useRef, useContext } from 'react'
+import QRCodeStyling from "qr-code-styling";
+import styles from './QrCode.styles.module.css'
+import domtoimage from 'dom-to-image';
 import { useWeb3React } from "@web3-react/core";
 import { factoryContractAddress } from '../Contracts/ContractAddress'
-import { factoryContractABI,registerContractABI } from '../Contracts/ContractsABI'
+import { factoryContractABI, registerContractABI } from '../Contracts/ContractsABI'
 import Button from '../Components/styled/Button'
 import Input from '../Components/styled/input';
 import { OverlayTrigger, Tooltip} from 'react-bootstrap'
 import { context } from '../App';
+import { create } from 'ipfs-http-client'
+import QrCode from '../Components/QrCode';
+
+const client = create('https://ipfs.infura.io:5001/api/v0')
 const ContractPage = () => {
     const {account,chainId,active,library} = useWeb3React()
-    const [buttonDisabled, setButtonDisabled] = useState(true)
+    const [buttonDisabled, setButtonDisabled] = useState(false)
     const [sendInfoDisabled,setSendInfoDisabled] = useState(false)
     const [sendInfoLoading,setSendInfoLoading] = useState(false)
     const [userName,setUserName] = useState()
@@ -20,8 +27,11 @@ const ContractPage = () => {
     const [error,setError] = useState()
     const [signedIn,setSignedIn] = useState(false)
     const [payableAmount,setPayableAmount] = useState(0)
-    const [presenter,setPresenter] = useState()
+    const [referral,setReferral] = useState("")
     const [loadingMsg,setLoadingMsg] = useState()
+    const [link,setLink] = useState("")
+    const [userValid,setUserValid] = useState(false)
+    const [showQr,setShowQr] = useState(false)
     const data = useContext(context)
     const estimatedTime = 15;
       const parseUserInfo = (info)=>{
@@ -123,21 +133,50 @@ const ContractPage = () => {
       const signIn = async ()=>{
         setSendInfoLoading(true)
         setSendInfoDisabled(true)
+        setShowQr(true)
+        const baseUrl = "https://ipfs.infura.io/ipfs/"
+        console.log("creating and uploading qr image")
+        setLoadingMsg("creating and uploading id card")
+        //creating qr image
+        const blob = await domtoimage.toBlob(qr.current)
+        const qrImage = await client.add(blob)
+        setShowQr(false)
+        console.log("creating and uploading uri object")
+        setLoadingMsg("creating and uploading uri object")
+        //creating uri object
+        const obj = {
+            image:baseUrl + qrImage.path,
+            name:input.split("@")[0],
+            attributes:[{trait_type:"dapp",value:"tapp v1.0"},{time:new Date().getTime()}],
+            interaction:interaction
+        }
+        const uri = await client.add(JSON.stringify(obj))
+
+        console.log("creating and uploading info hash")
+        //creating info hash
+        let tempData = getInfoFieldsData()
+        tempData = JSON.stringify(tempData).replaceAll("\"","\'")
+        console.log(JSON.stringify(tempData))
+        const infoHash = await client.add(JSON.stringify(tempData));
+        
+        console.log("uri",uri.path,"info",infoHash.path)
+
         setLoadingMsg("Wating to approve")
-        const factoryContract = new library.eth.Contract(factoryContractABI,factoryContractAddress)
-        const contractAddress = await factoryContract.methods.registerContract().call(res=>res)
-        const registerContract = new library.eth.Contract(registerContractABI,contractAddress)
-        const findUser = await registerContract.methods.userToAddr(input).call().then(res=>res)
-        if(library.utils.hexToNumberString(findUser)!== "0" ){
-            setError("user already exists!")
-            setSendInfoLoading(false)
-            setSendInfoDisabled(false)
-            setLoadingMsg()
-        }else{
-            let data = getInfoFieldsData()
-            data = JSON.stringify(data).replaceAll("\"","\'")
+        console.log(data.network)
+        console.log(data.addresses[data.network]["register"])
+        const registerContract = new library.eth.Contract(registerContractABI,data.addresses[data.network]["register"])
+        // const findUser = await registerContract.methods.userToAddr(input).call().then(res=>res)
+        // if(library.utils.hexToNumberString(findUser)!== "0" ){
+        //     setError("user already exists!")
+        //     setSendInfoLoading(false)
+        //     setSendInfoDisabled(false)
+        //     setLoadingMsg()
+        // }else{
+            // let data = getInfoFieldsData()
+            // data = JSON.stringify(data).replaceAll("\"","\'")
             const value = payableAmount;
-            registerContract.methods.signIn(input,JSON.stringify(data),presenter).send({from:account,value})
+            console.log(input,infoHash.path,referral,0,uri.path)
+            registerContract.methods.signIn(input.split("@")[0],baseUrl+infoHash.path,referral,0,baseUrl+uri.path).send({from:account,signIn:payableAmount})
             .on("transactionHash",transactionHash=>{
                 setLoadingMsg('Wating to comfirm')
                 progress()
@@ -147,8 +186,8 @@ const ContractPage = () => {
                 setLoadingMsg()
                 setSendInfoDisabled(false)
                 setSendInfoLoading(false)
-                getUserInfo()
-                addressToUser(account)
+                // getUserInfo()
+                // addressToUser(account)
             })
             .on("error",error=>{
                 setLoadingMsg()
@@ -156,7 +195,7 @@ const ContractPage = () => {
                 setSendInfoLoading(false)
                 console.log("error in sending info",error)
             })
-        }
+        // }
       }
     const sendInfo = async ()=>{
         setSendInfoDisabled(true)
@@ -177,7 +216,7 @@ const ContractPage = () => {
             setLoadingMsg()
             setSendInfoDisabled(false)
             setSendInfoLoading(false)
-            addressToUser(account)
+            // addressToUser(account)
         })
         .on("error",error=>{
             setSendInfoDisabled(false)
@@ -186,13 +225,26 @@ const ContractPage = () => {
         })
     }
     //****** Contract Write methods end********/
-    const handleUserName = (e)=>{
-        setInput(e.target.value)
+    const handleUserName = async (e)=>{
+        setInput(e.target.value.split("@")[0] + "@" + data.converChainIDToName(chainId))
+        const contract = new library.eth.Contract(registerContractABI,data.addresses[data.network]["register"])
+        // const price = await contract.methods.usernamePrice(e.target.value).call().then(res=>res)
+        // console.log(price)
+        // setPayableAmount(price) 
+        contract.methods.usernamePrice(e.target.value.split("@")[0]).call().then(res=>{
+            console.log(res)
+            setPayableAmount(res) 
+            setUserValid(true)
+        })
+        .catch(err=>{
+            console.log(err)
+            setUserValid(false)
+        })
     }
     useEffect(()=>{
         setInfoFields([])
         if(active){
-          addressToUser(account)
+        //   addressToUser(account)
         }
       },[active,account,chainId])
     const progress = ()=>{
@@ -207,13 +259,19 @@ const ContractPage = () => {
                 setNow(prevState => Math.floor(prevState+100/estimatedTime))
         },1000)
     }
+    useEffect(()=>{
+        setInput("@" + data.converChainIDToName(chainId))
+    },[chainId])
+
+    const qr = useRef(null)
+
     if(!active)
         return (<h2 className="w-100 h-100 d-flex justify-content-center align-items-center">please connect your wallet</h2>)
     else  
     return (
         <div className="w-100 h-100" style={{position:'relative'}}>
             <div className="px-4 d-flex align-items-center justify-content-between" style={{height:'5%',borderBottom:'2px solid white'}}>
-                <div></div>
+                <div></div>{console.log(data)}
                 <div>Sign In</div>
                 <div className="d-flex">
                     <div className="circle mx-1"></div>
@@ -226,10 +284,10 @@ const ContractPage = () => {
                         <div>loading...</div> : 
                             <div className="my-2">
                                 <div className="d-flex flex-column align-items-center">
-                                    <Input style={{width:'24rem'}} small={`enter a name`}
+                                    <Input style={{width:'24rem'}} small={`enter a name`} success={userValid ? "success" : "failure"}
                                     value={input}  title="Enter username" type="text" onChange={handleUserName} />
-                                    <Input style={{width:"24rem"}} small="enter username of your presenter, as default Lott.Link" 
-                                    value={presenter} title="presenter" type="text" onChange={e=>setPresenter(e.target.value)}/>
+                                    <Input style={{width:"24rem"}} small="enter username of your referral, as default Lott.Link" 
+                                    value={referral} title="referral" type="text" onChange={e=>setReferral(e.target.value)}/>
                                     <Input style={{width:"24rem"}} className="text-center my-1" type="text" disabled={true} value={`Payable Amount:${payableAmount}`} />
                                 </div>
                                 {sendInfoLoading && <span>loading...</span>}
@@ -283,26 +341,80 @@ const ContractPage = () => {
                     {error && 
                         <div>
                             <div className="text-danger">{error}</div>
-                            {/* <div><button onClick={getUserInfo}>try again</button></div> */}
                         </div>
                     }
                 </div>
-                { (sendInfoLoading || loadingProfile) &&
-                <div className="bg-primary w-100 h-100 d-flex flex-column justify-content-center align-items-center" style={{position:'absolute',top:'0',left:'0', opacity:'50%'}}>
+                { (sendInfoLoading  || loadingProfile) &&
+                <div className="w-100 h-100 d-flex flex-column " style={{position:'absolute',top:'0',left:'0', backgroundColor:"rgba(2,117,216,0.5)"}}>
                     {sendInfoLoading && loadingMsg==='Wating to comfirm' &&
-                     <div className="w-25 my-2" style={{background:'white'}}>
+                     <div className="w-25 my-2" style={{background:'white',position:'relative',top:'20%',left:'35%'}}>
                         <div style={{width:now+"%",color:"white",backgroundColor:'red',transition:'0.2s',fontSize:'smaller' }}>
                             <span className="d-flex ejustify-content-center">{`${now}%`}</span>
                         </div>
-                    </div> }
-                    <h3 className="w-100 text-center">{sendInfoLoading ? loadingMsg : "loading"}...</h3>
-                </div>}
+                    </div> 
+                    }
+                    <div className="w-100 text-center" style={{position:'relative',top:'20%'}}>
+                        <h3>{sendInfoLoading ? loadingMsg : "loading"}...</h3>
+                        <div className='d-flex justify-content-center mt-4'>
+                    </div>
+                    </div>
+                </div>
+                }
+                <div className='d-flex justify-content-center mt-4' style={{position:"absolute",top:'30%',left:'32%',zIndex:showQr?1:-1}}>
+                    {chainId === 43113 &&
+                         <QrCode profile="/avalanche.svg" background="avalanche" qr={qr}
+                        firstColor="#8E292F" secondColor="#F35C64"  data={input}
+                        rotation="90"/>
+                    }
+                    {chainId === 4 &&
+                        <QrCode profile="/eth.svg" background="eth" qr={qr} 
+                        firstColor="#7F7F7F" secondColor="#010101"  data={input}
+                        rotation="225"/>
+                    }
+                </div>
             </div>
             <div className="p-3" style={{height:'15%',borderTop:'2px solid white',overflow:'auto'}}>
-            this contract mint a unique username on your wallet address to easily named you on other contract. you can set your contact info optionaly. other people can see your info. _reqular user name are free and pure user name are payble.
+            this contract mint a unique username on your wallet address to easily 
+            named you on other contract. you can set your contact info optionaly.
+             other people can see your info. 
+            _reqular user name are free and pure user name are payble.
             </div>
         </div>
     )
 }
 
 export default ContractPage
+
+
+const interaction = {
+    read:[
+        {
+            "inputs": [],
+            "name": "withdraw",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        }
+    ],
+    write:[
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "userId",
+                    "type": "uint256"
+                }
+            ],
+            "name": "balanceInWei",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        }
+    ]
+}

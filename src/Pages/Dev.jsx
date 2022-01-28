@@ -341,9 +341,9 @@ const Dev = () => {
         {/* <QrCode profile="/eth.svg" background="eth" setLink={setLink}
         firstColor="#7F7F7F" secondColor="#010101"  data={"some data 2"}
         rotation="225"/> */}
-        {<QrCode profile="/polygonFill.svg" background="polygon"  setLink={setLink}
+        {/* {<QrCode profile="/polygonFill.svg" background="polygon"  setLink={setLink}
         firstColor="#8835DD" secondColor="#8835DD"  data={"some data 3"}
-        rotation="180"/>}
+        rotation="180"/>} */}
       </div>
       <button onClick={()=>setView(!view)}>view profile</button>
       <button onClick={send}>send</button>
