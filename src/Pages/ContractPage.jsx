@@ -334,7 +334,7 @@ const ContractPage = () => {
                         <div className="bg-white text-dark d-flex justify-content-around align-items-center " style={{margin:"0 40px"}}>
                             <div className='d-flex '>
                                 <OverlayTrigger  placement={"bottom"}  overlay={<Tooltip >{payableAmount} wei</Tooltip>}>
-                                    <div className="mx-4">{(payableAmount/10e18).toFixed(4)}</div>
+                                    <div className="mx-4">{(payableAmount/1e18).toFixed(4)}</div>
                                 </OverlayTrigger>
                                 <div>
                                     <img  style={{width:'25px',weight:'25px'}}

@@ -164,7 +164,7 @@ const Sidebar = () => {
             <div className="d-flex align-items-center">
               <div className="circle"></div>
               <OverlayTrigger  placement={"bottom"}  overlay={<Tooltip >{balance} wei</Tooltip>}>
-                <div className="mx-1">{(balance/10E18).toFixed(4)}</div>
+                <div className="mx-1">{(balance/1E18).toFixed(4)}</div>
               </OverlayTrigger>
             </div> 
           </div>}

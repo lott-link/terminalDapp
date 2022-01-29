@@ -16,8 +16,10 @@ const Dev = () => {
   const [file, setFile] = useState();
   const [hash, setHash] = useState();
   const send = async ()=>{
-    const added = await client.add(link);
+    const added = await client.add();
     console.log(added)
+    const fileUrl = `https://ipfs.infura.io/ipfs/${added.path}`;
+    setHash(fileUrl);
   }
   const sendFile = async () => {
     try {

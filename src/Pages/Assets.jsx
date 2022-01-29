@@ -35,8 +35,10 @@ const Assets = () => {
         const tempTokens = []
         idsToShow.forEach(async (id,index)=>{
           const token = await getToken(id.split('0x')[0],"0x"+id.split('0x')[1])
-          tempTokens.push(token)
-          setTokens(prev=>[...prev,token])
+          if(token){
+            tempTokens.push(token)
+            setTokens(prev=>[...prev,token])
+          } 
           if(index===idsToShow.length-1)  {
             setLoading(false)
             group(tempTokens)
@@ -53,20 +55,26 @@ const Assets = () => {
       else{
         const contract = new library.eth.Contract(contractABI,contractAddress)
         const tokenURI = await contract.methods.tokenURI(tokenID).call(res=>res)
-        const tokenJson = await axios.get(tokenURI).then(res=>res.data)
-        console.log("tokenJSON",tokenJson)
-        const data = {
-          name:tokenJson.name,
-          description:tokenJson.description,
-          image:tokenJson.image,
-          tokenID,
-          contractAddress,
-          chainId,
-          attributes:tokenJson.attributes,
-          interaction:tokenJson.interaction ? tokenJson.interaction : "noInteraction"
+        try {
+          const tokenJson = await axios.get(tokenURI).then(res=>res.data)
+          console.log("tokenJSON",tokenJson)
+          const data = {
+            name:tokenJson.name,
+            description:tokenJson.description,
+            image:tokenJson.image,
+            tokenID,
+            contractAddress,
+            chainId,
+            attributes:tokenJson.attributes,
+            interaction:tokenJson.interaction ? tokenJson.interaction : "noInteraction"
+          }
+          localStorage.setItem(contractAddress+tokenID,JSON.stringify(data))
+          return data
+        } 
+        catch(err){
+          return false
         }
-        localStorage.setItem(contractAddress+tokenID,JSON.stringify(data))
-        return data
+        
       } 
     }
     const group = async (tempTokens)=>{
