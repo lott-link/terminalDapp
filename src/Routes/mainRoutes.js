@@ -13,6 +13,6 @@ const mainRoutes = [
     {path:"/nft",exact:false,component:NFT,title:"NFT",type:'directory'},
     {path:"/tools",exact:false,component:Tools,title:"tools",type:'directory'},
     {path:"/assets",exact:true,component:Assets,title:"Assets",type:'link'},
-    {path:"/dev",exact:true,component:Dev,title:"dev",type:'link'},
+    // {path:"/dev",exact:true,component:Dev,title:"dev",type:'link'},
 ]
 export default mainRoutes;

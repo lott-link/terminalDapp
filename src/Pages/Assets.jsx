@@ -146,6 +146,7 @@ const NFTCard = ({token})=>{
     const [loading,setLoading] = useState(true)
     const handleLoad = ()=> setLoading(false)
     const [info,setInfo] = useState([])
+    const [val,setVal] = useState("")
     useEffect(()=>{
       for(let key in token){
         // if(key!=="chainId" && key!== "tokenID" && key!== "contractAddress" && key!=='image')
@@ -163,11 +164,11 @@ const NFTCard = ({token})=>{
     };
     const call = (item) => {
       const args = paramOrder(item);
-      console.log(args, item);
+      console.log(args, "item" ,item);
       const contract = new library.eth.Contract([item], token.contractAddress);
       contract.methods[item.name](...args)
         .call()
-        .then((res) => console.log(res));
+        .then((res) => setVal({res,sig:item.signature}));
     };
     const write = (item) => {
       const contract = new library.eth.Contract([item], token.contractAddress);
@@ -212,7 +213,8 @@ const NFTCard = ({token})=>{
                           name={element.name}
                           onChange={(e) => handleChange(e, item)} />);
                             })}
-                        <button onClick={() => call(item)}>call</button>
+                        <button className='rounded' onClick={() => call(item)}>call</button>
+                        {val && val.sig === item.signature && <div>{val.res}</div>}
                   </div>
                   );
                   })}
