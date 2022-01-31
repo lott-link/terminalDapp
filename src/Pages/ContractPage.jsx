@@ -147,7 +147,7 @@ const ContractPage = () => {
         //creating uri object
         const obj = {
             image:baseUrl + qrImage.path,
-            name:"@" + input.split("@")[0],
+            name:input.split("@")[0],
             attributes:[{trait_type:"dapp",value:"tapp v1.0"},{trait_type:"time",value:new Date().getTime()}],
             interaction:interaction
         }
@@ -177,7 +177,7 @@ const ContractPage = () => {
             // data = JSON.stringify(data).replaceAll("\"","\'")
             const value = payableAmount;
             console.log(input,infoHash.path,referral,0,uri.path)
-            registerContract.methods.signIn(input.split("@")[0],baseUrl+infoHash.path,referral,0,baseUrl+uri.path).send({from:account,signIn:payableAmount})
+            registerContract.methods.signIn(input.split("@")[0],baseUrl+infoHash.path,referral,0,baseUrl+uri.path).send({from:account,value:payableAmount})
             .on("transactionHash",transactionHash=>{
                 setLoadingMsg('Wating to comfirm')
                 progress()
@@ -288,7 +288,7 @@ const ContractPage = () => {
                 availableChains.map((chain,index)=> (
                     <OverlayTrigger key={index} placement={"bottom"}  overlay={<Tooltip >{chain}</Tooltip>}>
                     <div className="mx-1">
-                        <a href={data.chains[chain].params[0].blockExplorerUrls[0]+"/"+"address"+"/"+data.addresses[chain].crossChain}
+                        <a href={data.chains[chain].params[0].blockExplorerUrls[0]+"/"+"address"+"/"+data.addresses[chain].register}
                             target="_blank"
                         >
                             <img style={{width:'20px',height:'20px'}} src={data.chains[chain].icon} alt={chain+"icon"} />  

@@ -8,7 +8,6 @@ export const addresses = {
       },
     mumbai:{
        factory:"0xe88f4Ba9F8fe1701F3463A6244dcd7d3538a3b3F",
-       register:"0x92c3f3b2122b61a50b218df446e2799535fcb519",
        NFT:"0x4316773d8a9f366f3Ae53419000188b3979360C2",
        erc721API:"https://api-testnet.polygonscan.com/api?module=account&action=tokennfttx&startblock=0&endblock=999999999&sort=asc&address=",
        crossChain:"0xfd23d6C7083D116394aA203552eB23F486554e69"                
@@ -17,13 +16,13 @@ export const addresses = {
       NFT:"0xFE7FC1F36fBF10328F2E898b9487F9BD4ddA4287",
       erc721API:"https://api-rinkeby.etherscan.io/api?module=account&action=tokennfttx&startblock=0&endblock=999999999&sort=asc&apikey=WPZTIVDHXFF48WJ7UDAIE893S7WAVG6DSU&address=",
       crossChain:"0x64DfA1B8A8392E3c93f6Df96b5EbB01A1bB13e94",
-      register:"0xe415F45062C387faa1d09F73C3c3b49438C149E2"
+      register:"0x223beaBf32480C745f495a5C65459662818A1D5E"
     },
     fuji:{
       NFT:"0xc1A9ee55b5E915E72BfED9DBEcc27d0834d2f2b6",
       crossChain:"0x16539214c06b69b3bc4c2613cFE8a6BCf6d2A4aC",
       erc721API:"https://api-testnet.snowtrace.io/api?module=account&action=tokennfttx&startblock=0&endblock=999999999&sort=asc&address=",
-      register:"0xf17817Da2C8c3EB6d5EF6611ED70C478C98bF77c"
+      register:"0x42e8F2bD950303137F7Bc71f414E0DabD7f72aAf"
     }
 }
 export const chains = {
