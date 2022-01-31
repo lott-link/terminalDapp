@@ -49,7 +49,6 @@ const ChanceRoomList = () => {
     const currentChain = data.converChainIDToName(chainId)
     const chains = data.supportedChains.filter(item=> item.chain === currentChain)
     if(chains.length === 0) return 
-    console.log("chains",chains)
     const topic = Web3.utils.sha3("NewChanceRoom(address,address,uint256,uint256,uint256,uint256)")
     axios.get(`https://api-testnet.polygonscan.com/api?module=logs&action=getLogs&fromBlock=21122189&toBlock=31122189
     &address=${data.addresses[data.network]['factory']}&apikey=YourApiKeyToken

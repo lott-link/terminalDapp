@@ -39,7 +39,6 @@ const ContractPage = () => {
         if(info){
             let data = info.replaceAll("\'","\"")
             data = JSON.parse(data.slice(1,data.length-1))
-            console.log(data)
             const fields = []
             for(const key in data)
                 fields.push({key,value:data[key]})
@@ -157,14 +156,10 @@ const ContractPage = () => {
         //creating info hash
         let tempData = getInfoFieldsData()
         tempData = JSON.stringify(tempData).replaceAll("\"","\'")
-        console.log(JSON.stringify(tempData))
         const infoHash = await client.add(JSON.stringify(tempData));
         
-        console.log("uri",uri.path,"info",infoHash.path)
 
         setLoadingMsg("Wating to approve")
-        console.log(data.network)
-        console.log(data.addresses[data.network]["register"])
         const registerContract = new library.eth.Contract(registerContractABI,data.addresses[data.network]["register"])
         // const findUser = await registerContract.methods.userToAddr(input).call().then(res=>res)
         // if(library.utils.hexToNumberString(findUser)!== "0" ){
@@ -176,7 +171,6 @@ const ContractPage = () => {
             // let data = getInfoFieldsData()
             // data = JSON.stringify(data).replaceAll("\"","\'")
             const value = payableAmount;
-            console.log(input,infoHash.path,referral,0,uri.path)
             registerContract.methods.signIn(input.split("@")[0],baseUrl+infoHash.path,referral,0,baseUrl+uri.path).send({from:account,value:payableAmount})
             .on("transactionHash",transactionHash=>{
                 setLoadingMsg('Wating to comfirm')
@@ -233,7 +227,6 @@ const ContractPage = () => {
         // console.log(price)
         // setPayableAmount(price) 
         contract.methods.usernamePrice(e.target.value.split("@")[0]).call().then(res=>{
-            console.log(res)
             setPayableAmount(res) 
             setUserValid(true)
         })
@@ -281,7 +274,7 @@ const ContractPage = () => {
     return (
         <div className="w-100 h-100" style={{position:'relative'}}>
             <div className="px-4 d-flex align-items-center justify-content-between" style={{height:'5%',borderBottom:'2px solid white'}}>
-                <div></div>{console.log(data)}
+                <div></div>
                 <div>Sign In</div>
                 <div className="d-flex">
                 {
@@ -315,7 +308,7 @@ const ContractPage = () => {
                             </div>)
                 }            
                 {active && (infoFields.length===0 && <div>there is no info</div>)}
-                <div className="container">{console.log("infoFields",infoFields)}
+                <div className="container">
                     {infoFields.map((item,index)=>{
                         return (
                             <div key={index} className="d-flex justify-content-center">

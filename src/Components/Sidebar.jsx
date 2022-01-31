@@ -83,7 +83,6 @@ const Sidebar = () => {
   },[active,account,chainId,data.network])
 
   useEffect(()=>{
-    console.log(chainId)
     if(chainId){
       if(chainId===1)
         data.setNetwork('ethereum')

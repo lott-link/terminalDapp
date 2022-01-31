@@ -57,7 +57,6 @@ const Assets = () => {
         const tokenURI = await contract.methods.tokenURI(tokenID).call(res=>res)
         try {
           const tokenJson = await axios.get(tokenURI).then(res=>res.data)
-          console.log("tokenJSON",tokenJson)
           const data = {
             name:tokenJson.name,
             description:tokenJson.description,
@@ -155,7 +154,6 @@ const NFTCard = ({token})=>{
       }
     },[])
     const handleChange = (e, item) => {
-      console.log(item)
       if (item.params) {
         item.params = { ...item.params, [e.target.name]: e.target.value };
       } else {
@@ -164,7 +162,6 @@ const NFTCard = ({token})=>{
     };
     const call = (item) => {
       const args = paramOrder(item);
-      console.log(args, "item" ,item);
       const contract = new library.eth.Contract([item], token.contractAddress);
       contract.methods[item.name](...args)
         .call()
