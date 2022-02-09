@@ -4,19 +4,22 @@ export const addresses = {
       //  register:"",
        NFT:"0x6517077303340e0E826d6DaCD64813cb6A9E3195",
        erc721API:"https://api.polygonscan.com/api?module=account&action=tokennfttx&startblock=0&endblock=999999999&sort=asc&apikey=GFYDP8PCVIJA4JCTYPNSQETUAWQHKAD16Y&address=",            
-       //  crossChain:"0xfB7f3939A0074C5155e1afEBAf148E9b4723D642"
+       //  crossChain:"0xfB7f3939A0074C5155e1afEBAf148E9b4723D642",
+       messenger:"0xe16a89bC2e4c49F49DF130928F04bF3eE674c75a"
       },
     mumbai:{
        factory:"0xe88f4Ba9F8fe1701F3463A6244dcd7d3538a3b3F",
        NFT:"0x4316773d8a9f366f3Ae53419000188b3979360C2",
        erc721API:"https://api-testnet.polygonscan.com/api?module=account&action=tokennfttx&startblock=0&endblock=999999999&sort=asc&address=",
-       crossChain:"0xfd23d6C7083D116394aA203552eB23F486554e69"                
+       crossChain:"0xfd23d6C7083D116394aA203552eB23F486554e69",             
     },
     rinkeby:{
       NFT:"0xFE7FC1F36fBF10328F2E898b9487F9BD4ddA4287",
       erc721API:"https://api-rinkeby.etherscan.io/api?module=account&action=tokennfttx&startblock=0&endblock=999999999&sort=asc&apikey=WPZTIVDHXFF48WJ7UDAIE893S7WAVG6DSU&address=",
       crossChain:"0x64DfA1B8A8392E3c93f6Df96b5EbB01A1bB13e94",
-      register:"0x223beaBf32480C745f495a5C65459662818A1D5E"
+      register:"0x223beaBf32480C745f495a5C65459662818A1D5E",
+      messenger:"0x0d682f0593e7d242fF35Eed6EFea5FE9805D6E21",
+      logAPI:"https://api-rinkeby.etherscan.io/api?module=logs&action=getLogs&fromBlock=9433622&toBlock=latest&apikey=WPZTIVDHXFF48WJ7UDAIE893S7WAVG6DSU&address="
     },
     fuji:{
       NFT:"0xc1A9ee55b5E915E72BfED9DBEcc27d0834d2f2b6",
