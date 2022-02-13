@@ -26,6 +26,10 @@ export const addresses = {
       crossChain:"0x16539214c06b69b3bc4c2613cFE8a6BCf6d2A4aC",
       erc721API:"https://api-testnet.snowtrace.io/api?module=account&action=tokennfttx&startblock=0&endblock=999999999&sort=asc&address=",
       register:"0x42e8F2bD950303137F7Bc71f414E0DabD7f72aAf"
+    },
+    ethereum: {
+      logAPI:"https://api.etherscan.io/api?module=logs&action=getLogs&fromBlock=379224&toBlock=latest&apikey=WPZTIVDHXFF48WJ7UDAIE893S7WAVG6DSU&address=",
+      erc721API:"https://api.etherscan.io/api?module=account&action=tokennfttx&contractaddress=0x06012c8cf97bead5deae237070f9587f8e7a266d&startblock=0&endblock=latest&apikey=WPZTIVDHXFF48WJ7UDAIE893S7WAVG6DSU&address="
     }
 }
 export const chains = {
@@ -95,7 +99,7 @@ export const chains = {
         name: "AVAX",
         symbol: "AVAX",
         decimals: 18
-    },
+      },
     rpcUrls: ['https://api.avax-test.network/ext/bc/C/rpc'],     
     blockExplorerUrls: ['https://testnet.snowtrace.io/']
     }]
@@ -103,7 +107,19 @@ export const chains = {
    ethereum:{
       chainIdDecimal:1,
       chainIdHex:"0x1",
-      icon:'/eth/Preview.png'
+      icon:'/eth/Preview.png',
+      params:[
+        {
+          chainId: '0x1',
+          chainName: "Ethereum Mainnet",
+          nativeCurrency: {
+          name: "ETH",
+          symbol: "ETH",
+          decimals: 18
+        },
+      rpcUrls: [''],     
+      blockExplorerUrls: ['https://etherscan.io/']
+      }]
    }
 }
 export const converChainIDToName = (chainID)=>{

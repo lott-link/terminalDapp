@@ -1,10 +1,14 @@
 import React, { useState, useContext } from 'react'
 import { useWeb3React } from '@web3-react/core'
+import { useHistory } from 'react-router-dom'
+
 import Input from '../Components/styled/input' 
 import { context } from '../App'
 import { factoryContractABI } from '../Contracts/ContractsABI'
+
 const CreateChanceRoom = () => {
     const { account,library } = useWeb3React()
+    const history = useHistory()
     const data = useContext(context)
     const [input,setInput] = useState({
         info:'',
@@ -25,38 +29,18 @@ const CreateChanceRoom = () => {
         setInput({...input,[e.target.name]:e.target.value})
     }
     return (
-        <div className="w-100 h-100 d-flex justify-content-center align-items-center">
-            <div className='d-flex flex-column'>
-                <div className="d-flex justify-content-center">
-                    <Input type="text" name="info" 
-                        onChange={handleChange} title={"info"}
-                        style={{width:'21rem'}} value={input.info}
+        <div className="w-100 h-100 d-flex flex-column justify-content-center align-items-center position-relative">
+            <div className='position-absolute top-0 p-2' onClick={()=>history.push('/contract/chanceroomlist')}
+            style={{left:0,cursor:'pointer'}}>back</div>
+            <div className='d-flex justify-content-center flex-wrap'>
+                {
+                ["info","baseURI","gateFee","percentCommision","userLimit","timeLimit"].map((item,index)=>(
+                    <Input type="text" name={item} key={index}
+                        onChange={handleChange} title={item}
+                        style={{width:'21rem'}} value={input[item]}
                     />
-                    <Input className="" type="text" name="baseURI" 
-                        onChange={handleChange} title={"baseURI"}
-                        style={{width:'21rem'}} value={input.baseURI}
-                    />
-                </div>
-                <div className="d-flex justify-content-center">
-                    <Input className="" type="text" name="gateFee" 
-                        onChange={handleChange} title={"gateFee"}
-                        style={{width:'21rem'}} value={input.gateFee}
-                    />
-                    <Input className="" type="text" name="percentCommission" 
-                        onChange={handleChange} title={"percentCommission"}
-                        style={{width:'21rem'}} value={input.percentCommission}
-                    />
-                </div>
-                <div className="d-flex justify-content-center">
-                    <Input className="" type="text" name="userLimit" 
-                        onChange={handleChange} title={"userLimit"}
-                        style={{width:'21rem'}} value={input.userLimit}
-                    />
-                    <Input className="" type="text" name="timeLimit" 
-                        onChange={handleChange} title={"timeLimit"}
-                        style={{width:'21rem'}} value={input.timeLimit}
-                    />
-                </div>
+                ))
+                }
                 <button className="contract-button mx-auto" 
                 onClick={createChanceRoom}
                 style={{width:'24rem'}}

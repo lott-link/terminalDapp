@@ -114,7 +114,7 @@ const Assets = () => {
                     {group[0] && group[0].split(" ")[0]}
                     <OverlayTrigger key={"index"} placement={"bottom"}  overlay={<Tooltip >explore block</Tooltip>}>
                       <a href={data.chains[data.network].params[0].blockExplorerUrls[0]+"/"+"address"+"/"+ (group[0] && group[0].split(" ")[1])}
-                       target="_blank">
+                       target="_blank" rel="noreferrer">
                         <img className='mx-2 mb-1' src="/info2.svg" alt="tooltip-info" />
                       </a>
                     </OverlayTrigger>

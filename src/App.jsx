@@ -3,12 +3,10 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import mainRoutes from "./Routes/mainRoutes";
 import Navbar from "./Components/Navbar";
 import Sidebar from "./Components/Sidebar";
-import useWidth from './Hooks/useWidth'
 import "./app.styles.css";
 import { addresses, chains, converChainIDToName } from './addresses';
 export const context = createContext()
 function App() {
-  const width = useWidth()
   const [network,setNetwork] = useState('')
   const [supportedChains,setSupportedChains] = useState([])
   return (
@@ -23,9 +21,9 @@ function App() {
           <Router>
             <Navbar />
             <main className="d-flex justify-content-center" style={{ height: "calc(100% - 3rem)" }}>
-              {width > 500 && <div className="w-25 h-100 text-white" id="sidebar">
+              <div className="w-25 h-100 text-white" id="sidebar">
                 <Sidebar />
-              </div>}
+              </div>
               <div
                 className="w-75 h-100 text-white"
                 style={{ backgroundColor: "#020227" }}

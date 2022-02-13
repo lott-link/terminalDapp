@@ -31,12 +31,11 @@ const Select = () => {
       case '/':
         const tempChains = []
         for(let key in data.addresses){
-        if(data.addresses[key].crossChain && data.addresses[key].crossChain.length!==0)
-            tempChains.push({chain:key,supported:true})
+          tempChains.push({chain:key,supported:true})
         }
         setAvailableChains([...tempChains])
         break
-      case '/contract/signin':
+      case '/signin':
         setAvailableChains(checkNetworkSupport("register"))
         break;
       case '/contract/createchanceroom':
@@ -44,6 +43,8 @@ const Select = () => {
         data.setSupportedChains(checkNetworkSupport("factory"))
         break;
       case '/contract/chanceroomlist':
+        setAvailableChains(checkNetworkSupport("factory"))
+        data.setSupportedChains(checkNetworkSupport("factory"))
         break;
       case '/nft/mint':
         setAvailableChains(checkNetworkSupport("NFT"))
@@ -53,6 +54,9 @@ const Select = () => {
         break;
       case '/tools/crosschain':
         setAvailableChains(checkNetworkSupport("crossChain"))
+        break;
+      default:
+        break;
     }
   }
   const checkNetworkSupport = (contractName)=>{
@@ -83,14 +87,6 @@ const Select = () => {
         }).then(()=>data.setNetwork(chainName))
     }
   }
-  // useEffect(()=>{
-    // const tempChains = []
-    // for(let key in data.addresses){
-    //     if(data.addresses[key].crossChain && data.addresses[key].crossChain.length!==0)
-    //         tempChains.push({chain:key,supported:true})
-    // }
-    // setAvailableChains(tempChains)
-  // },[])
   return (
     <div ref={ref} className="w-100" style={{position:'relative'}}>
       <div

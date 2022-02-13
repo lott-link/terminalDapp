@@ -2,11 +2,13 @@ import React, { useState, useEffect, useContext } from "react";
 import { useWeb3React } from "@web3-react/core";
 import axios from "axios";
 import Table from 'react-bootstrap/Table'
+import { useHistory } from 'react-router-dom'
 
 import { context } from "../App";
 
 const Inbox = () => {
 	const { library, account } = useWeb3React();
+    const history = useHistory();
     const [logs,setLogs] = useState([])
     const [allMsgs,setAllMsgs] = useState([])
     const [publicMessages,setPublicMessages] = useState([])
@@ -21,7 +23,7 @@ const Inbox = () => {
 		const tempLogs = [];
         const tempPublic = [];
         const tempPrivate = [];
-		res.data.result.map((item) => {
+		res.data.result.forEach((item) => {
 			try {
 				console.log(item.data);
 				const result = library.eth.abi.decodeLog(typesArr, item.data);
@@ -81,11 +83,11 @@ const Inbox = () => {
             <tbody>
                 {
                 logs.map((message,index)=>(
-                <tr>
+                <tr key={index} style={{cursor:'pointer'}} onClick={()=>history.push({pathName:'/message',state:message})}>
                     <td><strong>{message.to.slice(0,5)+"..."+message.to.slice(-5)}</strong></td>
                     <td>{message.subject}</td>
                     <td>{message.msg.length > 30 ? message.msg.slice(0,30) : message.msg }</td>
-                    {message.isHashed && <button className="text-white" onClick={()=>decryptFunc(message.msg,message)}>decrypt message</button>}
+                    {message.isHashed && <td><button onClick={()=>decryptFunc(message.msg,message)}>decrypt message</button></td>}
                 </tr> 
                 ))
                 }

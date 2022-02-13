@@ -1,6 +1,4 @@
 import React, { useState, useEffect ,useRef, useContext } from 'react'
-import QRCodeStyling from "qr-code-styling";
-import styles from './QrCode.styles.module.css'
 import domtoimage from 'dom-to-image';
 import { useWeb3React } from "@web3-react/core";
 import { factoryContractAddress } from '../Contracts/ContractAddress'
@@ -22,14 +20,12 @@ const ContractPage = () => {
     const [loadingProfile,setLoadingProfile] = useState(false)
     const [input,setInput] = useState("")
     const [infoFields,setInfoFields] = useState([])
-    const [userInfo,setUserInfo] = useState()
     const [now,setNow] = useState(0)
     const [error,setError] = useState()
     const [signedIn,setSignedIn] = useState(false)
     const [payableAmount,setPayableAmount] = useState(0)
     const [referral,setReferral] = useState("")
     const [loadingMsg,setLoadingMsg] = useState()
-    const [link,setLink] = useState("")
     const [userValid,setUserValid] = useState(false)
     const [showQr,setShowQr] = useState(false)
     const [availableChains,setAvailableChains] = useState([])
@@ -116,7 +112,6 @@ const ContractPage = () => {
         if(registered){
             registerContract.methods.addressToProfile(account).call()
             .then(res=>{
-                setUserInfo(res.info.trim())
                 parseUserInfo(res.info)
                 setButtonDisabled(false)
                 setError()
@@ -170,7 +165,6 @@ const ContractPage = () => {
         // }else{
             // let data = getInfoFieldsData()
             // data = JSON.stringify(data).replaceAll("\"","\'")
-            const value = payableAmount;
             registerContract.methods.signIn(input.split("@")[0],baseUrl+infoHash.path,referral,0,baseUrl+uri.path).send({from:account,value:payableAmount})
             .on("transactionHash",transactionHash=>{
                 setLoadingMsg('Wating to comfirm')
@@ -282,7 +276,7 @@ const ContractPage = () => {
                     <OverlayTrigger key={index} placement={"bottom"}  overlay={<Tooltip >{chain}</Tooltip>}>
                     <div className="mx-1">
                         <a href={data.chains[chain].params[0].blockExplorerUrls[0]+"/"+"address"+"/"+data.addresses[chain].register}
-                            target="_blank"
+                            target="_blank" rel="noreferrer"
                         >
                             <img style={{width:'20px',height:'20px'}} src={data.chains[chain].icon} alt={chain+"icon"} />  
                         </a>

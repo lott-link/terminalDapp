@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
-import Button from "../Components/styled/Button";
 import { useWeb3React } from "@web3-react/core"; 
 import { useHistory } from "react-router";
-import CountDown from "../Components/CountDown";
-import { context } from '../App'
 import styles from './chanceRoomList.module.css'
 import axios from 'axios'
 import Web3 from "web3";
+
+import CountDown from "../Components/CountDown";
+import Button from "../Components/styled/Button";
+import { context } from '../App'
+
 const ChanceRoomList = () => {
   const { active,account,library, chainId} = useWeb3React()
   const data = useContext(context)
@@ -47,35 +49,41 @@ const ChanceRoomList = () => {
   // }
   const getAllTransactions = ()=>{
     const currentChain = data.converChainIDToName(chainId)
-    const chains = data.supportedChains.filter(item=> item.chain === currentChain)
-    if(chains.length === 0) return 
-    const topic = Web3.utils.sha3("NewChanceRoom(address,address,uint256,uint256,uint256,uint256)")
-    axios.get(`https://api-testnet.polygonscan.com/api?module=logs&action=getLogs&fromBlock=21122189&toBlock=31122189
-    &address=${data.addresses[data.network]['factory']}&apikey=YourApiKeyToken
-    &topic0=${topic}`)
-    .then(res=>{
-      const data = res.data.result;
-      let info = []
-      data.map(event=>{
-        const userLimit = "0x"+event.data.slice(260,322);
-        const timeLimit = "0x"+event.data.slice(322,458);
-        const commission = "0x"+event.data.slice(208,258);
-        info.push({
-        address:"0x"+event.data.slice(26,66),
-        owner:"0x"+event.data.slice(90,130),
-        commission:Web3.utils.toDecimal(commission),
-        userLimit:Web3.utils.toDecimal(userLimit),
-        timeLimit:Web3.utils.toDecimal(timeLimit),
-      })}
-      )
-      setList(info)
-      setCList(info)
-    })
+    const chains = data.supportedChains.find(item=> item.chain === currentChain)
+    if( chains && !chains.supported ) return 
+    try{
+      const topic = Web3.utils.sha3("NewChanceRoom(address,address,uint256,uint256,uint256,uint256)")
+      axios.get(`https://api-testnet.polygonscan.com/api?module=logs&action=getLogs&fromBlock=21122189&toBlock=31122189
+      &address=${data.addresses[data.network]['factory']}&apikey=YourApiKeyToken
+      &topic0=${topic}`)
+      .then(res=>{
+        console.log(res)
+        const data = res.data.result;
+        let info = []
+        data.forEach(event=>{
+          const userLimit = "0x"+event.data.slice(260,322);
+          const timeLimit = "0x"+event.data.slice(322,458);
+          const commission = "0x"+event.data.slice(208,258);
+          info.push({
+          address:"0x"+event.data.slice(26,66),
+          owner:"0x"+event.data.slice(90,130),
+          commission:Web3.utils.toDecimal(commission),
+          userLimit:Web3.utils.toDecimal(userLimit),
+          timeLimit:Web3.utils.toDecimal(timeLimit),
+        })}
+        )
+        setList(info)
+        setCList(info)
+      })
+    }
+    catch(err){
+      console.log(err)
+    }
   }
   const subscribe = ()=>{
     const currentChain = data.converChainIDToName(chainId)
-    const chains = data.supportedChains.filter(item=> item.chain === currentChain)
-    if(chains.length === 0) return 
+    const chains = data.supportedChains.find(item=> item.chain === currentChain)
+    if( !chains.supported ) return 
     library.setProvider(new Web3.providers.WebsocketProvider("wss://rpc-mumbai.maticvigil.com/ws/v1/c94e97b70a9c2127c529d948ce9229b844c4dbdb"))    
     library.eth.subscribe('logs', {
         address: data.addresses[data.network]['factory'],
