@@ -16,7 +16,7 @@ const mainRoutes = [
     {path:"/tools",exact:false,component:Tools,title:"tools",type:'directory'},
     {path:"/assets",exact:true,component:Assets,title:"Assets",type:'link'},
     {path:"/contactus",exact:true,component:ContactUs,title:"Contact_us",type:'link'},
-    {path:"/inbox",exact:true,component:Inbox,title:"Inbox",type:'link'},
+    {path:"/inbox",exact:false,component:Inbox,title:"Inbox",type:'link'},
     {path:"/dev",exact:true,component:Dev,title:"dev",type:'link'},
 ]
 export default mainRoutes;

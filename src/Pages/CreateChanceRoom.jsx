@@ -30,8 +30,8 @@ const CreateChanceRoom = () => {
     }
     return (
         <div className="w-100 h-100 d-flex flex-column justify-content-center align-items-center position-relative">
-            <div className='position-absolute top-0 p-2' onClick={()=>history.push('/contract/chanceroomlist')}
-            style={{left:0,cursor:'pointer'}}>back</div>
+            <div className='position-absolute top-0 p-2 w-100' onClick={()=>history.push('/contract/chanceroomlist')}
+            style={{left:0,cursor:'pointer',borderBottom:'1px solid white'}}>back</div>
             <div className='d-flex justify-content-center flex-wrap'>
                 {
                 ["info","baseURI","gateFee","percentCommision","userLimit","timeLimit"].map((item,index)=>(
