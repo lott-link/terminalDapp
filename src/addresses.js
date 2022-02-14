@@ -29,7 +29,7 @@ export const addresses = {
     },
     ethereum: {
       logAPI:"https://api.etherscan.io/api?module=logs&action=getLogs&fromBlock=379224&toBlock=latest&apikey=WPZTIVDHXFF48WJ7UDAIE893S7WAVG6DSU&address=",
-      erc721API:"https://api.etherscan.io/api?module=account&action=tokennfttx&contractaddress=0x06012c8cf97bead5deae237070f9587f8e7a266d&startblock=0&endblock=latest&apikey=WPZTIVDHXFF48WJ7UDAIE893S7WAVG6DSU&address="
+      erc721API:"https://api.etherscan.io/api?module=account&action=tokennfttx&startblock=0&endblock=latest&apikey=WPZTIVDHXFF48WJ7UDAIE893S7WAVG6DSU&address="
     }
 }
 export const chains = {
@@ -133,16 +133,4 @@ export const converChainIDToName = (chainID)=>{
     return "mumbai"
   else if(["0xa869",43113].includes(chainID))
     return "fuji"
-  // switch(chainID){
-  //   case "0x1":
-  //     return "ethereum"
-  //   case "0x4":
-  //     return "rinkeby"
-  //   case "0x89":
-  //     return "polygon" 
-  //   case "0x13881":
-  //     return "mumbai"
-  //   case "0xa869":
-  //     return "fuji"
-  // }
 }

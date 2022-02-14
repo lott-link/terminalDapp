@@ -52,12 +52,12 @@ const Navbar = () => {
             {item.type==="directory" && index === 0 &&
             <Link style={{color:'white',textTransform:"capitalize"}} to='/'
               className={`${index===0 && item.title!=="HomePage"  && "trapezoid py-1  "} mx-1`}
-              onClick={()=>handleNav("HomePage")}>{item.title!=="HomePage" && <img src={play} alt="play-icon" style={{transform:"rotate(180deg)"}} />}{" "}{item.title}</Link>
+              onClick={()=>handleNav("HomePage")}>{item.title!=="HomePage" && <img src={play} alt="play-icon" style={{width:'11px',height:"14px",transform:"rotate(180deg)"}} />}{" "}{item.title}</Link>
             }
             {item.type==="directory" && index !== 0 &&
             <button style={{border:'none',backgroundColor:"#020227",color:'white',textTransform:"capitalize"}} 
               className="mx-1" 
-              onClick={()=>handleNav(item.title)}>{item.title}{item.title!=="HomePage" && <span >{" "}<img className='mb-1' alt="icon" src={play} /></span>}</button>
+              onClick={()=>handleNav(item.title)}>{item.title}{item.title!=="HomePage" && <span >{" "}<img  style={{width:'11px',height:"14px"}} className='mb-1' alt="icon" src={play} /></span>}</button>
             }
             {item.type==="link" &&
             <Link 

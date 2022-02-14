@@ -123,7 +123,7 @@ const Sidebar = () => {
         {!active && <div className="w-100 text-center">
           <button onClick={metamask} className="wallet-button p-0">
             <div className="d-flex h-100">
-              <div className="wallet-button-logo d-flex justify-content-center align-items-center" style={{width:'15%'}}><img  src={metamaskIcon}/></div>
+              <div className="wallet-button-logo d-flex justify-content-center align-items-center" style={{width:'15%'}}><img style={{width:'40px',height:"40px"}} src={metamaskIcon} alt="metamask icon" /></div>
               <div className="wallet-button-text d-flex align-items-center" style={{width:'85%'}}>metamask</div>
             </div>
           </button>
@@ -131,7 +131,7 @@ const Sidebar = () => {
         {!active && <div className="w-100 text-center">
           <button onClick={walletConnect} className="wallet-button mt-2 p-0">
             <div className="d-flex h-100">
-              <div className="wallet-button-logo d-flex justify-content-center align-items-center" style={{width:'15%'}}><img  src={walletConnectIcon}/></div>
+              <div className="wallet-button-logo d-flex justify-content-center align-items-center" style={{width:'15%'}}><img style={{width:'40px',height:"40px"}} src={walletConnectIcon} alt="walletconnect icon" /></div>
               <div className="wallet-button-text d-flex align-items-center" style={{width:'85%'}}>walletconnect</div>
             </div>
           </button>
