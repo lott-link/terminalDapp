@@ -21,16 +21,17 @@ const ContactUs = () => {
   const [senderPublicKey,setSenderPublicKey] = useState()
   const [show,setShow] = useState(false)
   const [stages,setStages] = useState({loading:false,approving:false,confirming:false,confirmed:false})
-  const [publicKeyLoading,setPublicKeyLoading] = useState(false)
+  const [publicKeyLoading,setPublicKeyLoading] = useState({button:false,metakeyAprove:false,setKeyAprove:false,confirming:false})
   const [mode,setMode] = useState()
   const reqPublicKey = async ()=>{
-    setPublicKeyLoading(true)
+    setPublicKeyLoading({button:false,metakeyAprove:true,setKeyAprove:false,confirming:false})
     // requesting for public key
     const publicEncryptionKey = await window.ethereum.request({
       method: 'eth_getEncryptionPublicKey',
       params: [account],
     })
-    setPublicKeyLoading(false)
+    setPublicKeyLoading({button:false,metakeyAprove:false,setKeyAprove:false,confirming:false})
+    // setShow(false)
     setSenderPublicKey(publicEncryptionKey)
     setPublicKey(publicEncryptionKey)
     console.log("this is public key:",publicEncryptionKey)
@@ -60,17 +61,20 @@ const ContactUs = () => {
   const setPublicKey = async (publicKey)=>{
     if(!active) return;
     console.log("publicKey in setpublickey",publicKey)
+    setPublicKeyLoading({button:false,metakeyAprove:false,setKeyAprove:true,confirming:false})
     try {
         const contract = new library.eth.Contract(messengerABI,data.addresses[data.network]['messenger'])
         contract.methods.setPublicKey(publicKey).send({from:account}) 
         .on("transactionHash",transactionHash=>{
-          
+          setPublicKeyLoading({button:false,metakeyAprove:false,setKeyAprove:false,confirming:true})
         })
         .on("receipt",receipt=>{
           sendMessage(mode)
+          setShow(false)
         })
         .on("error",error=>{
-            
+          setPublicKeyLoading({button:false,metakeyAprove:false,setKeyAprove:false,confirming:false})
+          setShow(false)
         })
     }
     catch(err) {
@@ -140,6 +144,7 @@ const ContactUs = () => {
   const handleSendMessage = async(method)=>{
     if( ownPublicKey === false ) {
       setShow(true)
+      setPublicKeyLoading({button:true,metakeyAprove:false,setKeyAprove:false,confirming:false})
       setMode(method)
     }else{
       sendMessage(method)
@@ -208,7 +213,7 @@ const ContactUs = () => {
     {(show) &&
     <div className='position-absolute w-100 h-100 d-flex justify-content-center align-items-center' style={{backgroundColor:"rgba(13,110,253,0.5)"}}>
       <div className='w-50 h-50 p-3' style={{background:'#020227',border:'7px double white',color:'white'}}>
-        {!publicKeyLoading &&
+        {publicKeyLoading.button &&
         <>
         <div>
           <h5>
@@ -228,8 +233,23 @@ const ContactUs = () => {
         </div>
         </>
         }
-        {publicKeyLoading &&
-          <div className='d-flex justify-content-center position-relative' style={{top:'45%'}}><LoadingBalls /></div>
+        {publicKeyLoading.metakeyAprove &&
+          <div className='d-flex flex-column justify-content-center position-relative' style={{top:'40%'}}>
+            <div className='text-center'><h5>getting private key</h5></div>
+            <div><LoadingBalls /></div>
+          </div>
+        }
+        {publicKeyLoading.setKeyAprove &&
+          <div className='d-flex flex-column justify-content-center position-relative' style={{top:'40%'}}>
+            <div className='text-center'><h5>setting private key</h5></div>
+            <div><LoadingBalls /></div>
+          </div>
+        }
+        {publicKeyLoading.confirming &&
+          <div className='d-flex flex-column justify-content-center position-relative' style={{top:'40%'}}>
+            <div className='text-center'><h5>wating to confirm private key</h5></div>
+            <div><LoadingBalls /></div>
+          </div>
         }
       </div>
     </div>
