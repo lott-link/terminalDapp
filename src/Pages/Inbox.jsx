@@ -9,12 +9,14 @@ import { OverlayTrigger, Tooltip} from 'react-bootstrap'
 import { context } from "../App";
 import Button from '../Components/styled/Button'
 import styles from './chanceRoomList.module.css'
+import ContactUs from "./ContactUs";
 
 const Inbox = ()=>{
     return (
     <>
     <Route path="/inbox" exact={true} component={InboxPage} />
     <Route path="/inbox/message" component={Message} />
+    <Route path="/inbox/newmessage" component={ContactUs} />
     </>
     );
 }
@@ -96,6 +98,10 @@ const InboxPage = () => {
         const date = new Date(timeStamp)
         return date.getFullYear() + '/' + (+date.getMonth()+1) + '/' + date.getDate()
     }
+    const getTime = (timeStamp)=>{
+        const date = new Date(timeStamp)
+        return date.getHours() + ':' + date.getMinutes()
+    }
     if(!active)
         return (<h2 className="w-100 h-100 d-flex justify-content-center align-items-center">please connect your wallet</h2>)
     else if(!data.pageSupported) 
@@ -128,12 +134,13 @@ const InboxPage = () => {
     <div className="text-center mt-3">
         <Button secondary={selectedBtn === 0} primary={selectedBtn !== 0} className="mx-2" onClick={()=>{setLogs(allMsgs);setSelectedBtn(0)}}>received messages</Button>
         <Button secondary={selectedBtn === 1} primary={selectedBtn !== 1} className="mx-2" onClick={()=>{setLogs(sentMessages);setSelectedBtn(1)}}>sent messages</Button>
-        <Button primary className="mx-2" onClick={()=>history.push({pathname:'/contactus',state:{type:'fromInbox'}})}>new message</Button>
+        <Button primary className="mx-2" onClick={()=>history.push({pathname:'/inbox/newmessage',state:{type:'fromInbox'}})}>new message</Button>
     </div>
     <div className="d-flex justify-content-center container" style={{overflowY:'auto',maxHeight:'80%'}}>
         <table>
             <thead>
                 <tr className={`${styles.tr} ${styles.head}`}>
+                    <th>#</th>
                     <th>from</th>
                     <th>subject</th>
                     <th>msg</th>
@@ -144,14 +151,20 @@ const InboxPage = () => {
             <tbody>
                 {
                 logs.map((message,index)=>(
-                <tr key={index} className={styles.tr} >
+                <tr key={index} className={styles.tr} style={{cursor:'pointer'}} 
+                onClick={()=>history.push({pathname:"/inbox/message",state:message})} >
+                    <td>{index+1}</td>
                     <td><strong>{message.to.slice(0,5)+"..."+message.to.slice(-5)}</strong></td>
                     <td>{message.subject}</td>
                     <td>{message.msg && message.msg.length > 30 ? message.msg.slice(0,30) : message.msg }</td>
-                    <td>{getDate(message.timeStamp)}</td>
+                    <td>
+                        <OverlayTrigger placement={"bottom"}  overlay={<Tooltip >{getTime(message.timeStamp)}</Tooltip>}>
+                            <div>{getDate(message.timeStamp)}</div>
+                        </OverlayTrigger>
+                    </td>
                     <td>
                         <button onClick={()=>history.push({pathname:"/inbox/message",state:message})}>open</button>
-                        <button onClick={()=>history.push({pathname:'/contactus',state:{type:'reply',to:message.from}})}>reply</button>
+                        <button onClick={(e)=>{e.stopPropagation();history.push({pathname:'/inbox/newmessage',state:{type:'reply',to:message.from}})}}>reply</button>
                     </td>
                 </tr> 
                 ))
@@ -244,7 +257,7 @@ const Message = () => {
             {location.state.isHashed &&
             <div className="position-absolute" style={{left:'37%',bottom:'2%'}} >
                 <button onClick={()=>decryptFunc(location.state.msg,location.state)}>decrypt</button>
-                <button className="mx-2" onClick={()=>history.push({pathname:'/contactus',state:{type:'reply',to:location.state.from}})}>reply</button>
+                <button className="mx-2" onClick={()=>history.push({pathname:'/inbox/newmessage',state:{type:'reply',to:location.state.from}})}>reply</button>
             </div>
             }
         </div>

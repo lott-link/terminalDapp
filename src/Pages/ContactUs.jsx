@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import { encrypt } from 'eth-sig-util'
-import { OverlayTrigger, Tooltip} from 'react-bootstrap'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { useLocation } from 'react-router-dom' 
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
 import Input from '../Components/styled/input';
 import Button from '../Components/styled/Button';
@@ -12,6 +13,7 @@ import LoadingBalls from '../Components/LoadingBalls'
 
 const ContactUs = () => {
   const { library, account, active, chainId } = useWeb3React()
+  const history = useHistory()
   const location = useLocation()
   const data = useContext(context)
   const [msg,setMsg] = useState("")
@@ -168,11 +170,19 @@ const ContactUs = () => {
     else if(location.state && (location.state.type === "reply" )){
       setShowTo(true)
       setTo(location.state.to)
+      runFunc(location.state.to)
     }
     else
       setShowTo(false)
 
   },[])
+  const runFunc = async (address)=>{
+    const publicKey = await getPublicKey(address)
+    if(publicKey === false) setDisablePrivateMsg(true)
+      else {
+          setReceiverPublicKey(publicKey)
+    }
+  }
   if(!active)
         return (<h2 className="w-100 h-100 d-flex justify-content-center align-items-center">please connect your wallet</h2>)
   else if(!data.pageSupported) 
@@ -182,8 +192,8 @@ const ContactUs = () => {
     <div className="h-100 w-100">
     
     <div className='d-flex justify-content-between py-2' style={{borderBottom:"1px solid white"}}>
-            <div style={{cursor:"pointer"}} className='mx-4 my-auto'>{/*don't delete this div */}</div>
-            <div className='my-auto'>New Message</div>
+            <div style={{cursor:"pointer"}} className='mx-4 my-auto' onClick={()=>history.push('/inbox')}>{location.state && "back"}</div>
+            <div className='my-auto'>{location.state ? "New Message" : "Contact Us"}</div>
             <div className='d-flex' style={{paddingRight:'10px'}}>
             {
             availableChains.map((chain,index)=> (

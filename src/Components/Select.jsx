@@ -60,6 +60,7 @@ const Select = () => {
         setAvailableChains(checkNetworkSupport("messenger"))
         break;
       case '/inbox':
+      case '/inbox/newmessage':
         setAvailableChains(checkNetworkSupport("messenger"))
         break;
       default:
