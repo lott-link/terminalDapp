@@ -14,7 +14,7 @@ const ContactUs = () => {
   const data = useContext(context)
   const [msg,setMsg] = useState("")
   const [to,setTo] = useState("")
-  const [subject,setSubject] = useState()
+  const [subject,setSubject] = useState("")
   const [disablePrivateMsg,setDisablePrivateMsg] = useState(false)
   const [ownPublicKey,setOwnPublicKey] = useState()
   const [receiverPublicKey,setReceiverPublicKey] = useState()
@@ -167,7 +167,7 @@ const ContactUs = () => {
       <option value="0xfe6754537CfE0aD4Eb9F3996Ae9c36A717CBaaFb">Strategy</option>
     </select>
     <div className='d-flex'>
-      <Input title="Subject" onChange={(e)=>setSubject(e.target.value)} />
+      <Input title="Subject" value={subject} onChange={(e)=>setSubject(e.target.value)} />
       <OverlayTrigger key={"bottom"} placement={"bottom"}
                 overlay={
                 <Tooltip >
