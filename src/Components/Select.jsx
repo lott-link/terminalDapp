@@ -59,6 +59,9 @@ const Select = () => {
       case '/contactus':
         setAvailableChains(checkNetworkSupport("messenger"))
         break;
+      case '/inbox':
+        setAvailableChains(checkNetworkSupport("messenger"))
+        break;
       default:
         break;
     }
@@ -94,9 +97,14 @@ const Select = () => {
   useEffect(()=>{
     let supportedChains = availableChains.filter(item=>item.supported)
     supportedChains = supportedChains.map(item=>item.chain)
-    if(supportedChains.includes(data.network))
+    if(supportedChains.includes(data.network)){
       setSupported(true)
-    else setSupported(false)
+      data.setPageSupported(true)
+    }
+    else{
+      setSupported(false)
+      data.setPageSupported(false)
+    }
   },[data.network,value,history.location.pathname])
   return (
     <div ref={ref} className="w-100" style={{position:'relative'}}>

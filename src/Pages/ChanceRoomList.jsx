@@ -128,6 +128,11 @@ const ChanceRoomList = () => {
   useEffect(()=>{
     getAllTransactions()
   },[])
+  if(!active)
+    return (<h2 className="w-100 h-100 d-flex justify-content-center align-items-center">please connect your wallet</h2>)
+  else if(!data.pageSupported) 
+    return (<h2 className="w-100 h-100 d-flex justify-content-center align-items-center">Chain not supported</h2>)
+  else
   return (
     <div className="w-100 h-100">
       <div className="d-flex justify-content-center">

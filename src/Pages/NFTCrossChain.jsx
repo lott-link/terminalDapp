@@ -6,7 +6,9 @@ import SelectNFT from './CrossChainNFT/SelectNFT'
 import TransferNFT from './CrossChainNFT/TransferNFT'
 import InfoPage from './CrossChainNFT/InfoPage'
 import { useLocation } from 'react-router-dom' 
+import { useWeb3React } from '@web3-react/core'
 const NFTCrossChain = ({props}) => {
+    const { active } = useWeb3React()
     const data = useContext(context)
     const location = useLocation()
     const [availableChains,setAvailableChains] = useState([])
@@ -73,6 +75,11 @@ const NFTCrossChain = ({props}) => {
             setSelectedWay(true)
         }
     },[])
+    if(!active)
+        return (<h2 className="w-100 h-100 d-flex justify-content-center align-items-center">please connect your wallet</h2>)
+    else if(!data.pageSupported) 
+        return (<h2 className="w-100 h-100 d-flex justify-content-center align-items-center">Chain not supported</h2>)
+    else
     return (
         <div className='w-100 h-100' style={{display:'flex',flexFlow:'column'}} >
             <div className='d-flex justify-content-between py-2' style={{borderBottom:"1px solid white"}}>

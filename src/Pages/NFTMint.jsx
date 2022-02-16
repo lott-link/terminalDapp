@@ -94,6 +94,11 @@ const NFTMint = () => {
         progress: undefined,
         });
     }
+  if(!active)
+      return (<h2 className="w-100 h-100 d-flex justify-content-center align-items-center">please connect your wallet</h2>)
+  else if(!data.pageSupported) 
+      return (<h2 className="w-100 h-100 d-flex justify-content-center align-items-center">Chain not supported</h2>)
+  else
   return (
     <div className="w-100 h-100 d-flex flex-column align-items-center" style={{position:'relative'}}>
       <div className="my-2 w-100 d-flex justify-content-center" style={{borderBottom:"1px solid white"}}>

@@ -22,7 +22,7 @@ export default Inbox
 
 
 const InboxPage = () => {
-	const { library, account } = useWeb3React();
+	const { library, account, active } = useWeb3React();
     const history = useHistory();
     const [logs,setLogs] = useState([])
     const [allMsgs,setAllMsgs] = useState([])
@@ -89,6 +89,11 @@ const InboxPage = () => {
 	useEffect(() => {
 		getLogs();
 	}, [data.network]);
+    if(!active)
+        return (<h2 className="w-100 h-100 d-flex justify-content-center align-items-center">please connect your wallet</h2>)
+    else if(!data.pageSupported) 
+        return (<h2 className="w-100 h-100 d-flex justify-content-center align-items-center">Chain not supported</h2>)
+    else
 	return (
     <div className="h-100">{console.log(logs)}
     <div className="text-center mt-3">

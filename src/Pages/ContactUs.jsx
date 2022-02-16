@@ -151,6 +151,11 @@ const ContactUs = () => {
     }
 
   }
+  if(!active)
+        return (<h2 className="w-100 h-100 d-flex justify-content-center align-items-center">please connect your wallet</h2>)
+  else if(!data.pageSupported) 
+        return (<h2 className="w-100 h-100 d-flex justify-content-center align-items-center">Chain not supported</h2>)
+  else
   return (
   <div className='d-flex flex-column justify-content-center align-items-center position-relative w-100 h-100'>
     {/* <div><Input title="To" onChange={handleChangeAddress}/></div> */}
