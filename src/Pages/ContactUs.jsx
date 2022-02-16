@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import { encrypt } from 'eth-sig-util'
 import { OverlayTrigger, Tooltip} from 'react-bootstrap'
+import { useLocation } from 'react-router-dom' 
 
 import Input from '../Components/styled/input';
 import Button from '../Components/styled/Button';
@@ -11,6 +12,7 @@ import LoadingBalls from '../Components/LoadingBalls'
 
 const ContactUs = () => {
   const { library, account, active, chainId } = useWeb3React()
+  const location = useLocation()
   const data = useContext(context)
   const [msg,setMsg] = useState("")
   const [to,setTo] = useState("")
@@ -19,6 +21,8 @@ const ContactUs = () => {
   const [ownPublicKey,setOwnPublicKey] = useState()
   const [receiverPublicKey,setReceiverPublicKey] = useState()
   const [senderPublicKey,setSenderPublicKey] = useState()
+  const [availableChains,setAvailableChains] = useState([])
+  const [showTo,setShowTo] = useState()
   const [show,setShow] = useState(false)
   const [stages,setStages] = useState({loading:false,approving:false,confirming:false,confirmed:false})
   const [publicKeyLoading,setPublicKeyLoading] = useState({button:false,metakeyAprove:false,setKeyAprove:false,confirming:false})
@@ -151,30 +155,77 @@ const ContactUs = () => {
     }
 
   }
+  useEffect(()=>{
+    const tempChains = []
+    for(let key in data.addresses){
+        if(data.addresses[key].messenger && data.addresses[key].messenger.length!==0)
+            tempChains.push(key)
+    }
+    setAvailableChains(tempChains)
+
+    if(location.state && (location.state.type === "fromInbox" ))
+      setShowTo(true)
+    else if(location.state && (location.state.type === "reply" )){
+      setShowTo(true)
+      setTo(location.state.to)
+    }
+    else
+      setShowTo(false)
+
+  },[])
   if(!active)
         return (<h2 className="w-100 h-100 d-flex justify-content-center align-items-center">please connect your wallet</h2>)
   else if(!data.pageSupported) 
         return (<h2 className="w-100 h-100 d-flex justify-content-center align-items-center">Chain not supported</h2>)
   else
   return (
-  <div className='d-flex flex-column justify-content-center align-items-center position-relative w-100 h-100'>
-    {/* <div><Input title="To" onChange={handleChangeAddress}/></div> */}
+    <div className="h-100 w-100">
+    
+    <div className='d-flex justify-content-between py-2' style={{borderBottom:"1px solid white"}}>
+            <div style={{cursor:"pointer"}} className='mx-4 my-auto'>{/*don't delete this div */}</div>
+            <div className='my-auto'>New Message</div>
+            <div className='d-flex' style={{paddingRight:'10px'}}>
+            {
+            availableChains.map((chain,index)=> (
+                <OverlayTrigger key={index} placement={"bottom"}  overlay={<Tooltip >{chain}</Tooltip>}>
+                <div className="mx-1">
+                    <a href={data.chains[chain].params[0].blockExplorerUrls[0]+"address"+"/"+data.addresses[chain].messenger}
+                        target="_blank" rel="noreferrer" 
+                    >
+                        <img style={{width:'20px',height:'20px'}} src={data.chains[chain].icon} alt={chain+"icon"} />  
+                    </a>
+                </div>
+                </OverlayTrigger>
+                )
+            )
+            }
+        </div>
+    </div>
+            
+  <div className='d-flex flex-column align-items-center position-relative mt-4 w-100 h-100'>
+    
+    {showTo && <div><Input title="To" value={to} style={{width:'20rem'}} onChange={handleChangeAddress}/></div>}
+    {!showTo &&
     <select name="" id="" onChange={handleChangeAddress} className="text-center py-1 position-relative"
     style={{width:'17rem', background:"#020227",color:'white',border:'7px double white',right:'1.2rem'}}>
       <option value="">Select a section</option>
       <option value="0x8C97769D2Fc3e18967375B9E6e4214f1A393A862">Dapp</option>
       <option value="">Solidity</option>
       <option value="0xfe6754537CfE0aD4Eb9F3996Ae9c36A717CBaaFb">Strategy</option>
-    </select>
-    <div className='d-flex'>
-      <Input title="Subject" value={subject} onChange={(e)=>setSubject(e.target.value)} />
-      <OverlayTrigger key={"bottom"} placement={"bottom"}
-                overlay={
-                <Tooltip >
-               this part doesn't encrypt. It helps you and the receiver read something about the private message. Be careful everybody can read this part. 
-                </Tooltip>}>
-              <img className='mx-2 m-1' src="/info.svg" alt="" />
-        </OverlayTrigger>
+    </select>}
+    <div className='d-flex position-relative'>
+      <Input title="Subject" value={subject} style={{width:'20rem'}} onChange={(e)=>setSubject(e.target.value)} />
+      <div style={{position:"absolute",right:'25px',top:'22px'}}>
+        <OverlayTrigger key={"bottom"} placement={"bottom"}
+                  overlay={
+                  <Tooltip style={{border:'3px solid white',background:'black',textAlign:'justify'}}>
+                    <div style={{textAlign:'justify'}}>
+                    this part doesn't encrypt. It helps you and the receiver read something about the private message. Be careful everybody can read this part. 
+                    </div>
+                  </Tooltip>}>
+                <img className='mx-2 m-1' src="/info.svg" alt="" />
+          </OverlayTrigger>
+      </div>
     </div>
     <div style={{position:'relative'}}>
         <label htmlFor="" className='px-3' onChange={(e)=>setMsg(e.target.value)}
@@ -182,23 +233,23 @@ const ContactUs = () => {
             Message
             <OverlayTrigger key={"bottom"} placement={"bottom"}
                 overlay={
-                <Tooltip >
+                <Tooltip style={{border:'3px solid white',background:'black'}}>
                this part can encrypt and send in private mode. Be careful in the private mode; you can't read your sent message anymore. 
                 </Tooltip>}>
               <img className='mx-2 m-1' src="/info.svg" alt="" />
           </OverlayTrigger>        
         </label>
-        <textarea name="" id="" cols="30" rows="10" className='p-2' 
-        onChange={(e)=>setMsg(e.target.value)}
-        style={{background:'#020227',border:'7px double white',color:'white'}}>
+        <textarea name="" id=""  rows="10" className='p-2' 
+        onChange={(e)=>setMsg(e.target.value)} 
+        style={{background:'#020227',border:'7px double white',color:'white',width:'20rem'}}>
         </textarea>
     </div>
-    <div>
+    <div className='d-flex flex-column'>
         <Button disabled={disablePrivateMsg} onClick={()=>{handleSendMessage('private')}}>
           Send Private Message
           <OverlayTrigger key={"bottom"} placement={"bottom"}
                 overlay={
-                <Tooltip >
+                <Tooltip style={{border:'3px solid white',background:'black'}}>
                the message will encrypt whit the receiver's Public key, and only the receiver can read the message. 
                 </Tooltip>}>
               <img className='mx-2 m-1' src="/info.svg" alt="" />
@@ -208,7 +259,7 @@ const ContactUs = () => {
           Send Public Message
           <OverlayTrigger key={"bottom"} placement={"bottom"}
                 overlay={
-                <Tooltip >
+                <Tooltip style={{border:'3px solid white',background:'black'}}>
                your message will not encrypt, and everybody can read it.  
                 </Tooltip>}>
               <img className='mx-2 m-1' src="/info.svg" alt="" />
@@ -225,7 +276,7 @@ const ContactUs = () => {
             Enable your private messaging
             <OverlayTrigger key={"bottom"} placement={"bottom"}
                 overlay={
-                <Tooltip >
+                <Tooltip style={{border:'3px solid white',background:'black'}}>
                 By clicking this, allow other people to send you messages in private mode. It means anyone can't read messages sent to you. 
                 </Tooltip>}>
               <img className='mx-2 m-1' src="/info.svg" alt="" />
@@ -278,6 +329,7 @@ const ContactUs = () => {
         </div>
       </div>
     }
+  </div>
   </div>
   );
 };

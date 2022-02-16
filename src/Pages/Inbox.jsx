@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useWeb3React } from "@web3-react/core";
 import axios from "axios";
-import Table from 'react-bootstrap/Table'
 import { useHistory } from 'react-router-dom'
 import { Route } from 'react-router-dom'
 import { useLocation } from "react-router-dom";
+import { OverlayTrigger, Tooltip} from 'react-bootstrap'
 
 import { context } from "../App";
 import Button from '../Components/styled/Button'
+import styles from './chanceRoomList.module.css'
 
 const Inbox = ()=>{
     return (
@@ -20,16 +21,14 @@ const Inbox = ()=>{
 export default Inbox
 
 
-
 const InboxPage = () => {
 	const { library, account, active } = useWeb3React();
     const history = useHistory();
     const [logs,setLogs] = useState([])
     const [allMsgs,setAllMsgs] = useState([])
-    const [publicMessages,setPublicMessages] = useState([])
-    const [privateMessages,setPrivateMessages] = useState([])
     const [sentMessages,setSentMessages] = useState([])
     const [selectedBtn,setSelectedBtn] = useState(0)
+    const [availableChains,setAvailableChains] = useState([])
 	const data = useContext(context);
 	const getLogs = async () => {
 		if (!data.network) return;
@@ -39,21 +38,19 @@ const InboxPage = () => {
             .then((res) => res);
         console.log(res);
         const tempLogs = [];
-        const tempPublic = [];
-        const tempPrivate = [];
         const tempSentMessages = [];
 
         res.data.result.forEach((item) => {
             try {
                 const result = library.eth.abi.decodeLog(typesArr, item.data);
-                console.log(result)
+
+                result.timeStamp = library.utils.hexToNumber(item.timeStamp) * 1000
+
                 const tempMessage = JSON.parse(result.message.replaceAll("\'","\"")); 
                 result.isHashed = tempMessage.isHashed;
                 result.msg = tempMessage.msg;
                 if(result.to === account){
                     tempLogs.push(result);
-                    !result.isHashed && tempPublic.push(result)
-                    result.isHashed && tempPrivate.push(result)
                 }
                 if(result.from === account){
                     tempSentMessages.push(result)
@@ -66,8 +63,6 @@ const InboxPage = () => {
         console.log(tempLogs);
         setLogs(tempLogs)
         setAllMsgs(tempLogs)
-        setPublicMessages(tempPublic)
-        setPrivateMessages(tempPrivate)
         setSentMessages(tempSentMessages)
         
 	};
@@ -89,6 +84,18 @@ const InboxPage = () => {
 	useEffect(() => {
 		getLogs();
 	}, [data.network]);
+    useEffect(()=>{
+        const tempChains = []
+        for(let key in data.addresses){
+            if(data.addresses[key].messenger && data.addresses[key].messenger.length!==0)
+                tempChains.push(key)
+        }
+        setAvailableChains(tempChains)
+    },[])
+    const getDate = (timeStamp)=>{
+        const date = new Date(timeStamp)
+        return date.getFullYear() + '/' + (+date.getMonth()+1) + '/' + date.getDate()
+    }
     if(!active)
         return (<h2 className="w-100 h-100 d-flex justify-content-center align-items-center">please connect your wallet</h2>)
     else if(!data.pageSupported) 
@@ -96,35 +103,61 @@ const InboxPage = () => {
     else
 	return (
     <div className="h-100">{console.log(logs)}
-    <div className="text-center mt-3">
-        <Button secondary={selectedBtn === 0} primary={selectedBtn !== 0} className="mx-2" onClick={()=>{setLogs(allMsgs);setSelectedBtn(0)}}>all messages</Button>
-        <Button secondary={selectedBtn === 1} primary={selectedBtn !== 1} className="mx-2" onClick={()=>{setLogs(privateMessages);setSelectedBtn(1)}}>private mssages</Button>
-        <Button secondary={selectedBtn === 2} primary={selectedBtn !== 2} className="mx-2" onClick={()=>{setLogs(publicMessages);setSelectedBtn(2)}}>public messages</Button>
-        <Button secondary={selectedBtn === 3} primary={selectedBtn !== 3} className="mx-2" onClick={()=>{setLogs(sentMessages);setSelectedBtn(3)}}>sent messages</Button>
+
+        <div className='d-flex justify-content-between py-2' style={{borderBottom:"1px solid white"}}>
+            <div style={{cursor:"pointer"}} className='mx-4 my-auto'>{/*don't delete this div */}</div>
+            <div className='my-auto'>Messenger</div>
+            <div className='d-flex' style={{paddingRight:'10px'}}>
+            {
+            availableChains.map((chain,index)=> (
+                <OverlayTrigger key={index} placement={"bottom"}  overlay={<Tooltip >{chain}</Tooltip>}>
+                <div className="mx-1">
+                    <a href={data.chains[chain].params[0].blockExplorerUrls[0]+"address"+"/"+data.addresses[chain].messenger}
+                        target="_blank" rel="noreferrer" 
+                    >
+                        <img style={{width:'20px',height:'20px'}} src={data.chains[chain].icon} alt={chain+"icon"} />  
+                    </a>
+                </div>
+                </OverlayTrigger>
+                )
+            )
+            }
+        </div>
     </div>
-    <div className="d-flex justify-content-center container" style={{overflowY:'auto',height:'85%'}}>
-        <Table striped bordered hover variant="dark">
+
+    <div className="text-center mt-3">
+        <Button secondary={selectedBtn === 0} primary={selectedBtn !== 0} className="mx-2" onClick={()=>{setLogs(allMsgs);setSelectedBtn(0)}}>received messages</Button>
+        <Button secondary={selectedBtn === 1} primary={selectedBtn !== 1} className="mx-2" onClick={()=>{setLogs(sentMessages);setSelectedBtn(1)}}>sent messages</Button>
+        <Button primary className="mx-2" onClick={()=>history.push({pathname:'/contactus',state:{type:'fromInbox'}})}>new message</Button>
+    </div>
+    <div className="d-flex justify-content-center container" style={{overflowY:'auto',maxHeight:'80%'}}>
+        <table>
             <thead>
-                <tr>
+                <tr className={`${styles.tr} ${styles.head}`}>
                     <th>from</th>
                     <th>subject</th>
                     <th>msg</th>
+                    <th>time</th>
                     <th>action</th>
                 </tr>
             </thead>
             <tbody>
                 {
                 logs.map((message,index)=>(
-                <tr key={index} style={{cursor:'pointer'}} onClick={()=>history.push({pathname:"/inbox/message",state:message})}>
+                <tr key={index} className={styles.tr} >
                     <td><strong>{message.to.slice(0,5)+"..."+message.to.slice(-5)}</strong></td>
                     <td>{message.subject}</td>
                     <td>{message.msg && message.msg.length > 30 ? message.msg.slice(0,30) : message.msg }</td>
-                    {message.isHashed && <td><button onClick={()=>decryptFunc(message.msg,message)}>decrypt message</button></td>}
+                    <td>{getDate(message.timeStamp)}</td>
+                    <td>
+                        <button onClick={()=>history.push({pathname:"/inbox/message",state:message})}>open</button>
+                        <button onClick={()=>history.push({pathname:'/contactus',state:{type:'reply',to:message.from}})}>reply</button>
+                    </td>
                 </tr> 
                 ))
                 }
             </tbody>
-        </Table>
+        </table>
     </div>
     </div>
     );
@@ -209,8 +242,9 @@ const Message = () => {
                 <div style={{wordBreak:"break-word"}}>{msgToShow}</div>
             </div>
             {location.state.isHashed &&
-            <div className="position-absolute" style={{left:'45%',bottom:'2%'}} >
+            <div className="position-absolute" style={{left:'37%',bottom:'2%'}} >
                 <button onClick={()=>decryptFunc(location.state.msg,location.state)}>decrypt</button>
+                <button className="mx-2" onClick={()=>history.push({pathname:'/contactus',state:{type:'reply',to:location.state.from}})}>reply</button>
             </div>
             }
         </div>
