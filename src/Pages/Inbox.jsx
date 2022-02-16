@@ -7,6 +7,7 @@ import { Route } from 'react-router-dom'
 import { useLocation } from "react-router-dom";
 
 import { context } from "../App";
+import Button from '../Components/styled/Button'
 
 const Inbox = ()=>{
     return (
@@ -27,6 +28,8 @@ const InboxPage = () => {
     const [allMsgs,setAllMsgs] = useState([])
     const [publicMessages,setPublicMessages] = useState([])
     const [privateMessages,setPrivateMessages] = useState([])
+    const [sentMessages,setSentMessages] = useState([])
+    const [selectedBtn,setSelectedBtn] = useState(0)
 	const data = useContext(context);
 	const getLogs = async () => {
 		if (!data.network) return;
@@ -38,11 +41,12 @@ const InboxPage = () => {
         const tempLogs = [];
         const tempPublic = [];
         const tempPrivate = [];
+        const tempSentMessages = [];
 
         res.data.result.forEach((item) => {
             try {
-                console.log(item.data);
                 const result = library.eth.abi.decodeLog(typesArr, item.data);
+                console.log(result)
                 const tempMessage = JSON.parse(result.message.replaceAll("\'","\"")); 
                 result.isHashed = tempMessage.isHashed;
                 result.msg = tempMessage.msg;
@@ -50,6 +54,9 @@ const InboxPage = () => {
                     tempLogs.push(result);
                     !result.isHashed && tempPublic.push(result)
                     result.isHashed && tempPrivate.push(result)
+                }
+                if(result.from === account){
+                    tempSentMessages.push(result)
                 }
             }
             catch(err) {
@@ -61,6 +68,7 @@ const InboxPage = () => {
         setAllMsgs(tempLogs)
         setPublicMessages(tempPublic)
         setPrivateMessages(tempPrivate)
+        setSentMessages(tempSentMessages)
         
 	};
     const decryptFunc = async (encryptedData,obj)=>{
@@ -82,13 +90,14 @@ const InboxPage = () => {
 		getLogs();
 	}, [data.network]);
 	return (
-    <div>{console.log(logs)}
+    <div className="h-100">{console.log(logs)}
     <div className="text-center mt-3">
-        <button className="mx-2" onClick={()=>setLogs(allMsgs)}>all messages</button>
-        <button className="mx-2" onClick={()=>setLogs(privateMessages)}>private mssages</button>
-        <button className="mx-2" onClick={()=>setLogs(publicMessages)}>public messages</button>
+        <Button secondary={selectedBtn === 0} primary={selectedBtn !== 0} className="mx-2" onClick={()=>{setLogs(allMsgs);setSelectedBtn(0)}}>all messages</Button>
+        <Button secondary={selectedBtn === 1} primary={selectedBtn !== 1} className="mx-2" onClick={()=>{setLogs(privateMessages);setSelectedBtn(1)}}>private mssages</Button>
+        <Button secondary={selectedBtn === 2} primary={selectedBtn !== 2} className="mx-2" onClick={()=>{setLogs(publicMessages);setSelectedBtn(2)}}>public messages</Button>
+        <Button secondary={selectedBtn === 3} primary={selectedBtn !== 3} className="mx-2" onClick={()=>{setLogs(sentMessages);setSelectedBtn(3)}}>sent messages</Button>
     </div>
-    <div className="d-flex justify-content-center container">
+    <div className="d-flex justify-content-center container" style={{overflowY:'auto',height:'85%'}}>
         <Table striped bordered hover variant="dark">
             <thead>
                 <tr>
@@ -104,7 +113,7 @@ const InboxPage = () => {
                 <tr key={index} style={{cursor:'pointer'}} onClick={()=>history.push({pathname:"/inbox/message",state:message})}>
                     <td><strong>{message.to.slice(0,5)+"..."+message.to.slice(-5)}</strong></td>
                     <td>{message.subject}</td>
-                    <td>{message.msg.length > 30 ? message.msg.slice(0,30) : message.msg }</td>
+                    <td>{message.msg && message.msg.length > 30 ? message.msg.slice(0,30) : message.msg }</td>
                     {message.isHashed && <td><button onClick={()=>decryptFunc(message.msg,message)}>decrypt message</button></td>}
                 </tr> 
                 ))

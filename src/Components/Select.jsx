@@ -8,6 +8,7 @@ const Select = () => {
   const [show, setShow] = useState(false);
   const [value,setValue] = useState()
   const [availableChains,setAvailableChains] = useState([])
+  const [supported,setSupported] = useState("")
   const data = useContext(context)
   const history = useHistory()
   const ref = useRef(null);
@@ -55,6 +56,9 @@ const Select = () => {
       case '/tools/crosschain':
         setAvailableChains(checkNetworkSupport("crossChain"))
         break;
+      case '/contactus':
+        setAvailableChains(checkNetworkSupport("messenger"))
+        break;
       default:
         break;
     }
@@ -71,7 +75,7 @@ const Select = () => {
     }
   useEffect(()=>{
     handleAvailableChains(history.location.pathname)
-  },[])
+  },[history.location.pathname])
   const handleNetworkChange = (chainName)=>{
     if(window.ethereum){
         window.ethereum
@@ -87,6 +91,13 @@ const Select = () => {
         }).then(()=>data.setNetwork(chainName))
     }
   }
+  useEffect(()=>{
+    let supportedChains = availableChains.filter(item=>item.supported)
+    supportedChains = supportedChains.map(item=>item.chain)
+    if(supportedChains.includes(data.network))
+      setSupported(true)
+    else setSupported(false)
+  },[data.network,value,history.location.pathname])
   return (
     <div ref={ref} className="w-100" style={{position:'relative'}}>
       <div
@@ -100,12 +111,12 @@ const Select = () => {
         {
           !value &&
           <>
-          {data.network ? <span style={{textTransform:'capitalize'}}>{data.network}</span> : "not connected"} 
+          {data.network ? <span style={{textTransform:'capitalize'}}>{data.network}{!supported && <Badge bg="danger">Not supported</Badge>}</span> : "not connected"} 
           <span style={{transform:"translateY(2px)",marginLeft:'4px',position:'absolute',right:"4px"}}>&#x25BC;</span>
           </>
         }
         {value && <>
-        {<span style={{textTransform:'capitalize'}}>{value}</span> }
+        {<span style={{textTransform:'capitalize'}}>{value}{!supported && <Badge bg="danger">Not supported</Badge>}</span> }
         <span style={{transform:"translateY(2px)",marginLeft:'4px',position:'absolute',right:"4px"}}>&#x25BC;</span>
         </>
         }

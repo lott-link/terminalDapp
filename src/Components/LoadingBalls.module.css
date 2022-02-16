@@ -2,7 +2,7 @@
     width: 25px;
     height: 25px;
     border-radius: 50%;
-    background-color: blue;
+    background-color: rgb(206, 206, 216);
     animation: animation-grow 2s infinite;
     margin: 4px;
 }
@@ -10,7 +10,7 @@
     width: 25px;
     height: 25px;
     border-radius: 50%;
-    background-color: blue;
+    background-color: rgb(206, 206, 216);
     animation: animation-shrink 2s infinite;
     margin: 4px;
 }
