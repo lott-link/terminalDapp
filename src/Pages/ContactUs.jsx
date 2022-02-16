@@ -207,7 +207,7 @@ const ContactUs = () => {
     {showTo && <div><Input title="To" value={to} style={{width:'20rem'}} onChange={handleChangeAddress}/></div>}
     {!showTo &&
     <select name="" id="" onChange={handleChangeAddress} className="text-center py-1 position-relative"
-    style={{width:'17rem', background:"#020227",color:'white',border:'7px double white',right:'1.2rem'}}>
+    style={{width:'20rem', background:"#020227",color:'white',border:'7px double white'}}>
       <option value="">Select a section</option>
       <option value="0x8C97769D2Fc3e18967375B9E6e4214f1A393A862">Dapp</option>
       <option value="">Solidity</option>
