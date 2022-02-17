@@ -31,10 +31,13 @@ const InboxPage = () => {
     const [sentMessages,setSentMessages] = useState([])
     const [selectedBtn,setSelectedBtn] = useState(0)
     const [availableChains,setAvailableChains] = useState([])
+    const [loadingTable,setLoadinTable] = useState(true)
 	const data = useContext(context);
 	const getLogs = async () => {
 		if (!data.network) return;
        
+        setLoadinTable(true)
+
         const res = await axios
             .get(data.addresses[data.network].logAPI + data.addresses[data.network].messenger)
             .then((res) => res);
@@ -66,23 +69,10 @@ const InboxPage = () => {
         setLogs(tempLogs)
         setAllMsgs(tempLogs)
         setSentMessages(tempSentMessages)
+
+        setLoadinTable(false)
         
 	};
-    const decryptFunc = async (encryptedData,obj)=>{
-        //decrypting
-        try{
-            const decryptedMsg = await window.ethereum.request({
-              method: 'eth_decrypt',
-              params: [encryptedData, account],
-            });
-            console.log(decryptedMsg)
-            obj.msg = decryptedMsg;
-            setLogs([...logs])
-        }
-        catch(err) {
-            console.log(err)
-        }
-    }
 	useEffect(() => {
 		getLogs();
 	}, [data.network]);
@@ -134,10 +124,9 @@ const InboxPage = () => {
     <div className="text-center mt-3">
         <Button secondary={selectedBtn === 0} primary={selectedBtn !== 0} className="mx-2" onClick={()=>{setLogs(allMsgs);setSelectedBtn(0)}}>received messages</Button>
         <Button secondary={selectedBtn === 1} primary={selectedBtn !== 1} className="mx-2" onClick={()=>{setLogs(sentMessages);setSelectedBtn(1)}}>sent messages</Button>
-        <Button primary className="mx-2" onClick={()=>history.push({pathname:'/inbox/newmessage',state:{type:'fromInbox'}})}>new message</Button>
     </div>
-    <div className="d-flex justify-content-center container" style={{overflowY:'auto',maxHeight:'80%'}}>
-        <table>
+    <div className="d-flex justify-content-center container" style={{overflowY:'auto',maxHeight:'70%'}}>
+        <table style={{minWidth:'75%'}}>
             <thead>
                 <tr className={`${styles.tr} ${styles.head}`}>
                     <th>#</th>
@@ -169,8 +158,13 @@ const InboxPage = () => {
                 </tr> 
                 ))
                 }
+                {loadingTable ? <tr className={`${styles.tr}`} ><td  colSpan={6}>table is loading...</td></tr> :
+                                (logs.length === 0 && <tr className={`${styles.tr}`} ><td  colSpan={6}>you don't have any message</td></tr>)}
             </tbody>
         </table>
+    </div>
+    <div className="position-relative" style={{left:'4.5rem'}}>
+        <Button primary className="mx-2" onClick={()=>history.push({pathname:'/inbox/newmessage',state:{type:'fromInbox'}})}>new message</Button>
     </div>
     </div>
     );
