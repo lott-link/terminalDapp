@@ -29,6 +29,7 @@ const ContractPage = () => {
     const [userValid,setUserValid] = useState(false)
     const [showQr,setShowQr] = useState(false)
     const [availableChains,setAvailableChains] = useState([])
+    const [label,setLabel] = useState("")
     const data = useContext(context)
     const estimatedTime = 15;
       const parseUserInfo = (info)=>{
@@ -73,11 +74,11 @@ const ContractPage = () => {
         infoFields.forEach(item=>data[item.key] = item.value)
         return data;
     }
-    const hanleOption = (option)=>{
-        const index = infoFields.findIndex(item=>item.key.toLowerCase() === option.toLowerCase())
-        if(index!==-1) handleRempveField(index)
-        else addOptionInput(option)
-    }
+    // const hanleOption = (option)=>{
+    //     const index = infoFields.findIndex(item=>item.key.toLowerCase() === option.toLowerCase())
+    //     addOptionInput(option)
+    //     if(index!==-1) handleRempveField(index)
+    // }
     //****** Contract Read methods start********/
     const addressToUser = async (address)=>{
         setLoadingProfile(true)
@@ -215,12 +216,12 @@ const ContractPage = () => {
     }
     //****** Contract Write methods end********/
     const handleUserName = async (e)=>{
-        setInput(e.target.value.split("@")[0] + "@" + data.converChainIDToName(chainId))
+        // setInput(e.target.value.split("@")[0] + "@" + data.converChainIDToName(chainId))
+        setInput(e.target.value)
         const contract = new library.eth.Contract(registerContractABI,data.addresses[data.network]["register"])
-        // const price = await contract.methods.usernamePrice(e.target.value).call().then(res=>res)
-        // console.log(price)
-        // setPayableAmount(price) 
-        contract.methods.usernamePrice(e.target.value.split("@")[0]).call().then(res=>{
+        
+        // contract.methods.usernamePrice(e.target.value.split("@")[0]).call().then(res=>{
+        contract.methods.usernamePrice(e.target.value).call().then(res=>{
             setPayableAmount(res) 
             setUserValid(true)
         })
@@ -248,7 +249,7 @@ const ContractPage = () => {
         },1000)
     }
     useEffect(()=>{
-        setInput("@" + data.converChainIDToName(chainId))
+        setLabel("@" + data.converChainIDToName(chainId))
     },[chainId])
 
     useEffect(()=>{
@@ -297,9 +298,10 @@ const ContractPage = () => {
                     <div className="my-2">username:{userName}</div> : loadingProfile ? 
                         <div>loading...</div> : 
                             <div className="my-2">
-                                <div className="d-flex flex-column align-items-center">
-                                    <Input style={{width:'24rem'}} small={`enter a name`} success={userValid ? "success" : "failure"}
+                                <div className="d-flex flex-column align-items-center position-relative w-100">
+                                    <Input style={{width:'24rem',paddingRight:'7rem'}} small={`enter a name`} success={userValid ? "success" : "failure"}
                                     value={input}  title="Enter username" type="text" onChange={handleUserName} />
+                                    {input.length !== 0 && <div className='position-relative' style={{top:'-3.2rem',left:"9rem"}}><label htmlFor="">{label}</label></div>}
                                     <Input style={{width:"24rem"}} small="enter username of your referral, as default Lott.Link" 
                                     value={referral} title="referral" type="text" onChange={e=>setReferral(e.target.value)}/>
                                 </div>
@@ -310,16 +312,19 @@ const ContractPage = () => {
                 <div className="container">
                     {infoFields.map((item,index)=>{
                         return (
-                            <div key={index} className="d-flex justify-content-center">
+                            <div key={index} className="d-flex justify-content-center align-items-center">
                                 <div>
-                                    <Input style={{width:'24rem'}} title={item.key.slice(0,1).toUpperCase()+item.key.slice(1,item.key.length)} className=""  onChange={event=>handleInputChange(index,event)} name="value" value={item.value} type="text" />
+                                    <Input style={{width:'16.5rem'}} title={item.key.slice(0,1).toUpperCase()+item.key.slice(1,item.key.length)} className=""  onChange={event=>handleInputChange(index,event)} name="value" value={item.value} type="text" />
+                                </div>
+                                <div onClick={()=>handleRempveField(index)}>
+                                    <Button>Remove</Button>
                                 </div>
                             </div>
                         )
                     })}
                     {/* button when user not signed in */}
                      <div className="my-2 mx-auto" style={{width:'24rem'}}>
-                         {infoOptions.map((option,index)=><Button primary className="mx-1" disabled={buttonDisabled} onClick={()=>hanleOption(option)} key={index}>{option}</Button>)}
+                         {infoOptions.map((option,index)=><Button primary className="mx-1" disabled={buttonDisabled} onClick={()=>addOptionInput(option)} key={index}>{option}</Button>)}
                     </div>
                     { active && !signedIn && !loadingProfile &&
                     <div className="d-flex flex-column align-items-center">
@@ -376,12 +381,12 @@ const ContractPage = () => {
                 <div className='d-flex justify-content-center mt-4' style={{position:"absolute",top:'30%',left:'32%',zIndex:showQr?1:-1}}>
                     {chainId === 43113 &&
                          <QrCode profile="/avalanche.svg" background="avalanche" qr={qr} text={input}
-                        firstColor="#8E292F" secondColor="#F35C64"  data={"https://lott.link/"+input.split("@")[1]+ "/" +input.split("@")[0]}
+                        firstColor="#8E292F" secondColor="#F35C64"  data={"https://lott.link/"+ input + "/" }
                         rotation="90"/>
                     }
                     {chainId === 4 &&
                         <QrCode profile="/eth.svg" background="eth" qr={qr} text={input} 
-                        firstColor="#7F7F7F" secondColor="#010101"  data={"https://lott.link/"+input.split("@")[1]+ "/" +input.split("@")[0]}
+                        firstColor="#7F7F7F" secondColor="#010101"  data={"https://lott.link/"+ input + "/" }
                         rotation="225"/>
                     }
                 </div>

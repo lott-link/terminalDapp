@@ -163,7 +163,7 @@ const InboxPage = () => {
             </tbody>
         </table>
     </div>
-    <div className="position-relative" style={{left:'4.5rem'}}>
+    <div className="position-relative" style={{left:'15%'}}>
         <Button primary className="mx-2" onClick={()=>history.push({pathname:'/inbox/newmessage',state:{type:'fromInbox'}})}>new message</Button>
     </div>
     </div>

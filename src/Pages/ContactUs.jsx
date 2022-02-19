@@ -255,7 +255,7 @@ const ContactUs = () => {
         </textarea>
     </div>
     <div className='d-flex flex-column'>
-        <Button disabled={disablePrivateMsg} onClick={()=>{handleSendMessage('private')}}>
+        <Button secondary disabled={disablePrivateMsg} style={{width:'20rem'}} onClick={()=>{handleSendMessage('private')}}>
           Send Private Message
           <OverlayTrigger key={"bottom"} placement={"bottom"}
                 overlay={
@@ -265,7 +265,7 @@ const ContactUs = () => {
               <img className='mx-2 m-1' src="/info.svg" alt="" />
           </OverlayTrigger>   
         </Button>
-        <Button onClick={()=>{handleSendMessage('public')}}>
+        <Button secondary onClick={()=>{handleSendMessage('public')}} style={{width:'20rem'}}>
           Send Public Message
           <OverlayTrigger key={"bottom"} placement={"bottom"}
                 overlay={

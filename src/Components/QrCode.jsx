@@ -1,7 +1,6 @@
 import React, { useState, useEffect ,useRef } from 'react'
 import QRCodeStyling from "qr-code-styling";
 import styles from './QrCode.styles.module.css'
-import domtoimage from 'dom-to-image';
 const QrCode = ({ profile, background,firstColor,secondColor,rotation,data,qr,text}) => {
     const [options, setOptions] = useState({
       width: 252,

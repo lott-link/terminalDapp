@@ -1,10 +1,7 @@
 .avalanche {
     width: 350px;
     height: 350px;
-    background: url('../Assetes/tel_lottlink2.svg');
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
+    background-color:#720000;
     position: relative;
 }
 .polygon {
@@ -19,10 +16,7 @@
 .eth {
     width: 350px;
     height: 350px;
-    background: url('../Assetes/tel_lottlink4.svg');
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
+    background-color:#585858;
     position: relative;
 }
 
