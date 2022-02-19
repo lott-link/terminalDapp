@@ -32,7 +32,7 @@ const TextInput = styled.input`
     }
 `
 const Small = styled.small`
-    width:368px;
+    width:360px;
     color:${props => props.success ? props.success==="success" ? "#00AAAC" : "#FF00FF" : 'white'};
 `
 const Input = (props)=>{

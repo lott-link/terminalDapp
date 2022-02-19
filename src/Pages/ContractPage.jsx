@@ -9,6 +9,7 @@ import { OverlayTrigger, Tooltip} from 'react-bootstrap'
 import { context } from '../App';
 import { create } from 'ipfs-http-client'
 import QrCode from '../Components/QrCode';
+import useWidth from '../Hooks/useWidth';
 
 const client = create('https://ipfs.infura.io:5001/api/v0')
 const ContractPage = () => {
@@ -31,6 +32,7 @@ const ContractPage = () => {
     const [availableChains,setAvailableChains] = useState([])
     const [label,setLabel] = useState("")
     const data = useContext(context)
+    const width = useWidth()
     const estimatedTime = 15;
       const parseUserInfo = (info)=>{
         if(info){
@@ -273,7 +275,7 @@ const ContractPage = () => {
 </svg>
     return (
         <div className="w-100 h-100" style={{position:'relative'}}>
-            <div className="px-4 d-flex align-items-center justify-content-between" style={{height:'5%',borderBottom:'2px solid white'}}>
+            <div className={`px-4 d-flex align-items-center justify-content-between`} style={{height:'5%',borderBottom:'2px solid white'}}>
                 <div></div>
                 <div>Sign In</div>
                 <div className="d-flex">
@@ -293,28 +295,28 @@ const ContractPage = () => {
                 }
                 </div>
             </div>
-            <div style={{height:'80%',overflowY:"auto"}} className="px-4 text-center">
+            <div style={{height:'70vh',overflowY:"auto"}} className={`${width > 600 && "px-4"} text-center`}>
                 {active && (signedIn ? 
                     <div className="my-2">username:{userName}</div> : loadingProfile ? 
                         <div>loading...</div> : 
                             <div className="my-2">
                                 <div className="d-flex flex-column align-items-center position-relative w-100">
-                                    <Input style={{width:'24rem',paddingRight:'7rem'}} small={`enter a name`} success={userValid ? "success" : "failure"}
+                                    <Input style={{width:width>600 ?'24rem':"20rem",paddingRight:'7rem'}} small={`enter a name`} success={userValid ? "success" : "failure"}
                                     value={input}  title="Enter username" type="text" onChange={handleUserName} />
                                     {input.length !== 0 && <div className='position-relative' style={{top:'-3.2rem',left:"9rem"}}><label htmlFor="">{label}</label></div>}
-                                    <Input style={{width:"24rem"}} small="enter username of your referral, as default Lott.Link" 
+                                    <Input style={{width:width>600 ?"24rem":"20rem"}} small="enter username of your referral, as default Lott.Link" 
                                     value={referral} title="referral" type="text" onChange={e=>setReferral(e.target.value)}/>
                                 </div>
                                 {sendInfoLoading && <span>loading...</span>}
                             </div>)
                 }            
                 {active && (infoFields.length===0 && <div>there is no info</div>)}
-                <div className="container">
+                <div className={`${width > 600 && "container"}`}>
                     {infoFields.map((item,index)=>{
                         return (
                             <div key={index} className="d-flex justify-content-center align-items-center">
                                 <div>
-                                    <Input style={{width:'16.5rem'}} title={item.key.slice(0,1).toUpperCase()+item.key.slice(1,item.key.length)} className=""  onChange={event=>handleInputChange(index,event)} name="value" value={item.value} type="text" />
+                                    <Input style={{width:width>600 ?'16.5rem':"12.5rem"}} title={item.key.slice(0,1).toUpperCase()+item.key.slice(1,item.key.length)} className=""  onChange={event=>handleInputChange(index,event)} name="value" value={item.value} type="text" />
                                 </div>
                                 <div onClick={()=>handleRempveField(index)}>
                                     <Button>Remove</Button>
@@ -323,12 +325,12 @@ const ContractPage = () => {
                         )
                     })}
                     {/* button when user not signed in */}
-                     <div className="my-2 mx-auto" style={{width:'24rem'}}>
+                     <div className="my-2 mx-auto" style={{width:width>600 ?'24rem':"20rem"}}>
                          {infoOptions.map((option,index)=><Button primary className="mx-1" disabled={buttonDisabled} onClick={()=>addOptionInput(option)} key={index}>{option}</Button>)}
                     </div>
                     { active && !signedIn && !loadingProfile &&
-                    <div className="d-flex flex-column align-items-center">
-                        <div className="bg-white text-dark d-flex justify-content-around align-items-center " style={{margin:"0 40px"}}>
+                    <div className="d-flex flex-column align-items-center mx-auto" style={{width:width>600 ?'26rem':"20rem"}}>
+                        <div className="bg-white text-dark d-flex justify-content-around align-items-center w-100" style={{margin:"0 40px"}}>
                             <div className='d-flex '>
                                 <OverlayTrigger  placement={"bottom"}  overlay={<Tooltip >{payableAmount} wei</Tooltip>}>
                                     <div className="mx-4">{(payableAmount/1e18).toFixed(4)}</div>
@@ -339,7 +341,7 @@ const ContractPage = () => {
                                 </div>
                             </div>
                             <div>
-                                <Button secondary style={{width:'16rem'}} className="" onClick={signIn} disabled={sendInfoDisabled} >
+                                <Button secondary style={{width:width>600 ?'16rem' :"12rem"}} className="" onClick={signIn} disabled={sendInfoDisabled} >
                                 sign in and setInfo
                                 </Button>
                             </div>
@@ -378,7 +380,7 @@ const ContractPage = () => {
                     </div>
                 </div>
                 }
-                <div className='d-flex justify-content-center mt-4' style={{position:"absolute",top:'30%',left:'32%',zIndex:showQr?1:-1}}>
+                <div className='d-flex justify-content-center mt-4' style={{position:"absolute",top:'30%',left:width > 600 ? '32%':"0",zIndex:showQr?1:-1}}>
                     {chainId === 43113 &&
                          <QrCode profile="/avalanche.svg" background="avalanche" qr={qr} text={input}
                         firstColor="#8E292F" secondColor="#F35C64"  data={"https://lott.link/"+ input + "/" }
@@ -391,7 +393,7 @@ const ContractPage = () => {
                     }
                 </div>
             </div>
-            <div className="p-3" style={{height:'15%',borderTop:'2px solid white',overflow:'auto'}}>
+            <div className="p-3" style={{borderTop:'2px solid white',overflow:'auto',position:'relative',bottom:'0'}}>
             this contract mint a unique username on your wallet address to easily 
             named you on other contract. you can set your contact info optionaly.
              other people can see your info. 

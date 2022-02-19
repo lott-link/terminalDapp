@@ -10,6 +10,7 @@ import { context } from "../App";
 import Button from '../Components/styled/Button'
 import styles from './chanceRoomList.module.css'
 import ContactUs from "./ContactUs";
+import useWidth from "../Hooks/useWidth";
 
 const Inbox = ()=>{
     return (
@@ -33,6 +34,7 @@ const InboxPage = () => {
     const [availableChains,setAvailableChains] = useState([])
     const [loadingTable,setLoadinTable] = useState(true)
 	const data = useContext(context);
+    const width = useWidth()
 	const getLogs = async () => {
 		if (!data.network) return;
        
@@ -86,7 +88,10 @@ const InboxPage = () => {
     },[])
     const getDate = (timeStamp)=>{
         const date = new Date(timeStamp)
-        return date.getFullYear() + '/' + (+date.getMonth()+1) + '/' + date.getDate()
+        if(width > 600) 
+            return date.getFullYear() + '/' + (+date.getMonth()+1) + '/' + date.getDate()
+        else
+            return (+date.getMonth()+1) + '/' + date.getDate()
     }
     const getTime = (timeStamp)=>{
         const date = new Date(timeStamp)
@@ -98,7 +103,7 @@ const InboxPage = () => {
         return (<h2 className="w-100 h-100 d-flex justify-content-center align-items-center">Chain not supported</h2>)
     else
 	return (
-    <div className="h-100">{console.log(logs)}
+    <div className="w-100" style={{ height: "calc(100vh - 7.5rem)" }}>{console.log(logs)}
 
         <div className='d-flex justify-content-between py-2' style={{borderBottom:"1px solid white"}}>
             <div style={{cursor:"pointer"}} className='mx-4 my-auto'>{/*don't delete this div */}</div>
@@ -125,8 +130,8 @@ const InboxPage = () => {
         <Button secondary={selectedBtn === 0} primary={selectedBtn !== 0} className="mx-2" onClick={()=>{setLogs(allMsgs);setSelectedBtn(0)}}>received messages</Button>
         <Button secondary={selectedBtn === 1} primary={selectedBtn !== 1} className="mx-2" onClick={()=>{setLogs(sentMessages);setSelectedBtn(1)}}>sent messages</Button>
     </div>
-    <div className="d-flex justify-content-center container" style={{overflowY:'auto',maxHeight:'70%'}}>
-        <table style={{minWidth:'75%'}}>
+    <div className={`w-100 d-flex justify-content-center ${width > 600 && "container"}`} style={{overflowY:'auto',maxHeight:'70%'}}>
+        <table className="w-100">
             <thead>
                 <tr className={`${styles.tr} ${styles.head}`}>
                     <th>#</th>
@@ -143,9 +148,9 @@ const InboxPage = () => {
                 <tr key={index} className={styles.tr} style={{cursor:'pointer'}} 
                 onClick={()=>history.push({pathname:"/inbox/message",state:message})} >
                     <td>{index+1}</td>
-                    <td><strong>{message.to.slice(0,5)+"..."+message.to.slice(-5)}</strong></td>
+                    <td><strong>{width > 600 ? message.to.slice(0,5)+"..."+message.to.slice(-5):message.to.slice(0,2)+"."+message.to.slice(-2)}</strong></td>
                     <td>{message.subject}</td>
-                    <td>{message.msg && message.msg.length > 30 ? message.msg.slice(0,30) : message.msg }</td>
+                    <td>{width > 600 ? (message.msg && message.msg.length > 30 ? message.msg.slice(0,30) : message.msg) : (message.msg && message.msg.length > 5 ? message.msg.slice(0,5) : message.msg) }</td>
                     <td>
                         <OverlayTrigger placement={"bottom"}  overlay={<Tooltip >{getTime(message.timeStamp)}</Tooltip>}>
                             <div>{getDate(message.timeStamp)}</div>
@@ -163,7 +168,7 @@ const InboxPage = () => {
             </tbody>
         </table>
     </div>
-    <div className="position-relative" style={{left:'15%'}}>
+    <div className="position-relative">
         <Button primary className="mx-2" onClick={()=>history.push({pathname:'/inbox/newmessage',state:{type:'fromInbox'}})}>new message</Button>
     </div>
     </div>
@@ -206,6 +211,7 @@ const Message = () => {
     const history = useHistory()
     const [msgToShow,setMsgToShow] = useState(location.state.msg)
     console.log(location)
+    const width = useWidth()
     const decryptFunc = async (encryptedData,obj)=>{
         //decrypting
         try{
@@ -235,14 +241,14 @@ const Message = () => {
         <div>
             <h1>Message</h1>
         </div>
-        <div className="w-50 position-relative" style={{border:"7px double white",minHeight:'50%'}}>
+        <div className={`w-50 position-relative ${width < 992 ? "w-100" : "w-50"}`} style={{border:"7px double white",minHeight:'50%'}}>
             <div className="d-flex py-2 container" style={{borderBottom:'1px solid white'}}>
                 <div>subject:</div>
                 <div>{location.state.subject}</div>
             </div>
             <div className="d-flex py-2 container" style={{borderBottom:'1px solid white'}}>
                 <div>from:</div>
-                <div>{location.state.from}</div>
+                <div style={{wordBreak:"break-word"}}>{location.state.from}</div>
             </div>
             <div className="py-2 container mb-5" >
                 <div>message:</div>

@@ -5,10 +5,14 @@ import contractRoutes from "../Routes/contractRoutes";
 import nftRoutes  from '../Routes/nftRoutes.js'
 import play from '../Assetes/play.svg'
 import toolsRoutes from "../Routes/toolsRoutes";
-const Navbar = () => {
+import { Nav, Container, Navbar } from 'react-bootstrap'
+import useWidth from "../Hooks/useWidth";
+import Sidebar from "./Sidebar";
+const MyNavbar = () => {
   //sidebar
   const [navItems, setNavItems] = useState();
   const [pathName, setPathName] = useState();
+  const width = useWidth()
   const history = useHistory()
   history.listen((location) => {
     setPathName(location.pathname);
@@ -45,30 +49,38 @@ const Navbar = () => {
     setNavItems(mainRoutes);
   }, []);
   return (
-    <nav className="d-flex" id="navbar">
-      {navItems &&
-        navItems.map((item, index) => (
-          <div key={Math.random() * 1000} className="mx-1 d-flex align-items-center">
-            {item.type==="directory" && index === 0 &&
-            <Link style={{color:'white',textTransform:"capitalize"}} to='/'
-              className={`${index===0 && item.title!=="HomePage"  && "trapezoid py-1  "} mx-1`}
-              onClick={()=>handleNav("HomePage")}>{item.title!=="HomePage" && <img src={play} alt="play-icon" style={{width:'11px',height:"14px",transform:"rotate(180deg)"}} />}{" "}{item.title}</Link>
-            }
-            {item.type==="directory" && index !== 0 &&
-            <button style={{border:'none',backgroundColor:"#020227",color:'white',textTransform:"capitalize"}} 
-              className="mx-1" 
-              onClick={()=>handleNav(item.title)}>{item.title}{item.title!=="HomePage" && <span >{" "}<img  style={{width:'11px',height:"14px"}} className='mb-1' alt="icon" src={play} /></span>}</button>
-            }
-            {item.type==="link" &&
-            <Link 
-              to={item.path} style={{textTransform:"capitalize",color:'white'}}
-              className={pathName === item.path ? "selected-nav-item link px-2" : "link px-2"}
-              onClick={()=>handleNav(item.title)}>{item.title}</Link>
-            }
-          </div>
-        ))}
+    <nav className="d-flex w-100" id="navbar">
+      <Navbar className="w-100" expand="lg">
+          <Navbar.Toggle className="bg-light" aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="me-auto text-white">
+              {navItems &&
+              navItems.map((item, index) => (
+                <div key={Math.random() * 1000} className="mx-1 d-flex align-items-center">
+                  {item.type==="directory" && index === 0 &&
+                  <Link style={{color:'white',textTransform:"capitalize"}} to='/'
+                    className={`${index===0 && item.title!=="HomePage"  && "trapezoid py-1  "} mx-1`}
+                    onClick={()=>handleNav("HomePage")}>{item.title!=="HomePage" && <img src={play} alt="play-icon" style={{width:'11px',height:"14px",transform:"rotate(180deg)"}} />}{" "}{item.title}</Link>
+                  }
+                  {item.type==="directory" && index !== 0 &&
+                  <button style={{border:'none',backgroundColor:"#020227",color:'white',textTransform:"capitalize"}} 
+                    className="mx-1" 
+                    onClick={()=>handleNav(item.title)}>{item.title}{item.title!=="HomePage" && <span >{" "}<img  style={{width:'11px',height:"14px"}} className='mb-1' alt="icon" src={play} /></span>}</button>
+                  }
+                  {item.type==="link" &&
+                  <Link 
+                    to={item.path} style={{textTransform:"capitalize",color:'white'}}
+                    className={pathName === item.path ? "selected-nav-item link px-2" : "link px-2"}
+                    onClick={()=>handleNav(item.title)}>{item.title}</Link>
+                  }
+                </div>
+              ))}
+              {width < 992 && <Sidebar />}
+            </Nav>
+          </Navbar.Collapse>
+      </Navbar>
     </nav>
   );
 };
 
-export default Navbar;
+export default MyNavbar;

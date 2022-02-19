@@ -1,7 +1,9 @@
 import React from 'react'
 import Button from '../../Components/styled/Button'
 import styles from './SelectNFT.module.css'
+import useWidth from '../../Hooks/useWidth'
 const InfoPage = ({setCircles,setStages,setSelectedWay}) => {
+    const width = useWidth()
     const lockAndMint = ()=>{
         setCircles([true,true,false])
         setStages([false,true,false])
@@ -13,7 +15,8 @@ const InfoPage = ({setCircles,setStages,setSelectedWay}) => {
         setSelectedWay(false)
     }
     return (
-        <div className={`w-50 h-100 p-2 mx-auto ${styles["animation-in"]}`} style={{borderRight:"1px solid white",borderLeft:"1px solid white",position:"relative"}}>
+        <div className={`${width < 992 ? "w-100" : "w-50"} h-100 p-2 mx-auto ${styles["animation-in"]}`} 
+        style={{borderRight:"1px solid white",borderLeft:"1px solid white",position:"relative"}}>
             <div className='w-100 h-100 d-flex flex-column' style={{border:"1px solid white"}}>
                 <div className='text-center py-4' style={{borderBottom:"1px solid white",fontSize:"22px"}}>
                     Info

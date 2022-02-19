@@ -7,9 +7,11 @@ import TransferNFT from './CrossChainNFT/TransferNFT'
 import InfoPage from './CrossChainNFT/InfoPage'
 import { useLocation } from 'react-router-dom' 
 import { useWeb3React } from '@web3-react/core'
+import useWidth from '../Hooks/useWidth'
 const NFTCrossChain = ({props}) => {
     const { active } = useWeb3React()
     const data = useContext(context)
+    const width = useWidth()
     const location = useLocation()
     const [availableChains,setAvailableChains] = useState([])
     const [stages,setStages] = useState([true,false,false])
@@ -119,7 +121,7 @@ const NFTCrossChain = ({props}) => {
             </div>
             <div style={{borderRight:"1px solid white",borderLeft:"1px solid white",position:"relative",
             backgroundColor:(approveBtn.loading || approveBtn.approving || transferBtn.loading || transferBtn.approving)?"rgba(2,117,216,0.5)":""}}
-            className='d-flex justify-content-center pt-2 w-50 mx-auto'>
+            className={`d-flex justify-content-center pt-2 ${width < 992 ? "w-100" : "w-50"} mx-auto`}>
                 {
                 circles.map((item,index)=>{
                     if(item) return(

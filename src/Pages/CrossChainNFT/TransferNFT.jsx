@@ -7,10 +7,12 @@ import { useWeb3React } from '@web3-react/core'
 import ProgressBar from '../../Components/ProgressBar'
 import { crossChainNFTABI as abi, NFTContractABI } from '../../Contracts/ContractsABI'
 import { OverlayTrigger, Tooltip} from 'react-bootstrap'
+import useWidth from '../../Hooks/useWidth'
 const TransferNFT = ({selectedToken,transferBtn,setTransferBtn,
                         setStages,setCircles,selectedWay,isSafeTransfer})=>{
     const { active, account, library } = useWeb3React()
     const data = useContext(context)
+    const width = useWidth()
     const [allChains,setAllChains] = useState([])
     const [fee,setFee] = useState(0)
     const [address,setAddress] = useState("")
@@ -140,7 +142,8 @@ const TransferNFT = ({selectedToken,transferBtn,setTransferBtn,
         setAllChains(tempAllChains)
     },[])
     return(
-        <div className={`w-50 h-100 p-2 mx-auto ${styles["animation-in"]}`} style={{borderRight:"1px solid white",borderLeft:"1px solid white",position:"relative"}}>
+        <div className={`${width < 992 ? "w-100" : "w-50"} h-100 p-2 mx-auto ${styles["animation-in"]}`} 
+        style={{borderRight:"1px solid white",borderLeft:"1px solid white",position:"relative"}}>
             <div className='w-100 h-100' style={{border:"1px solid white"}}>
                 <div className='text-center py-4' style={{borderBottom:"1px solid white",fontSize:"22px"}}>
                     {isSafeTransfer ? "Transfer NFT" : "Cross Chainin"}

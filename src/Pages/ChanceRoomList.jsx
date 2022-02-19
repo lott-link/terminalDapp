@@ -8,6 +8,7 @@ import Web3 from "web3";
 import CountDown from "../Components/CountDown";
 import Button from "../Components/styled/Button";
 import { context } from '../App'
+import useWidth from "../Hooks/useWidth";
 
 const ChanceRoomList = () => {
   const { active,account,library, chainId} = useWeb3React()
@@ -15,6 +16,7 @@ const ChanceRoomList = () => {
   const [clicked, setClicked] = useState(1);
   const [list,setList] = useState([]);
   const [cList,setCList]= useState([])
+  const width = useWidth()
   const history = useHistory()
   const getTime = (time)=>{
     if(parseInt(time) === 0)
@@ -141,7 +143,7 @@ const ChanceRoomList = () => {
         <Button secondary={clicked === 2} primary={clicked !== 2} style={{ marginLeft: "3px", marginRight: "3px" }} onClick={() => filterByYours(2)}>yours</Button>
         <Button secondary={clicked === 3} primary={clicked !== 3} style={{ marginLeft: "3px", marginRight: "3px" }} onClick={() => setClicked(3)}>filter</Button>
       </div>
-      <div className="px-5">
+      <div className={width > 600 && "px-5"}>
       <table className="w-100">
         <thead>
           <tr className={`${styles.tr} ${styles.head}`}>
@@ -161,7 +163,7 @@ const ChanceRoomList = () => {
                 key={index}
                 onClick={()=>history.push(`/contract/chanceroom/${item.address}`)}>
                 <td>{index+1}</td>
-                <td>{item.owner.slice(0,8)+"..."+item.owner.slice(-8)}</td>
+                <td>{width > 600 ? (item.owner.slice(0,8)+"..."+item.owner.slice(-8)) : (item.owner.slice(0,2)+"."+item.owner.slice(-2))}</td>
                 <td>{(item.userLimit)}</td>
                 <td>{getTime(item.timeLimit)}</td>
                 <td>0</td>

@@ -10,9 +10,8 @@
   --main-bg-color: #020227;
 }
 #app-container {
-  min-height: 750px;
-  min-width: 1250px;
-  height: 100%;
+  /* min-height: 750px;
+  min-width: 1250px; */
   margin: 30px;
   border: 7px double white;
 }
@@ -23,8 +22,17 @@
   top: -15px;
   text-transform: uppercase;
 }
+@media only screen and (max-width: 500px) {
+  #app-container {
+    margin: 30px 5px;
+  }
+  #title {
+    left:28%;
+  }
+}
+
 #navbar {
-  height: 3.75rem;
+  min-height: 3.75rem;
   border-bottom: 2px solid white;
   background-color: var(--main-bg-color);
   padding: 8px;

@@ -87,7 +87,8 @@ const Transfer = ()=>{
         }
     },[])
     return(
-        <div className={`w-50 h-100 p-2 mx-auto ${styles["animation-in"]}`} style={{borderRight:"1px solid white",borderLeft:"1px solid white",position:"relative"}}>
+        <div className={`w-50 h-100 p-2 mx-auto ${styles["animation-in"]}`}
+         style={{borderRight:"1px solid white",borderLeft:"1px solid white",position:"relative"}}>
             <div className='w-100 h-100' style={{border:"1px solid white"}}>
                 <div className='text-center py-4' style={{borderBottom:"1px solid white",fontSize:"22px"}}>
                     Transfer

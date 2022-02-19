@@ -117,8 +117,8 @@ const Sidebar = () => {
    useInactiveListener(!triedEager || !!activatingConnector)
 
   return (
-    <div className="w-100 h-100">
-      <div style={{height:'40%',position:'relative',}} className="d-flex flex-column">
+    <div className="w-100" style={{minHeight: "calc(100vh - 7.5rem)"}}>
+      <div style={{height:'40%',position:'relative',minHeight:'15rem'}} className="d-flex flex-column">
         <div style={{width:'90%',margin:'0.5rem auto',fontSize:'1.3rem'}}>{active ? "Wallet" : "Connect Wallet"}</div>
         {!active && <div className="w-100 text-center">
           <button onClick={metamask} className="wallet-button p-0">
@@ -182,7 +182,7 @@ const Sidebar = () => {
         }
       </div>
       {!loadingProfile ? <div className="w-100 p-3" 
-      style={{height:"60%",borderTop:'2px solid white',position:'relative',overflow:'auto'}}>
+      style={{height:"60%",borderTop:'2px solid white',position:'relative',overflow:'auto',minHeight:'10rem'}}>
         {active && signedIn && <div className="d-flex">
           <div style={{width:'50px',height:'50px',borderRadius:'50%',backgroundColor:'gray'}}></div>
           <div className="mx-3">

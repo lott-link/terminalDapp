@@ -23,3 +23,14 @@
     padding:8px;
     color:#C0C0C0;
 }
+
+@media only screen and (max-width: 500px) {
+    .tr th {
+        padding:1px;
+    }
+    .tr td {
+        padding:1px;
+        
+    }
+}
+  
