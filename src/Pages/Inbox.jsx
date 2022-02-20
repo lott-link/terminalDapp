@@ -37,7 +37,7 @@ const InboxPage = () => {
     const width = useWidth()
 	const getLogs = async () => {
 		if (!data.network) return;
-       
+        if(!data.addresses[data.network].messenger) return
         setLoadinTable(true)
 
         const res = await axios
