@@ -95,7 +95,7 @@ const Select = () => {
         }).then(()=>data.setNetwork(chainName))
     }
   }
-  useEffect(()=>{
+  const setSuppoerted = ()=>{
     let supportedChains = availableChains.filter(item=>item.supported)
     supportedChains = supportedChains.map(item=>item.chain)
     if(supportedChains.includes(data.network)){
@@ -106,7 +106,13 @@ const Select = () => {
       setSupported(false)
       data.setPageSupported(false)
     }
+  }
+  useEffect(()=>{
+    setSuppoerted()
   },[data.network,value,history.location.pathname])
+  useEffect(()=>{
+    setSuppoerted()
+  })
   return (
     <div ref={ref} className="w-100" style={{position:'relative'}}>
       <div
