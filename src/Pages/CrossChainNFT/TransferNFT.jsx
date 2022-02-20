@@ -142,20 +142,20 @@ const TransferNFT = ({selectedToken,transferBtn,setTransferBtn,
         setAllChains(tempAllChains)
     },[])
     return(
-        <div className={`${width < 992 ? "w-100" : "w-50"} h-100 p-2 mx-auto ${styles["animation-in"]}`} 
-        style={{borderRight:"1px solid white",borderLeft:"1px solid white",position:"relative"}}>
+        <div className={`${width < 992 ? "w-100" : "w-50"} p-2 mx-auto ${styles["animation-in"]}`} 
+        style={{height:'100vh',borderRight:"1px solid white",borderLeft:"1px solid white",position:"relative"}}>
             <div className='w-100 h-100' style={{border:"1px solid white"}}>
                 <div className='text-center py-4' style={{borderBottom:"1px solid white",fontSize:"22px"}}>
                     {isSafeTransfer ? "Transfer NFT" : "Cross Chainin"}
                 </div>
-                <div className='py-3 px-4 text-center'>
+                <div className={`py-3 text-center ${width > 992 ? "px-4" : "px-2"}`}>
                     <div style={{display:isSafeTransfer?"none":"block"}}>
                         select your destination network
                     </div>
-                    <div className='text-center m-3' style={{display:isSafeTransfer?"none":"block"}}>
+                    <div className={`text-center ${width > 992 && "m-3"}`} style={{display:isSafeTransfer?"none":"block"}}>
                         <select  name="" className={`${styles.select} p-1 text-center`} 
                         onChange={handleTarget} ref={ref2} disabled={!selectedWay}
-                        style={{width:'24rem'}}>
+                        style={{width:width> 992 ? '24rem':'19rem'}}>
                             {
                             allChains.map(item=><option key={item} value={item}>{item}</option>)
                             }
@@ -163,7 +163,7 @@ const TransferNFT = ({selectedToken,transferBtn,setTransferBtn,
                     </div>
                     <div className='my-4'>
                         <div>select your destination address</div>
-                        <Input style={{width:'24rem'}} 
+                        <Input style={{width:width> 992 ? '24rem':'19rem'}} 
                         small={addressSmall} success={addressSmall.length !==0 ? true : false}
                         value={address} onChange={e=>{setAddress(e.target.value);setAddressSmall("")}} 
                         title="address" className="" name="address"  type="text" />

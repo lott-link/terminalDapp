@@ -21,6 +21,7 @@ const Assets = () => {
         setTokens([])
         if(!data.network) return
         const array = await axios.get(`${data.addresses[data.network]["erc721API"]}${account}`).then(res=>res.data.result)
+        console.log(array)
         let ids = array.map(token=>token.tokenID+token.contractAddress)
         ids = Array.from(new Set(ids))
         const counts = new Array(ids.length).fill(0)

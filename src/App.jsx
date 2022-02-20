@@ -20,7 +20,7 @@ function App() {
         Lott.Link
       </h3>
       <div className="" id="app-container" style={{ minHeight: "calc(100vh - 3.75rem)" }} >
-        <div style={{minHeight:"calc(100vh - 3.75rem)"}}>
+        <div className='w-100' style={{minHeight:"calc(100vh - 3.75rem)"}}>
           <Router>
             <MyNavbar />
             <main className="d-flex justify-content-center w-100" style={{ minHeight: "calc(100% - 3.75rem)" }}>
@@ -28,10 +28,10 @@ function App() {
               <div className="h-100 text-white" id="sidebar" style={{width:'28%'}}>
                 <Sidebar />
               </div>
-              }
+              } 
               <div
-                className="h-100 text-white"
-                style={{ backgroundColor: "#020227",width:width > 992 ? '72%' : '100%' }}
+                className="text-white"
+                style={{ backgroundColor: "#020227",width:width > 992 ? '72%' : '100%',minHeight: "calc(100% - 3.75rem)" }}
               >
                 <Switch>
                   {mainRoutes.map((route, index) => {

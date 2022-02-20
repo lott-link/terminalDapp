@@ -7,10 +7,12 @@ import { useWeb3React } from '@web3-react/core'
 import ProgressBar from '../Components/ProgressBar'
 import { crossChainNFTABI as abi, NFTContractABI } from '../Contracts/ContractsABI'
 import { useLocation } from 'react-router-dom'
+import useWidth from '../Hooks/useWidth'
 const Transfer = ()=>{
     const { active, account, library } = useWeb3React()
     const data = useContext(context)
     const location = useLocation()
+    const width = useWidth()
     const [allChains,setAllChains] = useState([])
     const [fee,setFee] = useState(0)
     const [transferBtn,setTransferBtn] = useState({

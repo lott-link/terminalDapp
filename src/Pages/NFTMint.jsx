@@ -9,6 +9,7 @@ import { context } from '../App'
 import ProgressBar from "../Components/ProgressBar";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import useWidth from "../Hooks/useWidth";
 const client = create('https://ipfs.infura.io:5001/api/v0')
 const NFTMint = () => {
     const { active, account, library } = useWeb3React();
@@ -17,6 +18,7 @@ const NFTMint = () => {
     const [mintBtn,setMintBtn] = useState({disabled:false,approved:false,loading:false})
     const data = useContext(context) 
     const [toSmall,setToSmall] = useState("")
+    const width = useWidth()
     const [uploadStatus,setUploadStatus] = useState({
       publicFileHash:false,
     })
@@ -100,12 +102,12 @@ const NFTMint = () => {
       return (<h2 className="w-100 h-100 d-flex justify-content-center align-items-center">Chain not supported</h2>)
   else
   return (
-    <div className="w-100 h-100 d-flex flex-column align-items-center" style={{position:'relative'}}>
+    <div className=" h-100 w-100 d-flex flex-column align-items-center" style={{position:'relative',left:0}}>
       <div className="my-2 w-100 d-flex justify-content-center" style={{borderBottom:"1px solid white"}}>
         <h1>Mint</h1>
       </div>
       <div className="d-flex flex-column align-items-center">
-          <div className="w-50 d-flex justify-content-center">
+          <div className={`d-flex justify-content-center flex-wrap ${width > 992 ? "w-100" : "w-50"}`}>
             <Input
                 type="text"
                 name="name"
@@ -125,7 +127,7 @@ const NFTMint = () => {
               success={toSmall.length !==0 ? true : false}
           />
           </div>
-          <div className="d-flex justify-content-start w-100">
+          <div className={`d-flex justify-content-start ${width > 992 ? "w-100" : "w-100"} flex-wrap`}>
           <Input
             className=""
             type="text"
@@ -141,7 +143,7 @@ const NFTMint = () => {
             {uriDisabled ? "enable" : "disable"}
           </Button>
         </div>
-        <div className="d-flex  justify-content-center">
+        <div className={`d-flex  justify-content-center flex-wrap ${width > 992 ? "w-100" : "w-50"}`}>
           <Input
             type="text" name="description"
             onChange={(e)=>setInput({...input,[e.target.name]:e.target.value})}
@@ -159,11 +161,11 @@ const NFTMint = () => {
             </div>  
         </div>
         <div className="align-self-start mx-3 mt-2"><h4>attributes(optional)</h4></div>
-        <div className="w-100 d-flex flex-column justify-content-center" style={{maxHeight:"300px",overflowY:'auto'}}>
+        <div className={`d-flex flex-column justify-content-center `} style={{maxHeight:"300px",overflowY:'auto'}}>
         {
         inputFields.map((inputField, index)=>{
             return(
-            <div key={index} className="d-flex justify-content-center">
+            <div key={index} className="d-flex justify-content-center flex-wrap">
             <Input 
                 type="text"  style={{width:"21rem"}}
                 onChange={event => handleInputChange(index, event)}
@@ -185,7 +187,7 @@ const NFTMint = () => {
         <Button
           className="contract-button mx-auto"
           onClick={safeMint}
-          style={{ width: "24rem" }}
+          style={{ width:width>992 ? "24rem" : "21rem" }}
           disabled={mintBtn.disabled}
         >
           Safe Mint
