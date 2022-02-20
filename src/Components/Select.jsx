@@ -107,7 +107,7 @@ const Select = () => {
     else{
       setSupported(false)
       data.setPageSupported(false)
-      if(supportedChains.length!==0 && active){
+      if(supportedChains.length!==0 && active && history.location.pathname !=='/' ){
         handleNetworkChange(supportedChains[0])
       }
     }
