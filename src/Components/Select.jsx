@@ -108,9 +108,7 @@ const Select = () => {
       setSupported(false)
       data.setPageSupported(false)
       if(supportedChains.length!==0 && active){
-        console.log(supportedChains)
         handleNetworkChange(supportedChains[0])
-        console.log("changing network!")
       }
     }
   }

@@ -14,7 +14,7 @@ function App() {
   const width = useWidth()
   return (
     <context.Provider value={{addresses,network,setNetwork,supportedChains,
-      setSupportedChains,chains,converChainIDToName,pageSupported,setPageSupported}}>{console.log(width)}
+      setSupportedChains,chains,converChainIDToName,pageSupported,setPageSupported}}>
     <div style={{ position: "relative",minHeight:'100%' }}>
       <h3 className="text-white px-3 m-0" id="title">
         Lott.Link
@@ -25,7 +25,7 @@ function App() {
             <MyNavbar />
             <main className="d-flex justify-content-center w-100" style={{ minHeight: "calc(100% - 3.75rem)" }}>
               {width > 992 &&
-              <div className="h-100 text-white" id="sidebar" style={{width:'28%'}}>
+              <div className="text-white" id="sidebar" style={{width:'28%'}}>
                 <Sidebar />
               </div>
               } 
