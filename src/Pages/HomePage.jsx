@@ -1,3 +1,4 @@
+import Button from '../Components/styled/Button'
 const HomePage = () => {
   
     return (
@@ -12,6 +13,20 @@ const HomePage = () => {
                 <div style={{whiteSpace:'pre'}}></div>
                 <div style={{whiteSpace:'pre'}}> ================ Open source smart contract on EVM ===================</div>
                 <div style={{whiteSpace:'pre'}}>  =============== Verify Random Function by ChainLink ================</div>
+            </div>
+            <div className='mt-5'>
+                <h5 className='text-center'>Get free faucet</h5>
+                <div>
+                    <a href="https://faucet.rinkeby.io/" target="_blank" rel="noreferrer" >
+                        <Button>Rinkeby</Button>
+                    </a>
+                    <a href="https://faucet.polygon.technology/" target="_blank" rel="noreferrer">
+                        <Button>Mumbai</Button>
+                    </a>
+                    <a href="https://faucets.chain.link/fuji" target="_blank" rel="noreferrer">
+                        <Button>Fuji</Button>
+                    </a>
+                </div>
             </div>
         </div>
     )
