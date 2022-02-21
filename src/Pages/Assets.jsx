@@ -24,9 +24,16 @@ const Assets = () => {
     const [loading,setLoading] = useState(false)
     const [show,setShow] = useState(false)
     const [modalToken,setModalToken] = useState(null)
-    // const checkLink = (link)=>{
-    //   console.log(link.split('/')[0])
-    // }
+    
+    const checkLink = (link)=>{
+      const protocol = link.split(':')[0]
+      console.log(protocol)
+      if(protocol.toLowerCase().includes(['http','https']))
+        return link
+      else if(protocol.toLowerCase().includes(['ipfs']))
+        return "https://ipfs.infura.io/" + link.split(':')[1].slice(0,link.length-1)
+      else return link
+    }
     
     const getERC721 = async ()=>{
         if(!active) return;
@@ -68,13 +75,15 @@ const Assets = () => {
       }
       else{
         const contract = new library.eth.Contract(contractABI,contractAddress)
-        const tokenURI = await contract.methods.tokenURI(tokenID).call(res=>res)
+        let tokenURI = await contract.methods.tokenURI(tokenID).call(res=>res)
+        tokenURI = checkLink(tokenURI)
         try {
           const tokenJson = await axios.get(tokenURI).then(res=>res.data)
+          const image = checkLink(tokenJson.image)
           const data = {
             name:tokenJson.name,
             description:tokenJson.description,
-            image:tokenJson.image,
+            image,
             tokenID,
             contractAddress,
             chainId,
