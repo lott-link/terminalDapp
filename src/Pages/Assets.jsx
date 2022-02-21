@@ -9,12 +9,25 @@ import '../../node_modules/react-loading-skeleton/dist/skeleton.css'
 import ContentLoader from '../../node_modules/react-loading-skeleton'
 import { useHistory } from 'react-router-dom';
 import { OverlayTrigger, Tooltip} from 'react-bootstrap'
+import { Route } from 'react-router-dom'
+import { useLocation } from 'react-router-dom' 
+import { useParams } from 'react-router-dom'
+import useWidth from '../Hooks/useWidth';
+
 const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"approved","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getApproved","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"operator","type":"address"}],"name":"isApprovedForAll","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"privateFileHash","outputs":[{"internalType":"string","name":"_privateFileHash","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"privateInfo","outputs":[{"internalType":"string","name":"_privateInfo","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"publicFileHash","outputs":[{"internalType":"string","name":"_publicFileHash","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"publicInfo","outputs":[{"internalType":"string","name":"_publicInfo","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"string","name":"uri","type":"string"},{"internalType":"string","name":"publicInfo","type":"string"},{"internalType":"string","name":"privateInfo","type":"string"},{"internalType":"string","name":"publicFileHash","type":"string"},{"internalType":"string","name":"privateFileHash","type":"string"}],"name":"safeMint","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"bytes","name":"_data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"name":"setApprovalForAll","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"transferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"}]
+
+
 const Assets = () => {
     const data = useContext(context);
     const { active, account, library, chainId } = useWeb3React()
     const [tokens,setTokens] = useState([])
     const [loading,setLoading] = useState(false)
+    const [show,setShow] = useState(false)
+    const [modalToken,setModalToken] = useState(null)
+    // const checkLink = (link)=>{
+    //   console.log(link.split('/')[0])
+    // }
+    
     const getERC721 = async ()=>{
         if(!active) return;
         setLoading(true)
@@ -66,7 +79,8 @@ const Assets = () => {
             contractAddress,
             chainId,
             attributes:tokenJson.attributes,
-            interaction:tokenJson.interaction ? tokenJson.interaction : "noInteraction"
+            interaction:tokenJson.interaction ? tokenJson.interaction : "noInteraction",
+            tokenURI:tokenURI
           }
           localStorage.setItem(contractAddress+tokenID,JSON.stringify(data))
           return data
@@ -102,8 +116,7 @@ const Assets = () => {
       </div>
     )
     return (
-        <div className='w-100 h-100' style={{overflowY:"auto"}}>
-            {/* <div className='d-flex flex-wrap gap-3 justify-content-start p-2'> */}
+        <div className='w-100 h-100' style={{overflowY:"auto",position:'relative'}}>
             <div className='d-flex flex-column flex-wrap px-3 py-4'>
             {
             tokens.map((group,index)=>{
@@ -121,7 +134,7 @@ const Assets = () => {
                     </OverlayTrigger>
                   </div> 
                   <div className='d-flex flex-wrap gap-4' style={{marginTop:'2rem'}}>
-                    {group[1] && group[1].map((token,indx)=><NFTCard key={indx} token={token}/>)}
+                    {group[1] && group[1].map((token,indx)=><NFTCard key={indx} token={token} setShow={setShow} setModalToken={setModalToken}/>)}
                   </div>
                 </div>
               )
@@ -134,14 +147,34 @@ const Assets = () => {
             </div>
             }
             </div>
+            {show &&
+              <div className='w-50 p-3'
+               style={{height:'50vh',position:'fixed',backgroundColor:"rgba(0,0,0,0.8)"
+               ,zIndex:"20",top:'27%',left:'33%',border:"5px double white"}}>
+                <div>
+                  <div className='d-flex flex-row-reverse' style={{cursor:'pointer'}} onClick={()=>setShow(false)}>close</div>
+                  <div className='d-flex'>
+                    <div>contract address:</div>
+                    <div style={{wordBreak:'break-word'}}>{modalToken.contractAddress}</div>
+                  </div>
+                  <div className='d-flex'>
+                    <div>asset link:</div>
+                    <div style={{wordBreak:'break-word'}}><a target="_blank" rel="noreferrer" href={modalToken.image}>{modalToken.image}</a></div>
+                  </div>
+                  <div className='d-flex'>
+                    <div>token uri:</div>
+                    <div style={{wordBreak:'break-word'}}><a target="_blank" rel="noreferrer" href={modalToken.tokenURI}>{modalToken.tokenURI}</a></div>
+                  </div>
+                </div>
+              </div>
+            }
         </div>
     )
 }
 
-export default Assets
+export default Assets;
 
-
-const NFTCard = ({token})=>{
+const NFTCard = ({token,setShow,setModalToken})=>{
     const { library , account} = useWeb3React()
     const [loading,setLoading] = useState(true)
     const handleLoad = ()=> setLoading(false)
@@ -183,7 +216,7 @@ const NFTCard = ({token})=>{
     return (
         <div style={{width:'275px'}}>
             <div style={{backgroundColor:"#C4C4C4"}}>
-              <DropDownComponent token={token} />
+              <DropDownComponent token={token} setShow={setShow} setModalToken={setModalToken} />
             </div>
             <div style={{width:'275px',height:'225px',backgroundColor:"#C4C4C4"}}>
                  <img className='w-100 h-100' onLoad={handleLoad} style={{objectFit:"contain",display:loading?"none":"initial"}} src={token.image} alt="" />
@@ -299,7 +332,7 @@ const AccordionComponent = ({property})=>{
     </Accordion>
     )
 }
-const DropDownComponent = ({token})=>{
+const DropDownComponent = ({token,setShow,setModalToken})=>{
   const history = useHistory()
   const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
     <span href="" ref={ref} onClick={(e) => {e.preventDefault();onClick(e);}}
@@ -316,8 +349,82 @@ const DropDownComponent = ({token})=>{
         <Dropdown.Menu align="end">
           <Dropdown.Item onClick={()=>history.push({pathname:"/tools/crosschain",state:{token,type:"transfer"}})}>transfer</Dropdown.Item>
           <Dropdown.Item onClick={()=>history.push({pathname:"/tools/crosschain",state:{token,type:"crossChain"}})}>cross chain</Dropdown.Item>
+          {/* <Dropdown.Item onClick={()=>history.push({pathname:`/assets/${token.contractAddress}/${token.tokenID}`,state:token})}>more info</Dropdown.Item> */}
+          <Dropdown.Item onClick={()=>{setModalToken(token);setShow(true)}}>more info</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown.Toggle>
     </Dropdown>
   )
 }
+
+
+
+// const Assets = ()=>{
+//   return (
+//     <>
+//       <Route path="/assets" exact component={AssetsPage} />
+//       <Route path="/assets/:contractAddress/:tokenId"  component={AssetsSingle} />
+//     </>
+//   )
+// }
+// export default Assets;
+
+// const AssetsSingle = ()=>{
+//   const location = useLocation()
+//   const [token,setToken] = useState(location.state || null)
+//   const { contractAddress, tokenId } = useParams()
+//   console.log(contractAddress, tokenId,token)
+//   const width = useWidth()
+//   useEffect(()=>{
+//     if(!location.state){
+//       setToken({"name":"no token"})
+    
+//     }
+//   })
+//   return (
+//     <div className="h-100 w-100 p-3">
+//       <div className={`d-flex ${width < 992 && "flex-wrap"} gap-3`}>
+//         <div className={`${width > 992 ? "w-50" : "w-100"}`}>
+//           <img className='w-100' src={token.image} alt="" />
+//         </div>
+//         <div className={`${width > 992 ? "w-50" : "w-100"} d-flex flex-column gap-2`}>
+//           <div className='d-flex gap-1'>
+//             <div>name:</div>
+//             <div>{token.name}</div>
+//           </div>
+//           <div className='d-flex gap-1'>
+//             <div>description:</div>
+//             <div>{token.description}</div>
+//           </div>
+//           <div className='d-flex gap-1'>
+//             <div>contract address:</div>
+//             <div>{token.contractAddress.slice(0,8)+"..."+token.contractAddress.slice(-8)}</div>
+//           </div>
+//           <div className='d-flex gap-1'>
+//             <div>token id:</div>
+//             <div>{token.tokenID}</div>
+//           </div>
+//           <div></div>
+//         </div>
+//       </div>
+//       <div className='d-flex flex-wrap gap-2 px-4 p-3 my-2'
+//           style={{border:'5px double white',overFlow:'auto',position:'relative'}}>
+//            <div className='px-2'
+//            style={{position:'absolute',top:"-1rem",zIndex:'20',backgroundColor:'black'}}>
+//              Properties
+//            </div>
+//            {token.attributes.map((attr,index)=>(
+//             <div key={index} className="d-flex flex-column p-2"
+//              style={{width:'fit-content',border:'1px solid white'}}>
+//               <div>{attr.trait_type}</div>
+//               <div>{attr.value}</div>
+//             </div>
+//           ))}
+//          </div>
+//       <div>
+//       </div>
+//     </div>
+//   )
+// }
+
+// ipfs:/

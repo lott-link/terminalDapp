@@ -107,9 +107,9 @@ const Select = () => {
     else{
       setSupported(false)
       data.setPageSupported(false)
-      if(supportedChains.length!==0 && active && history.location.pathname !=='/' ){
-        handleNetworkChange(supportedChains[0])
-      }
+      // if(supportedChains.length!==0 && active ){
+      //   handleNetworkChange(supportedChains[0])
+      // }
     }
   }
   useEffect(()=>{

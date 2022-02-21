@@ -365,7 +365,7 @@ const ContractPage = () => {
                     }
                 </div>
                 { (sendInfoLoading  || loadingProfile) &&
-                <div className="w-100 h-100 d-flex flex-column " style={{position:'absolute',top:'0',left:'0', backgroundColor:"rgba(2,117,216,0.5)"}}>
+                <   div className="w-100 h-100 d-flex flex-column " style={{position:'absolute',top:'0',left:'0', backgroundColor:"rgba(2,117,216,0.5)"}}>
                     {sendInfoLoading && loadingMsg==='Wating to comfirm' &&
                      <div className="w-25 my-2" style={{background:'white',position:'relative',top:'20%',left:'35%'}}>
                         <div style={{width:now+"%",color:"white",backgroundColor:'red',transition:'0.2s',fontSize:'smaller' }}>
