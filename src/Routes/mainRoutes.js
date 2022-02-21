@@ -13,8 +13,8 @@ const mainRoutes = [
     {path:"/contract",exact:false,component:Contract,title:"Contract",type:'directory'},
     {path:"/nft",exact:false,component:NFT,title:"NFT",type:'directory'},
     {path:"/tools",exact:false,component:Tools,title:"tools",type:'directory'},
-    {path:"/assets",exact:true,component:Assets,title:"Assets",type:'link'},
-    {path:"/contactus",exact:true,component:ContactUs,title:"Contact_us",type:'link'},
+    {path:"/assets",exact:false,component:Assets,title:"Assets",type:'link'},
     {path:"/inbox",exact:false,component:Inbox,title:"Messenger",type:'link'},
+    {path:"/contactus",exact:true,component:ContactUs,title:"Contact_us",type:'link'},
 ]
 export default mainRoutes;
