@@ -132,7 +132,7 @@ const ContractPage = () => {
         setSendInfoLoading(true)
         setSendInfoDisabled(true)
         setShowQr(true)
-        const baseUrl = "https://ipfs.infura.io/ipfs/"
+        const baseUrl = "ipfs://"
         console.log("creating and uploading qr image")
         setLoadingMsg("creating and uploading id card")
         //creating qr image

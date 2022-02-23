@@ -65,11 +65,11 @@ const NFTMint = () => {
         const attributes = tempFields.map(field=>{return {trait_type:field.property,value:field.value} })
         const json = await client.add(JSON.stringify({
           description:input.description,
-          image:"https://ipfs.infura.io/ipfs/"+input.publicFileHash,
+          image:"ipfs://"+input.publicFileHash,
           name:input.name,
           attributes
         }))
-        uri = `https://ipfs.infura.io/ipfs/${json.path}`
+        uri = `ipfs://${json.path}`
       }
       const contract = new library.eth.Contract(contractABI,data.addresses[data.network]["NFT"])
       contract.methods["safeMint"](input.to,uri).send({from:account})
