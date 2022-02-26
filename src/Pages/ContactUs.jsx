@@ -122,6 +122,7 @@ const ContactUs = () => {
     }  
   }
   const handleChangeAddress = async (e)=>{
+      setTo(e.target.value)
       if(e.target.value.length === 42){
         const publicKey = await getPublicKey(e.target.value)
         if(publicKey === false) setDisablePrivateMsg(true)
@@ -130,7 +131,6 @@ const ContactUs = () => {
         }
         console.log("getting public key in input",publicKey)
       }
-      setTo(e.target.value)
   }
   useEffect(()=>{
     (async()=>{
