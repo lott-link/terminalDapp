@@ -209,7 +209,7 @@ const Sidebar = ({HomePage = false}) => {
         }
         {!HomePage && error && <div>{error}</div>}
         {!HomePage && active && !signedIn && <div className="w-100 text-center" style={{position:'absolute',bottom:'5%',right:'0'}}><button onClick={()=>history.push('/contract/signin')} className="secondary-button">Sign in</button></div>}
-      </div>) : <div>loading...</div>}
+      </div>) : !HomePage && <div>loading...</div>}
       </div>
   );
 };
