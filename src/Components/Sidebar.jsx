@@ -181,9 +181,7 @@ const Sidebar = ({HomePage = false}) => {
             </div>
         }
       </div>
-      {!HomePage &&
-      <div>
-      {!loadingProfile ? <div className="w-100 p-3" 
+      {!HomePage && !loadingProfile ?( <div className="w-100 p-3" 
       style={{height:"60%",borderTop:'2px solid white',position:'relative',overflow:'auto',minHeight:'10rem',flexGrow:"1"}}>
         {active && signedIn && <div className="d-flex">
           <div style={{width:'50px',height:'50px',borderRadius:'50%',backgroundColor:'gray'}}></div>
@@ -193,7 +191,7 @@ const Sidebar = ({HomePage = false}) => {
           </div>
         </div>}
         {/* {active && (userName && userName.username ? <div>username:{userName.username}</div> : loadingProfile ? <div>loading...</div> : <div>you are not signed in <div className="w-100 text-center"><button className="wallet-button" onClick={()=>history.push('/contract')}>Sign in</button></div></div>)} */}
-        {userInfo && userInfo.length !== 0 ? 
+        {!HomePage && userInfo && userInfo.length !== 0 ? 
           (<div className="my-2 h-75" style={{overflowY:"auto"}}>
             {userInfo.map((item,index)=>{
               return <div key={index} className="d-flex align-items-center">
@@ -204,16 +202,14 @@ const Sidebar = ({HomePage = false}) => {
           </div>)
           : <div>there is no info</div>
         } 
-        {userInfo && 
+        {!HomePage && userInfo && 
         <div className="w-100" style={{position:'absolute',bottom:'0',left:'0'}}>
           <Button primary style={{width:'90%'}}>more</Button>
         </div>
         }
-        {error && <div>{error}</div>}
-        {active && !signedIn && <div className="w-100 text-center" style={{position:'absolute',bottom:'5%',right:'0'}}><button onClick={()=>history.push('/contract/signin')} className="secondary-button">Sign in</button></div>}
-      </div> : <div>loading...</div>}
-      </div>
-      }
+        {!HomePage && error && <div>{error}</div>}
+        {!HomePage && active && !signedIn && <div className="w-100 text-center" style={{position:'absolute',bottom:'5%',right:'0'}}><button onClick={()=>history.push('/contract/signin')} className="secondary-button">Sign in</button></div>}
+      </div>) : <div>loading...</div>}
       </div>
   );
 };
