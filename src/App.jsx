@@ -1,5 +1,5 @@
 import React, { createContext, useState } from 'react'; 
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import mainRoutes from "./Routes/mainRoutes";
 import MyNavbar from "./Components/Navbar";
 import Sidebar from "./Components/Sidebar";
