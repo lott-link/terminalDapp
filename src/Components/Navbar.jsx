@@ -79,7 +79,7 @@ const MyNavbar = () => {
               ))}
             </Nav>
             }
-            {width < 992 &&
+            {/* {width < 992 &&
               <Nav className="me-auto">
               {navItems &&
               navItems.map((item, index) => (
@@ -103,7 +103,7 @@ const MyNavbar = () => {
                 </div>
               ))}
             </Nav>
-            }
+            } */}
           </Navbar.Collapse>
       </Navbar>
     </nav>
