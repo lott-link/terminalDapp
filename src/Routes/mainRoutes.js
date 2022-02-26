@@ -1,12 +1,21 @@
 import React from 'react'
-const HomePage = React.lazy(()=>import('../Pages/HomePage'))
-const Contract =  React.lazy(()=>import('../Pages/Contract'))
-const NFT = React.lazy(()=>import('../Pages/NFT'))
-const Tools = React.lazy(()=>import('../Pages/Tools'))
-const Assets = React.lazy(()=>import('../Pages/Assets'))
-const ContractPage = React.lazy(()=>import('../Pages/ContractPage'))
-const ContactUs = React.lazy(()=>import('../Pages/ContactUs'))
-const Inbox = React.lazy(()=>import('../Pages/Inbox'))
+import HomePage from '../Pages/HomePage'
+import Contract from '../Pages/Contract'
+import NFT from '../Pages/NFT'
+import Tools from '../Pages/Tools'
+import Assets from '../Pages/Assets'
+import ContractPage from '../Pages/ContractPage'
+import ContactUs from '../Pages/ContactUs'
+import Inbox from '../Pages/Inbox'
+
+// const HomePage = React.lazy(()=>import('../Pages/HomePage'))
+// const Contract =  React.lazy(()=>import('../Pages/Contract'))
+// const NFT = React.lazy(()=>import('../Pages/NFT'))
+// const Tools = React.lazy(()=>import('../Pages/Tools'))
+// const Assets = React.lazy(()=>import('../Pages/Assets'))
+// const ContractPage = React.lazy(()=>import('../Pages/ContractPage'))
+// const ContactUs = React.lazy(()=>import('../Pages/ContactUs'))
+// const Inbox = React.lazy(()=>import('../Pages/Inbox'))
 const mainRoutes = [
     {path:"/",exact:true,component:HomePage,title:"HomePage",type:'directory'},
     {path:'/signin',exact:true,component:ContractPage,title:"Sign_In",type:'link',render:true,display:true},
