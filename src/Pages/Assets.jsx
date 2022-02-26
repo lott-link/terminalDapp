@@ -9,10 +9,6 @@ import '../../node_modules/react-loading-skeleton/dist/skeleton.css'
 import ContentLoader from '../../node_modules/react-loading-skeleton'
 import { useHistory } from 'react-router-dom';
 import { OverlayTrigger, Tooltip} from 'react-bootstrap'
-import { Route } from 'react-router-dom'
-import { useLocation } from 'react-router-dom' 
-import { useParams } from 'react-router-dom'
-import useWidth from '../Hooks/useWidth';
 
 const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"approved","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getApproved","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"operator","type":"address"}],"name":"isApprovedForAll","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"privateFileHash","outputs":[{"internalType":"string","name":"_privateFileHash","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"privateInfo","outputs":[{"internalType":"string","name":"_privateInfo","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"publicFileHash","outputs":[{"internalType":"string","name":"_publicFileHash","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"publicInfo","outputs":[{"internalType":"string","name":"_publicInfo","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"string","name":"uri","type":"string"},{"internalType":"string","name":"publicInfo","type":"string"},{"internalType":"string","name":"privateInfo","type":"string"},{"internalType":"string","name":"publicFileHash","type":"string"},{"internalType":"string","name":"privateFileHash","type":"string"}],"name":"safeMint","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"bytes","name":"_data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"name":"setApprovalForAll","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"transferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"}]
 
@@ -27,11 +23,10 @@ const Assets = () => {
     
     const checkLink = (link)=>{
       const protocol = link.split(':')[0]
-      console.log(protocol)
       if(protocol.toLowerCase().includes(['http','https']))
         return link
       else if(protocol.toLowerCase().includes(['ipfs']))
-        return "https://ipfs.infura.io/" + link.split(':')[1].slice(0,link.length-1)
+        return "https://ipfs.infura.io/" + link.split(':')[1].slice(2,link.length-1)
       else return link
     }
     
@@ -149,10 +144,11 @@ const Assets = () => {
               )
             })
             }
-            {loading && <div style={{position:'absolute',top:'45%',left:'55%'}}>
+            {loading && <div style={{position:'absolute',top:'45%',left:'45%'}}>
                 <Spinner style={{width:"3rem",height:"3rem"}} animation="grow" variant="light" />
                 <Spinner className='mx-2' style={{width:"3rem",height:"3rem"}} animation="grow" variant="light" />
                 <Spinner style={{width:"3rem",height:"3rem"}} animation="grow" variant="light" />
+                <div className='text-center'><h3>loading...</h3></div>
             </div>
             }
             </div>
@@ -365,75 +361,3 @@ const DropDownComponent = ({token,setShow,setModalToken})=>{
     </Dropdown>
   )
 }
-
-
-
-// const Assets = ()=>{
-//   return (
-//     <>
-//       <Route path="/assets" exact component={AssetsPage} />
-//       <Route path="/assets/:contractAddress/:tokenId"  component={AssetsSingle} />
-//     </>
-//   )
-// }
-// export default Assets;
-
-// const AssetsSingle = ()=>{
-//   const location = useLocation()
-//   const [token,setToken] = useState(location.state || null)
-//   const { contractAddress, tokenId } = useParams()
-//   console.log(contractAddress, tokenId,token)
-//   const width = useWidth()
-//   useEffect(()=>{
-//     if(!location.state){
-//       setToken({"name":"no token"})
-    
-//     }
-//   })
-//   return (
-//     <div className="h-100 w-100 p-3">
-//       <div className={`d-flex ${width < 992 && "flex-wrap"} gap-3`}>
-//         <div className={`${width > 992 ? "w-50" : "w-100"}`}>
-//           <img className='w-100' src={token.image} alt="" />
-//         </div>
-//         <div className={`${width > 992 ? "w-50" : "w-100"} d-flex flex-column gap-2`}>
-//           <div className='d-flex gap-1'>
-//             <div>name:</div>
-//             <div>{token.name}</div>
-//           </div>
-//           <div className='d-flex gap-1'>
-//             <div>description:</div>
-//             <div>{token.description}</div>
-//           </div>
-//           <div className='d-flex gap-1'>
-//             <div>contract address:</div>
-//             <div>{token.contractAddress.slice(0,8)+"..."+token.contractAddress.slice(-8)}</div>
-//           </div>
-//           <div className='d-flex gap-1'>
-//             <div>token id:</div>
-//             <div>{token.tokenID}</div>
-//           </div>
-//           <div></div>
-//         </div>
-//       </div>
-//       <div className='d-flex flex-wrap gap-2 px-4 p-3 my-2'
-//           style={{border:'5px double white',overFlow:'auto',position:'relative'}}>
-//            <div className='px-2'
-//            style={{position:'absolute',top:"-1rem",zIndex:'20',backgroundColor:'black'}}>
-//              Properties
-//            </div>
-//            {token.attributes.map((attr,index)=>(
-//             <div key={index} className="d-flex flex-column p-2"
-//              style={{width:'fit-content',border:'1px solid white'}}>
-//               <div>{attr.trait_type}</div>
-//               <div>{attr.value}</div>
-//             </div>
-//           ))}
-//          </div>
-//       <div>
-//       </div>
-//     </div>
-//   )
-// }
-
-// ipfs:/

@@ -11,7 +11,7 @@ import { context } from '../App'
 import styles from './sidebar.styles.module.css'
 import Select from "./Select";
 import { OverlayTrigger, Tooltip} from 'react-bootstrap'
-const Sidebar = () => {
+const Sidebar = ({HomePage = false}) => {
   const {activate,account,chainId,active,connector,library,deactivate} = useWeb3React()
   const [loadingProfile,setLoadingProfile] = useState(false)
   const [balance,setBalance] = useState()
@@ -181,6 +181,8 @@ const Sidebar = () => {
             </div>
         }
       </div>
+      {!HomePage &&
+      <div>
       {!loadingProfile ? <div className="w-100 p-3" 
       style={{height:"60%",borderTop:'2px solid white',position:'relative',overflow:'auto',minHeight:'10rem',flexGrow:"1"}}>
         {active && signedIn && <div className="d-flex">
@@ -210,6 +212,8 @@ const Sidebar = () => {
         {error && <div>{error}</div>}
         {active && !signedIn && <div className="w-100 text-center" style={{position:'absolute',bottom:'5%',right:'0'}}><button onClick={()=>history.push('/contract/signin')} className="secondary-button">Sign in</button></div>}
       </div> : <div>loading...</div>}
+      </div>
+      }
       </div>
   );
 };

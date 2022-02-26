@@ -8,6 +8,7 @@ import toolsRoutes from "../Routes/toolsRoutes";
 import { Nav, Container, Navbar } from 'react-bootstrap'
 import useWidth from "../Hooks/useWidth";
 import Sidebar from "./Sidebar";
+import Button from './styled/Button'
 const MyNavbar = () => {
   //sidebar
   const [navItems, setNavItems] = useState();
@@ -53,11 +54,12 @@ const MyNavbar = () => {
       <Navbar className="w-100" expand="lg">
           <Navbar.Toggle className="bg-light" aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
+            {width > 992 &&
             <Nav className="me-auto text-white">
               {navItems &&
               navItems.map((item, index) => (
                 <div key={Math.random() * 1000} className="mx-1 d-flex align-items-center">
-                  {item.type==="directory" && index === 0 &&
+                  {item.type==="directory" && index === 0 && 
                   <Link style={{color:'white',textTransform:"capitalize"}} to='/'
                     className={`${index===0 && item.title!=="HomePage"  && "trapezoid py-1  "} mx-1`}
                     onClick={()=>handleNav("HomePage")}>{item.title!=="HomePage" && <img src={play} alt="play-icon" style={{width:'11px',height:"14px",transform:"rotate(180deg)"}} />}{" "}{item.title}</Link>
@@ -75,8 +77,33 @@ const MyNavbar = () => {
                   }
                 </div>
               ))}
-              {width < 992 && <Sidebar />}
             </Nav>
+            }
+            {width < 992 &&
+              <Nav className="me-auto">
+              {navItems &&
+              navItems.map((item, index) => (
+                <div key={Math.random() * 1000} className="mx-1 d-flex align-items-start">
+                  {item.type==="directory" && index === 0 && 
+                  <Button primary style={{textTransform:"capitalize",margin:'8px 0'}} 
+                    className={`${index===0 && item.title!=="HomePage"  && "trapezoid py-1  "} `}
+                    onClick={()=>{handleNav("HomePage");history.push('/')}}>{item.title!=="HomePage" && <img src={play} alt="play-icon" style={{width:'11px',height:"14px",transform:"rotate(180deg)",filter:'contrast(10%)'}} />}{" "}{item.title}</Button>
+                  }
+                  {item.type==="directory" && index !== 0 &&
+                  <Button primary style={{border:'none',textTransform:"capitalize",margin:'8px 0'}} 
+                    className="" 
+                    onClick={()=>handleNav(item.title)}>{item.title}{item.title!=="HomePage" && <span >{" "}<img  style={{width:'11px',height:"14px",filter:'contrast(10%)'}} className='mb-1' alt="icon" src={play} /></span>}</Button>
+                  }
+                  {item.type==="link" &&
+                  <Button primary
+                    to={item.path} style={{textTransform:"capitalize",margin:'8px 0'}}
+                    className={pathName === item.path ? "selected-nav-item link px-2" : "link px-2"}
+                    onClick={()=>{handleNav(item.title);history.push(item.path)}}>{item.title}</Button>
+                  }
+                </div>
+              ))}
+            </Nav>
+            }
           </Navbar.Collapse>
       </Navbar>
     </nav>

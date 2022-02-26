@@ -220,7 +220,7 @@ const ContactUs = () => {
     style={{width:'20rem', background:"#020227",color:'white',border:'7px double white'}}>
       <option value="">Select a section</option>
       <option value="0x8C97769D2Fc3e18967375B9E6e4214f1A393A862">Dapp</option>
-      <option value="">Solidity</option>
+      <option value="0x2beD17dDE61A5b862409eF7Af301229Ae50387f0">Solidity</option>
       <option value="0xfe6754537CfE0aD4Eb9F3996Ae9c36A717CBaaFb">Strategy</option>
     </select>}
     <div className='d-flex position-relative'>

@@ -1,6 +1,13 @@
+import Sidebar from '../Components/Sidebar';
 import Button from '../Components/styled/Button'
+import useWidth from '../Hooks/useWidth';
 const HomePage = () => {
-  
+    const width = useWidth()
+    if(width < 992)
+        return(
+            <Sidebar HomePage={true} />
+        )
+    else 
     return (
         <div className="w-100 d-flex flex-column align-items-center justify-content-center" style={{overflow:'auto',minHeight: "calc(100vh - 7.5rem)"}}>
             <div>
