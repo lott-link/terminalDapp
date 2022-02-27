@@ -20,7 +20,8 @@ const Assets = () => {
     const [loading,setLoading] = useState(false)
     const [show,setShow] = useState(false)
     const [modalToken,setModalToken] = useState(null)
-    
+    const [groups,setGroups] = useState([])
+
     const checkLink = (link)=>{
       const protocol = link.split(':')[0]
       if(protocol.toLowerCase().includes(['http','https']))
@@ -47,7 +48,15 @@ const Assets = () => {
           }
         }
         let idsToShow = [] 
-        counts.forEach((id,index)=> {if(id%2!==0) idsToShow.push(ids[index])})
+        let raw = []
+        counts.forEach((id,index)=> {
+          if(id%2!==0) {
+            idsToShow.push(ids[index])
+            raw.push(array[index])
+          }
+        })
+        console.log("raw",raw)
+        group2(raw)
         const tempTokens = []
         idsToShow.forEach(async (id,index)=>{
           const token = await getToken(id.split('0x')[0],"0x"+id.split('0x')[1])
@@ -95,6 +104,36 @@ const Assets = () => {
         
       } 
     }
+    const group2 = (tempTokens)=>{
+      const data = {
+        name:"",
+        description:"",
+        image:"",
+        tokenID:"",
+        contractAddress:"",
+        chainId:"",
+        attributes:"",
+        interaction:"noInteraction",
+        tokenURI:""
+      }
+      let result = {}
+      tempTokens.forEach(token=>{
+        if(result[token.tokenName])
+          result[token.tokenName].push({
+            ...data,
+            contractAddress:token.contractAddress,
+            tokenID:token.tokenID
+          })
+        else 
+          result[token.tokenName] = [{
+            ...data,
+            contractAddress:token.contractAddress,
+            tokenID:token.tokenID
+          }]
+      })
+      console.log("group2",Object.entries(result))
+      setTokens(Object.entries(result))
+    }
     const group = async (tempTokens)=>{
       let result = {}
       tempTokens.forEach(token=>{
@@ -110,6 +149,7 @@ const Assets = () => {
         finalObj[contractName + " " + key ] = result[key] 
       }
       setTokens(Object.entries(finalObj))
+      console.log("tokens",Object.entries(finalObj))
     }
     useEffect(()=>{
         data.network && getERC721()
