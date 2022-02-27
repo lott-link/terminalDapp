@@ -165,7 +165,7 @@ const Assets = () => {
             {
             tokens.map((group,index)=>{
               return (
-                <div key={index} className='px-4 pb-4 my-2'
+                <div key={Math.random()*1e6} className='px-4 pb-4 my-2'
                  style={{border:'5px double white',overFlow:'auto',position:'relative'}}>
                   <div className='px-2'
                   style={{position:'absolute',top:"-1rem",zIndex:'20',backgroundColor:'black'}}>
@@ -178,7 +178,7 @@ const Assets = () => {
                     </OverlayTrigger>
                   </div> 
                   <div className='d-flex flex-wrap gap-4' style={{marginTop:'2rem'}}>
-                    {group[1] && group[1].map((token,indx)=><NFTCard key={indx} token={token} setShow={setShow} setModalToken={setModalToken}/>)}
+                    {group[1] && group[1].map((token,indx)=><NFTCard key={Math.random()*1e6} token={token} setShow={setShow} setModalToken={setModalToken}/>)}
                   </div>
                 </div>
               )
@@ -188,7 +188,6 @@ const Assets = () => {
                 <Spinner style={{width:"3rem",height:"3rem"}} animation="grow" variant="light" />
                 <Spinner className='mx-2' style={{width:"3rem",height:"3rem"}} animation="grow" variant="light" />
                 <Spinner style={{width:"3rem",height:"3rem"}} animation="grow" variant="light" />
-                <div className='text-center'><h3>loading...</h3></div>
             </div>
             }
             </div>
@@ -357,7 +356,7 @@ const AccordionComponent = ({property})=>{
     <Accordion defaultActiveKey="1">
       <Accordion.Item eventKey="0">
         <Accordion.Header as="h6">{property[0]}</Accordion.Header>
-        <Accordion.Body>
+        <Accordion.Body style={{wordBreak:"break-word"}}>
           {property[1]}
       </Accordion.Body>
       </Accordion.Item>
