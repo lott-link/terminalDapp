@@ -57,6 +57,7 @@ const Assets = () => {
         })
         console.log("raw",raw)
         group2(raw)
+        setLoading(false)
         const tempTokens = []
         idsToShow.forEach(async (id,index)=>{
           const token = await getToken(id.split('0x')[0],"0x"+id.split('0x')[1])
@@ -65,11 +66,11 @@ const Assets = () => {
             setTokens(prev=>[...prev,token])
           } 
           if(index===idsToShow.length-1)  {
-            setLoading(false)
+            // setLoading(false)
             group(tempTokens)
           }
         })
-        if(idsToShow.length === 0) setLoading(false)
+        // if(idsToShow.length === 0) setLoading(false)
     }
     const getToken = async (tokenID,contractAddress) => {
       if(!active) return;
