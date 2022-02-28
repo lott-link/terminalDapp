@@ -389,8 +389,18 @@ const DropDownComponent = ({token,setShow,setModalToken})=>{
   return (
     <Dropdown className="d-inline mx-2">
       <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components">
-        <span style={{position:'relative',left:'20px',cursor:'default'}}>#{token.tokenID}</span> 
-        <span style={{position:'relative',left:'180px'}}>...</span>
+      <OverlayTrigger key={"index"} placement={"bottom"}  overlay={<Tooltip >copy</Tooltip>}>
+        <span style={{cursor:'pointer'}} 
+        onClick={(e)=>{e.stopPropagation();navigator.clipboard.writeText(token.tokenID)}}>
+            #{
+            token.tokenID.length > 5 ?
+            token.tokenID.slice(0,3) + ".."
+            :
+            token.tokenID
+            }
+        </span> 
+      </OverlayTrigger>
+        <span style={{position:'relative',left:token.tokenID.length > 5 ?'180px' : '200px',cursor:'pointer'}}>...</span>
         <Dropdown.Menu align="end">
           <Dropdown.Item onClick={()=>history.push({pathname:"/tools/crosschain",state:{token,type:"transfer"}})}>transfer</Dropdown.Item>
           <Dropdown.Item onClick={()=>history.push({pathname:"/tools/crosschain",state:{token,type:"crossChain"}})}>cross chain</Dropdown.Item>
