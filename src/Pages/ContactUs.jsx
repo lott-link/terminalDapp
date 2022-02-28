@@ -301,19 +301,19 @@ const ContactUs = () => {
         }
         {publicKeyLoading.metakeyAprove &&
           <div className='d-flex flex-column justify-content-center position-relative' style={{top:'40%'}}>
-            <div className='text-center'><h5>getting private key</h5></div>
+            <div className='text-center'><h5>getting puclic key</h5></div>
             <div><LoadingBalls /></div>
           </div>
         }
         {publicKeyLoading.setKeyAprove &&
           <div className='d-flex flex-column justify-content-center position-relative' style={{top:'40%'}}>
-            <div className='text-center'><h5>setting private key</h5></div>
+            <div className='text-center'><h5>setting puclic key</h5></div>
             <div><LoadingBalls /></div>
           </div>
         }
         {publicKeyLoading.confirming &&
           <div className='d-flex flex-column justify-content-center position-relative' style={{top:'40%'}}>
-            <div className='text-center'><h5>wating to confirm private key</h5></div>
+            <div className='text-center'><h5>wating to confirm public key</h5></div>
             <div><LoadingBalls /></div>
           </div>
         }

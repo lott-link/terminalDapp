@@ -119,14 +119,14 @@ const Assets = () => {
       }
       let result = {}
       tempTokens.forEach(token=>{
-        if(result[token.tokenName])
-          result[token.tokenName].push({
+        if(result[token.tokenName + " " + token.contractAddress])
+          result[token.tokenName + " " + token.contractAddress].push({
             ...data,
             contractAddress:token.contractAddress,
             tokenID:token.tokenID
           })
         else 
-          result[token.tokenName] = [{
+          result[token.tokenName + " " + token.contractAddress] = [{
             ...data,
             contractAddress:token.contractAddress,
             tokenID:token.tokenID
