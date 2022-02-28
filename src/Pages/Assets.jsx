@@ -27,10 +27,12 @@ const Assets = () => {
       if(protocol.toLowerCase().includes(['http','https']))
         return link
       else if(protocol.toLowerCase().includes(['ipfs']))
-        return "https://ipfs.infura.io/" + link.split(':')[1].slice(2,link.length-1)
+        return "https://ipfs.infura.io/ipfs/" + link.split(':')[1].slice(2,link.length-1)
       else return link
     }
-    
+    console.log(
+      checkLink("ipfs://QmUwzGbz3vY3JNEs5p1hfac4exCZzc6gNPVZ2ULwe33mQ5")
+    )
     const getERC721 = async ()=>{
         if(!active) return;
         setLoading(true)
