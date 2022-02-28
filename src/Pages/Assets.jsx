@@ -20,31 +20,37 @@ const Assets = () => {
     const [loading,setLoading] = useState(false)
     const [show,setShow] = useState(false)
     const [modalToken,setModalToken] = useState(null)
-    const [groups,setGroups] = useState([])
+    const [error,setError] = useState({err:false,msg:''})
 
     const checkLink = (link)=>{
-      const protocol = link.split(':')[0]
+      const protocol = link.split('://')[0]
       if(protocol.toLowerCase().includes(['http','https']))
         return link
       else if(protocol.toLowerCase().includes(['ipfs']))
-        return "https://ipfs.infura.io/ipfs/" + link.split(':')[1].slice(2,link.length-1)
+        return "https://ipfs.infura.io/ipfs/" + link.split('://')[1].slice(2,link.length-1)
       else return link
     }
-    console.log(
-      checkLink("ipfs://QmUwzGbz3vY3JNEs5p1hfac4exCZzc6gNPVZ2ULwe33mQ5")
-    )
     const getERC721 = async ()=>{
         if(!active) return;
         setLoading(true)
         setTokens([])
         if(!data.network) return
-        const array = await axios.get(`${data.addresses[data.network]["erc721API"]}${account}`).then(res=>res.data.result)
+        let array;
+        try {
+          array = await axios.get(`${data.addresses[data.network]["erc721API"]}${account}`)
+          .then(res=>res.data.result)
+        }
+        catch(err){
+          setError({err:true,msg:"Oops something went wrong,please reload"})
+          setLoading(false)
+          return
+        }
         console.log(array)
         let ids = array.map(token=>token.tokenID+token.contractAddress)
-        ids = Array.from(new Set(ids))
+        // ids = Array.from(new Set(ids))
         const counts = new Array(ids.length).fill(0)
         for(let i = 0; i < array.length; i++){
-          for(let j = 0; j < ids.length; j++){
+          for(let j = 0; j < array.length; j++){
             if(array[i].tokenID + array[i].contractAddress === ids[j])
               counts[j]++
           }
@@ -57,27 +63,50 @@ const Assets = () => {
             raw.push(array[index])
           }
         })
+        console.log("ids to show",idsToShow)
         console.log("raw",raw)
-        group2(raw)
+        const result = group2(raw)
         setLoading(false)
-        const tempTokens = []
+        // const tempTokens = []
         idsToShow.forEach(async (id,index)=>{
           const token = await getToken(id.split('0x')[0],"0x"+id.split('0x')[1])
           if(token){
-            tempTokens.push(token)
-            setTokens(prev=>[...prev,token])
+            // tempTokens.push(token)
+
+            const tempGroup = result.find(item=>item[0].includes(token.contractAddress))
+            const tempToken = tempGroup[1].find(item=>item.tokenID === token.tokenID)
+  
+            if(tempToken){
+              tempToken.name = token.name
+              tempToken.description = token.description
+              tempToken.image = token.image
+              tempToken.tokenID = token.tokenID
+              tempToken.contractAddress = token.contractAddress
+              tempToken.chainId = token.chainId
+              tempToken.attributes = token.attributes
+              tempToken.interaction = token.interaction ? token.interaction : "noInteraction"
+              tempToken.tokenURI = token.tokenURI
+  
+              setTokens([...result])
+            }else{
+              console.log("broken token",token,tempToken)
+            }
+            // setTokens(prev=>[...prev,token])
           } 
           if(index===idsToShow.length-1)  {
             // setLoading(false)
-            group(tempTokens)
+            // group(tempTokens)
           }
         })
         // if(idsToShow.length === 0) setLoading(false)
     }
-    const getToken = async (tokenID,contractAddress) => {
+    //getToken gets token information it accepts token id and contract address 
+    //then checks in local storage, if the token is available in localstorage returns it
+    //else it gets tokenURI from contract
+    const getToken = async (tokenID,contractAddress,refresh = false) => {
       if(!active) return;
       const token = localStorage.getItem(contractAddress+tokenID)
-      if(token){
+      if(token && !refresh){
         return JSON.parse(token)
       }
       else{
@@ -99,10 +128,38 @@ const Assets = () => {
             tokenURI:tokenURI
           }
           localStorage.setItem(contractAddress+tokenID,JSON.stringify(data))
+          if(refresh){
+            let findGroup = tokens.find(item=>item[0].includes(contractAddress))
+            let findToken = findGroup[1].find(item=>item.tokenID === tokenID)
+            console.log(findToken)
+            
+            findToken.name = data.name
+            findToken.description = data.description
+            findToken.image = data.image
+            findToken.tokenID = data.tokenID
+            findToken.contractAddress = data.contractAddress
+            findToken.chainId = data.chainId
+            findToken.attributes = data.attributes
+            findToken.interaction = data.interaction ? data.interaction : "noInteraction"
+            findToken.tokenURI = data.tokenURI
+
+            setTokens([...tokens])
+            console.log(findToken)
+          }
           return data
         } 
         catch(err){
-          return false
+          return {
+            name:"failed to load",
+            description:"",
+            image:"",
+            tokenID,
+            contractAddress,
+            chainId:"",
+            attributes:"",
+            interaction:"noInteraction",
+            tokenURI:""
+          }
         }
         
       } 
@@ -136,6 +193,7 @@ const Assets = () => {
       })
       console.log("group2",Object.entries(result))
       setTokens(Object.entries(result))
+      return Object.entries(result)
     }
     const group = async (tempTokens)=>{
       let result = {}
@@ -157,7 +215,7 @@ const Assets = () => {
     useEffect(()=>{
         data.network && getERC721()
     },[data.network,chainId])
-    if(tokens.length===0 && !loading) return (
+    if(tokens.length===0 && !loading && !error.err) return (
       <div className='w-100 h-100 d-flex justify-content-center align-items-center' > 
         <h1>you don't have any token</h1>
       </div>
@@ -171,7 +229,7 @@ const Assets = () => {
                 <div key={Math.random()*1e6} className='px-4 pb-4 my-2'
                  style={{border:'5px double white',overFlow:'auto',position:'relative'}}>
                   <div className='px-2'
-                  style={{position:'absolute',top:"-1rem",zIndex:'20',backgroundColor:'black'}}>
+                  style={{position:'absolute',top:"-1rem",zIndex:'20',backgroundColor:'#020227'}}>
                     {group[0] && group[0].split(" ")[0]}
                     <OverlayTrigger key={"index"} placement={"bottom"}  overlay={<Tooltip >explore block</Tooltip>}>
                       <a href={data.chains[data.network].params[0].blockExplorerUrls[0]+"/"+"address"+"/"+ (group[0] && group[0].split(" ")[1])}
@@ -181,7 +239,8 @@ const Assets = () => {
                     </OverlayTrigger>
                   </div> 
                   <div className='d-flex flex-wrap gap-4' style={{marginTop:'2rem'}}>
-                    {group[1] && group[1].map((token,indx)=><NFTCard key={Math.random()*1e6} token={token} setShow={setShow} setModalToken={setModalToken}/>)}
+                    {group[1] && group[1].map((token)=><NFTCard key={Math.random()*1e6} token={token}
+                     setShow={setShow} setModalToken={setModalToken} getToken={getToken} />)}
                   </div>
                 </div>
               )
@@ -215,13 +274,22 @@ const Assets = () => {
                 </div>
               </div>
             }
+            {error.err &&
+              <div className='w-50 p-3'
+              style={{height:'50vh',position:'fixed',backgroundColor:"rgba(0,0,0,0.8)"
+              ,zIndex:"20",top:'27%',left:'33%',border:"5px double white"}}>
+               <div className='d-flex justify-content-center align-items-center'>
+                 <h4>{error.msg}</h4>
+               </div>
+              </div>
+            }
         </div>
     )
 }
 
 export default Assets;
 
-const NFTCard = ({token,setShow,setModalToken})=>{
+const NFTCard = ({token,setShow,setModalToken,getToken})=>{
     const { library , account} = useWeb3React()
     const [loading,setLoading] = useState(true)
     const handleLoad = ()=> setLoading(false)
@@ -263,7 +331,7 @@ const NFTCard = ({token,setShow,setModalToken})=>{
     return (
         <div style={{width:'275px'}}>
             <div style={{backgroundColor:"#C4C4C4"}}>
-              <DropDownComponent token={token} setShow={setShow} setModalToken={setModalToken} />
+              <DropDownComponent token={token} setShow={setShow} setModalToken={setModalToken} getToken={getToken} />
             </div>
             <div style={{width:'275px',height:'225px',backgroundColor:"#C4C4C4"}}>
                  <img className='w-100 h-100' onLoad={handleLoad} style={{objectFit:"contain",display:loading?"none":"initial"}} src={token.image} alt="" />
@@ -379,7 +447,7 @@ const AccordionComponent = ({property})=>{
     </Accordion>
     )
 }
-const DropDownComponent = ({token,setShow,setModalToken})=>{
+const DropDownComponent = ({token,setShow,setModalToken,getToken})=>{
   const history = useHistory()
   const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
     <span href="" ref={ref} onClick={(e) => {e.preventDefault();onClick(e);}}
@@ -408,6 +476,7 @@ const DropDownComponent = ({token,setShow,setModalToken})=>{
           <Dropdown.Item onClick={()=>history.push({pathname:"/tools/crosschain",state:{token,type:"crossChain"}})}>cross chain</Dropdown.Item>
           {/* <Dropdown.Item onClick={()=>history.push({pathname:`/assets/${token.contractAddress}/${token.tokenID}`,state:token})}>more info</Dropdown.Item> */}
           <Dropdown.Item onClick={()=>{setModalToken(token);setShow(true)}}>more info</Dropdown.Item>
+          <Dropdown.Item onClick={()=>getToken(token.tokenID,token.contractAddress,true)}>refresh token</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown.Toggle>
     </Dropdown>

@@ -68,7 +68,7 @@ const InboxPage = () => {
             }
         });
         console.log(tempLogs);
-        setLogs(tempLogs)
+        setLogs(tempLogs.reverse())
         setAllMsgs(tempLogs)
         setSentMessages(tempSentMessages)
 
@@ -148,7 +148,8 @@ const InboxPage = () => {
                 <tr key={index} className={styles.tr} style={{cursor:'pointer'}} 
                 onClick={()=>history.push({pathname:"/inbox/message",state:message})} >
                     <td>{index+1}</td>
-                    <td><strong>{width > 600 ? message.to.slice(0,5)+"..."+message.to.slice(-5):message.to.slice(0,2)+"."+message.to.slice(-2)}</strong></td>
+                    {selectedBtn === 0 && <td><strong>{width > 600 ? message.from.slice(0,5)+"..."+message.from.slice(-5):message.from.slice(0,2)+"."+message.from.slice(-2)}</strong></td>}
+                    {selectedBtn === 1 &&<td><strong>{width > 600 ? message.to.slice(0,5)+"..."+message.to.slice(-5):message.to.slice(0,2)+"."+message.to.slice(-2)}</strong></td>}
                     <td>{message.subject}</td>
                     <td>{width > 600 ? (message.msg && message.msg.length > 30 ? message.msg.slice(0,30) : message.msg) : (message.msg && message.msg.length > 5 ? message.msg.slice(0,5) : message.msg) }</td>
                     <td>
