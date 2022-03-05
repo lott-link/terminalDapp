@@ -46,6 +46,9 @@ const InboxPage = () => {
         console.log(res);
         const tempLogs = [];
         const tempSentMessages = [];
+        // let ids = {};
+
+        const ids = JSON.parse(localStorage.getItem('messages')) || {}
 
         res.data.result.forEach((item) => {
             try {
@@ -56,10 +59,15 @@ const InboxPage = () => {
                 const tempMessage = JSON.parse(result.message.replaceAll("\'","\"")); 
                 result.isHashed = tempMessage.isHashed;
                 result.msg = tempMessage.msg;
+                result.id = item.transactionHash
+
                 if(result.to === account){
+                    result.isRead = ids[item.transactionHash] ? ids[item.transactionHash] : false ;
+                    ids[item.transactionHash] = result.isRead
                     tempLogs.push(result);
                 }
                 if(result.from === account){
+                    result.isRead = true;
                     tempSentMessages.push(result)
                 }
             }
@@ -67,6 +75,7 @@ const InboxPage = () => {
                 console.log(err)
             }
         });
+        localStorage.setItem("messages",JSON.stringify(ids))
         console.log(tempLogs);
         setLogs(tempLogs.reverse())
         setAllMsgs(tempLogs)
@@ -135,7 +144,7 @@ const InboxPage = () => {
             <thead>
                 <tr className={`${styles.tr} ${styles.head}`}>
                     <th>#</th>
-                    <th>from</th>
+                    <th>{selectedBtn === 0 ? "from" : 'to'}</th>
                     <th>subject</th>
                     <th>msg</th>
                     <th>time</th>
@@ -145,11 +154,11 @@ const InboxPage = () => {
             <tbody>
                 {
                 logs.map((message,index)=>(
-                <tr key={index} className={styles.tr} style={{cursor:'pointer'}} 
+                <tr key={index} className={styles.tr} style={{cursor:'pointer',fontWeight:message.isRead ? 'normal' : 'bold' }} 
                 onClick={()=>history.push({pathname:"/inbox/message",state:message})} >
                     <td>{index+1}</td>
-                    {selectedBtn === 0 && <td><strong>{width > 600 ? message.from.slice(0,5)+"..."+message.from.slice(-5):message.from.slice(0,2)+"."+message.from.slice(-2)}</strong></td>}
-                    {selectedBtn === 1 &&<td><strong>{width > 600 ? message.to.slice(0,5)+"..."+message.to.slice(-5):message.to.slice(0,2)+"."+message.to.slice(-2)}</strong></td>}
+                    {selectedBtn === 0 && <td>{width > 600 ? message.from.slice(0,5)+"..."+message.from.slice(-5):message.from.slice(0,2)+"."+message.from.slice(-2)}</td>}
+                    {selectedBtn === 1 &&<td>{width > 600 ? message.to.slice(0,5)+"..."+message.to.slice(-5):message.to.slice(0,2)+"."+message.to.slice(-2)}</td>}
                     <td>{message.subject}</td>
                     <td>{width > 600 ? (message.msg && message.msg.length > 30 ? message.msg.slice(0,30) : message.msg) : (message.msg && message.msg.length > 5 ? message.msg.slice(0,5) : message.msg) }</td>
                     <td>
@@ -229,6 +238,11 @@ const Message = () => {
             console.log(err)
         }
     }
+    useEffect(()=>{
+        let ids = JSON.parse(localStorage.getItem('messages'))
+        ids = {...ids,[location?.state?.id]:true}
+        localStorage.setItem('messages',JSON.stringify(ids))
+    },[])
     if(!location.state)
     return (
         <div className='w-100 h-100 d-flex justify-content-center align-items-center'>
@@ -239,7 +253,7 @@ const Message = () => {
     <div className='w-100 h-100 d-flex flex-column justify-content-center align-items-center position-relative'>
         <div className='position-absolute top-0 p-2 w-100' onClick={()=>history.push('/inbox')}
             style={{left:0,cursor:'pointer',borderBottom:'1px solid white'}}>back</div>
-        <div>
+        <div>   {console.log(location.state)}
             <h1>Message</h1>
         </div>
         <div className={`w-50 position-relative ${width < 992 ? "w-100" : "w-50"}`} style={{border:"7px double white",minHeight:'50%'}}>
