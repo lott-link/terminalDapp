@@ -112,22 +112,23 @@ const Assets = () => {
       }
       else{
         const contract = new library.eth.Contract(contractABI,contractAddress)
-        let tokenURI = await contract.methods.tokenURI(tokenID).call(res=>res)
-        tokenURI = checkLink(tokenURI)
+        const tokenURI = await contract.methods.tokenURI(tokenID).call(res=>res)
+        const tempTokenURI = checkLink(tokenURI)
         try {
-          console.log("tokenURI",tokenURI)
-          const tokenJson = await axios.get(tokenURI).then(res=>res.data)
-          const image = checkLink(tokenJson.image)
+          console.log("tokenURI",tempTokenURI)
+          const tokenJson = await axios.get(tempTokenURI).then(res=>res.data)
+          // const image = checkLink(tokenJson.image)
           const data = {
             name:tokenJson.name,
             description:tokenJson.description,
-            image,
+            image:tokenJson.image,
             tokenID,
             contractAddress,
             chainId,
             attributes:tokenJson.attributes,
             interaction:tokenJson.interaction ? tokenJson.interaction : "noInteraction",
-            tokenURI:tokenURI
+            tokenURI:tokenURI,
+            isSpam:false
           }
           localStorage.setItem(contractAddress+tokenID,JSON.stringify(data))
           if(refresh){
@@ -144,6 +145,7 @@ const Assets = () => {
             findToken.attributes = data.attributes
             findToken.interaction = data.interaction ? data.interaction : "noInteraction"
             findToken.tokenURI = data.tokenURI
+            findToken.isSpam = false
 
             setTokens([...tokens])
             console.log(findToken)
@@ -197,23 +199,23 @@ const Assets = () => {
       setTokens(Object.entries(result))
       return Object.entries(result)
     }
-    const group = async (tempTokens)=>{
-      let result = {}
-      tempTokens.forEach(token=>{
-        if(result[token.contractAddress])
-          result[token.contractAddress].push(token)
-        else 
-          result[token.contractAddress] = [token]
-      })
-      const finalObj = {}
-      for(let key in result){
-        const contract = new library.eth.Contract(contractABI,key)
-        const contractName = await contract.methods.name().call()
-        finalObj[contractName + " " + key ] = result[key] 
-      }
-      setTokens(Object.entries(finalObj))
-      console.log("tokens",Object.entries(finalObj))
-    }
+    // const group = async (tempTokens)=>{
+    //   let result = {}
+    //   tempTokens.forEach(token=>{
+    //     if(result[token.contractAddress])
+    //       result[token.contractAddress].push(token)
+    //     else 
+    //       result[token.contractAddress] = [token]
+    //   })
+    //   const finalObj = {}
+    //   for(let key in result){
+    //     const contract = new library.eth.Contract(contractABI,key)
+    //     const contractName = await contract.methods.name().call()
+    //     finalObj[contractName + " " + key ] = result[key] 
+    //   }
+    //   setTokens(Object.entries(finalObj))
+    //   console.log("tokens",Object.entries(finalObj))
+    // }
     useEffect(()=>{
         data.network && getERC721()
     },[data.network,chainId])
@@ -222,6 +224,10 @@ const Assets = () => {
         <h1>you don't have any token</h1>
       </div>
     )
+    const setSpamToken = (token)=>{
+      token.isSpam = true;
+      setTokens([...tokens])
+    }
     return (
         <div className='w-100 h-100' style={{overflowY:"auto",position:'relative'}}>
             <div className='d-flex flex-column flex-wrap px-3 py-4'>
@@ -241,8 +247,9 @@ const Assets = () => {
                     </OverlayTrigger>
                   </div> 
                   <div className='d-flex flex-wrap gap-4' style={{marginTop:'2rem'}}>
-                    {group[1] && group[1].map((token)=><NFTCard key={Math.random()*1e6} token={token}
-                     setShow={setShow} setModalToken={setModalToken} getToken={getToken} />)}
+                    {group[1] && group[1].map((token)=> !token.isSpam && <NFTCard key={Math.random()*1e6} token={token}
+                     setShow={setShow} setModalToken={setModalToken} getToken={getToken}
+                     checkLink={checkLink} setSpamToken={setSpamToken} />)}
                   </div>
                 </div>
               )
@@ -266,11 +273,11 @@ const Assets = () => {
                     <div style={{wordBreak:'break-word'}}>{modalToken.contractAddress}</div>
                   </div>
                   <div className='d-flex'>
-                    <div>asset link:</div>
+                    <div style={{width:'8rem'}}>asset link:</div>
                     <div style={{wordBreak:'break-word'}}><a target="_blank" rel="noreferrer" href={modalToken.image}>{modalToken.image}</a></div>
                   </div>
                   <div className='d-flex'>
-                    <div>token uri:</div>
+                    <div style={{width:'8rem'}}>token uri:</div>
                     <div style={{wordBreak:'break-word'}}><a target="_blank" rel="noreferrer" href={modalToken.tokenURI}>{modalToken.tokenURI}</a></div>
                   </div>
                 </div>
@@ -291,7 +298,7 @@ const Assets = () => {
 
 export default Assets;
 
-const NFTCard = ({token,setShow,setModalToken,getToken})=>{
+const NFTCard = ({token,setShow,setModalToken,getToken,checkLink,setSpamToken})=>{
     const { library , account} = useWeb3React()
     const [loading,setLoading] = useState(true)
     const handleLoad = ()=> setLoading(false)
@@ -300,7 +307,7 @@ const NFTCard = ({token,setShow,setModalToken,getToken})=>{
     useEffect(()=>{
       for(let key in token){
         // if(key!=="chainId" && key!== "tokenID" && key!== "contractAddress" && key!=='image')
-        if(!["chainId","tokenID","contractAddress","image","interaction"].includes(key))
+        if(!["chainId","tokenID","contractAddress","image","interaction",'tokenURI'].includes(key))
         setInfo(prev=>[...prev,[key,token[key]]])
       }
     },[])
@@ -333,10 +340,12 @@ const NFTCard = ({token,setShow,setModalToken,getToken})=>{
     return (
         <div style={{width:'275px'}}>
             <div style={{backgroundColor:"#C4C4C4"}}>
-              <DropDownComponent token={token} setShow={setShow} setModalToken={setModalToken} getToken={getToken} />
+              <DropDownComponent token={token} setShow={setShow}
+               setModalToken={setModalToken} getToken={getToken}
+               setSpamToken={setSpamToken} />
             </div>
             <div style={{width:'275px',height:'225px',backgroundColor:"#C4C4C4"}}>
-                 <img className='w-100 h-100' onLoad={handleLoad} style={{objectFit:"contain",display:loading?"none":"initial"}} src={token.image} alt="" />
+                 <img className='w-100 h-100' onLoad={handleLoad} style={{objectFit:"contain",display:loading?"none":"initial"}} src={checkLink(token.image)} alt="" />
                 {loading && <LazyImage className='w-100 h-100' />}
             </div>
             <div className='bg-white text-dark px-2 py-3' style={{width:"275px",minHeight:'130px'}}>
@@ -420,7 +429,7 @@ const AccordionComponent = ({property})=>{
     if(typeof property[1] !== "object") return
     for(let key in property[1]){
       // if(key!=="chainId" && key!== "tokenID" && key!== "contractAddress" && key!=='image')
-      if(!["chainId","tokenID","contractAddress","image","interaction"].includes(key))
+      if(!["chainId","tokenID","contractAddress","image","interaction",'tokenURI'].includes(key))
         setInfo(prev=>[...prev,[property[1][key].trait_type,property[1][key].value]])
     }
   },[])
@@ -449,7 +458,7 @@ const AccordionComponent = ({property})=>{
     </Accordion>
     )
 }
-const DropDownComponent = ({token,setShow,setModalToken,getToken})=>{
+const DropDownComponent = ({token,setShow,setModalToken,getToken,setSpamToken})=>{
   const history = useHistory()
   const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
     <span href="" ref={ref} onClick={(e) => {e.preventDefault();onClick(e);}}
@@ -479,6 +488,7 @@ const DropDownComponent = ({token,setShow,setModalToken,getToken})=>{
           {/* <Dropdown.Item onClick={()=>history.push({pathname:`/assets/${token.contractAddress}/${token.tokenID}`,state:token})}>more info</Dropdown.Item> */}
           <Dropdown.Item onClick={()=>{setModalToken(token);setShow(true)}}>more info</Dropdown.Item>
           <Dropdown.Item onClick={()=>getToken(token.tokenID,token.contractAddress,true)}>refresh token</Dropdown.Item>
+          <Dropdown.Item onClick={()=>setSpamToken(token)}>hide</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown.Toggle>
     </Dropdown>
