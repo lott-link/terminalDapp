@@ -23,11 +23,12 @@ const Assets = () => {
     const [error,setError] = useState({err:false,msg:''})
 
     const checkLink = (link)=>{
+      console.log("lnk",link)
       const protocol = link.split('://')[0]
       if(protocol.toLowerCase().includes(['http','https']))
         return link
       else if(protocol.toLowerCase().includes(['ipfs']))
-        return "https://ipfs.infura.io/ipfs/" + link.split('://')[1].slice(2,link.length-1)
+        return "https://ipfs.infura.io/ipfs/" + link.split('://')[1]
       else return link
     }
     const getERC721 = async ()=>{
@@ -114,6 +115,7 @@ const Assets = () => {
         let tokenURI = await contract.methods.tokenURI(tokenID).call(res=>res)
         tokenURI = checkLink(tokenURI)
         try {
+          console.log("tokenURI",tokenURI)
           const tokenJson = await axios.get(tokenURI).then(res=>res.data)
           const image = checkLink(tokenJson.image)
           const data = {
