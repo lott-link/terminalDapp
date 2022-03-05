@@ -23,6 +23,7 @@ const Assets = () => {
     const [error,setError] = useState({err:false,msg:''})
 
     const checkLink = (link)=>{
+      if(!link) return;
       console.log("lnk",link)
       const protocol = link.split('://')[0]
       if(protocol.toLowerCase().includes(['http','https']))
