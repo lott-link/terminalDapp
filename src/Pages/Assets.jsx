@@ -21,10 +21,10 @@ const Assets = () => {
     const [show,setShow] = useState(false)
     const [modalToken,setModalToken] = useState(null)
     const [error,setError] = useState({err:false,msg:''})
+    const [spams,setSpams] = useState([])
 
     const checkLink = (link)=>{
       if(!link) return;
-      console.log("lnk",link)
       const protocol = link.split('://')[0]
       if(protocol.toLowerCase().includes(['http','https']))
         return link
@@ -88,6 +88,7 @@ const Assets = () => {
               tempToken.attributes = token.attributes
               tempToken.interaction = token.interaction ? token.interaction : "noInteraction"
               tempToken.tokenURI = token.tokenURI
+              tempToken.isSpam = false
   
               setTokens([...result])
             }else{
@@ -163,7 +164,8 @@ const Assets = () => {
             chainId:"",
             attributes:"",
             interaction:"noInteraction",
-            tokenURI:""
+            tokenURI:"",
+            isSpam:""
           }
         }
         
@@ -179,7 +181,8 @@ const Assets = () => {
         chainId:"",
         attributes:"",
         interaction:"noInteraction",
-        tokenURI:""
+        tokenURI:"",
+        isSpam:""
       }
       let result = {}
       tempTokens.forEach(token=>{
@@ -200,23 +203,6 @@ const Assets = () => {
       setTokens(Object.entries(result))
       return Object.entries(result)
     }
-    // const group = async (tempTokens)=>{
-    //   let result = {}
-    //   tempTokens.forEach(token=>{
-    //     if(result[token.contractAddress])
-    //       result[token.contractAddress].push(token)
-    //     else 
-    //       result[token.contractAddress] = [token]
-    //   })
-    //   const finalObj = {}
-    //   for(let key in result){
-    //     const contract = new library.eth.Contract(contractABI,key)
-    //     const contractName = await contract.methods.name().call()
-    //     finalObj[contractName + " " + key ] = result[key] 
-    //   }
-    //   setTokens(Object.entries(finalObj))
-    //   console.log("tokens",Object.entries(finalObj))
-    // }
     useEffect(()=>{
         data.network && getERC721()
     },[data.network,chainId])
@@ -227,6 +213,16 @@ const Assets = () => {
     )
     const setSpamToken = (token)=>{
       token.isSpam = true;
+      const foundGroup = tokens.find(item=>item[0].includes(token.contractAddress))
+      foundGroup[1] = foundGroup[1].filter(item=>!((item.contractAddress === token.contractAddress)&&(item.tokenID === token.tokenID)))
+      setTokens([...tokens])
+      setSpams([...spams,token])
+    }
+    const setUnspamToken = (token)=>{
+      token.isSpam = false;
+      setSpams(prev=>prev.filter(item=>(item.contractAddress !== token.contractAddress)&&(item.tokenID !== token.tokenID) ))
+      const foundGroup = tokens.find(item=>item[0].includes(token.contractAddress))
+      foundGroup[1].push(token)
       setTokens([...tokens])
     }
     return (
@@ -235,6 +231,7 @@ const Assets = () => {
             {
             tokens.map((group,index)=>{
               return (
+                group[1].length !== 0 &&
                 <div key={Math.random()*1e6} className='px-4 pb-4 my-2'
                  style={{border:'5px double white',overFlow:'auto',position:'relative'}}>
                   <div className='px-2'
@@ -248,13 +245,27 @@ const Assets = () => {
                     </OverlayTrigger>
                   </div> 
                   <div className='d-flex flex-wrap gap-4' style={{marginTop:'2rem'}}>
-                    {group[1] && group[1].map((token)=> !token.isSpam && <NFTCard key={Math.random()*1e6} token={token}
+                    {group[1] && group[1].map((token)=> <NFTCard key={Math.random()*1e6} token={token}
                      setShow={setShow} setModalToken={setModalToken} getToken={getToken}
                      checkLink={checkLink} setSpamToken={setSpamToken} />)}
                   </div>
                 </div>
               )
             })
+            }
+            { spams.length !== 0 &&
+            <div className='px-4 pb-4 my-2'
+             style={{border:'5px double white',overFlow:'auto',position:'relative'}}>
+              <div className='px-2'
+              style={{position:'absolute',top:"-1rem",zIndex:'20',backgroundColor:'#020227'}}>
+                Spam
+              </div> 
+              <div className='d-flex flex-wrap gap-4' style={{marginTop:'2rem'}}>
+                {spams.map((token)=> <NFTCard key={Math.random()*1e6} token={token}
+                 setShow={setShow} setModalToken={setModalToken} getToken={getToken}
+                 checkLink={checkLink} setSpamToken={setSpamToken} setUnspamToken={setUnspamToken} />)}
+              </div>
+            </div>
             }
             {loading && <div style={{position:'absolute',top:'45%',left:'45%'}}>
                 <Spinner style={{width:"3rem",height:"3rem"}} animation="grow" variant="light" />
@@ -299,7 +310,7 @@ const Assets = () => {
 
 export default Assets;
 
-const NFTCard = ({token,setShow,setModalToken,getToken,checkLink,setSpamToken})=>{
+const NFTCard = ({token,setShow,setModalToken,getToken,checkLink,setSpamToken,setUnspamToken})=>{
     const { library , account} = useWeb3React()
     const [loading,setLoading] = useState(true)
     const handleLoad = ()=> setLoading(false)
@@ -343,7 +354,7 @@ const NFTCard = ({token,setShow,setModalToken,getToken,checkLink,setSpamToken})=
             <div style={{backgroundColor:"#C4C4C4"}}>
               <DropDownComponent token={token} setShow={setShow}
                setModalToken={setModalToken} getToken={getToken}
-               setSpamToken={setSpamToken} />
+               setSpamToken={setSpamToken} setUnspamToken={setUnspamToken} />
             </div>
             <div style={{width:'275px',height:'225px',backgroundColor:"#C4C4C4"}}>
                  <img className='w-100 h-100' onLoad={handleLoad} style={{objectFit:"contain",display:loading?"none":"initial"}} src={checkLink(token.image)} alt="" />
@@ -459,7 +470,7 @@ const AccordionComponent = ({property})=>{
     </Accordion>
     )
 }
-const DropDownComponent = ({token,setShow,setModalToken,getToken,setSpamToken})=>{
+const DropDownComponent = ({token,setShow,setModalToken,getToken,setSpamToken,setUnspamToken})=>{
   const history = useHistory()
   const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
     <span href="" ref={ref} onClick={(e) => {e.preventDefault();onClick(e);}}
@@ -486,10 +497,9 @@ const DropDownComponent = ({token,setShow,setModalToken,getToken,setSpamToken})=
         <Dropdown.Menu align="end">
           <Dropdown.Item onClick={()=>history.push({pathname:"/tools/crosschain",state:{token,type:"transfer"}})}>transfer</Dropdown.Item>
           <Dropdown.Item onClick={()=>history.push({pathname:"/tools/crosschain",state:{token,type:"crossChain"}})}>cross chain</Dropdown.Item>
-          {/* <Dropdown.Item onClick={()=>history.push({pathname:`/assets/${token.contractAddress}/${token.tokenID}`,state:token})}>more info</Dropdown.Item> */}
           <Dropdown.Item onClick={()=>{setModalToken(token);setShow(true)}}>more info</Dropdown.Item>
           <Dropdown.Item onClick={()=>getToken(token.tokenID,token.contractAddress,true)}>refresh token</Dropdown.Item>
-          <Dropdown.Item onClick={()=>setSpamToken(token)}>hide</Dropdown.Item>
+          <Dropdown.Item onClick={()=>token.isSpam ? setUnspamToken(token) : setSpamToken(token)}>{token.isSpam ? "show" : "hide"}</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown.Toggle>
     </Dropdown>
