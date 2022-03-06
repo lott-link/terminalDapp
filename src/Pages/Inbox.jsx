@@ -154,7 +154,7 @@ const InboxPage = () => {
             <tbody>
                 {
                 logs.map((message,index)=>(
-                <tr key={index} className={styles.tr} style={{cursor:'pointer',fontWeight:message.isRead ? 'normal' : 'bold' }} 
+                <tr key={index} className={styles.tr} style={{cursor:'pointer',fontWeight:message.isRead ? 'normal' : 'bold',backgroundColor:!message.isRead && "#262643" }} 
                 onClick={()=>history.push({pathname:"/inbox/message",state:message})} >
                     <td>{index+1}</td>
                     {selectedBtn === 0 && <td>{width > 600 ? message.from.slice(0,5)+"..."+message.from.slice(-5):message.from.slice(0,2)+"."+message.from.slice(-2)}</td>}

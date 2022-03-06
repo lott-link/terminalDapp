@@ -57,18 +57,21 @@ const ContractPage = () => {
         values.push({key:'',value:''})
         setInfoFields(values)
     }
-    const handleRempveField = index =>{
+    const handleRempveField = (index,item) =>{
+        console.log(item)
         const values = [...infoFields]
         values.splice(index,1)
         setInfoFields(values)
+        setInfoOptions(prev=>[...prev,item.key])
     }
-    const infoOptions = ['Telegram', 'Phone number', 'Email','Website','Facebook','Instagram']
+    const [infoOptions,setInfoOptions] = useState(['Telegram', 'Phone number', 'Email','Website','Facebook','Instagram'])
     const addOptionInput = (option)=>{
         const values = [...infoFields]
         const keys = values.map(item => item.key)
         if(!keys.includes(option)) {
             values.push({key:option,value:''})
             setInfoFields(values)
+            setInfoOptions(prev => prev.filter(item=>item !== option))
         }
     }
     const getInfoFieldsData = ()=>{
@@ -318,7 +321,7 @@ const ContractPage = () => {
                                 <div>
                                     <Input style={{width:width>600 ?'16.5rem':"12.5rem"}} title={item.key.slice(0,1).toUpperCase()+item.key.slice(1,item.key.length)} className=""  onChange={event=>handleInputChange(index,event)} name="value" value={item.value} type="text" />
                                 </div>
-                                <div onClick={()=>handleRempveField(index)}>
+                                <div onClick={()=>handleRempveField(index,item)}>
                                     <Button>Remove</Button>
                                 </div>
                             </div>
