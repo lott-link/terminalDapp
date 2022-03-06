@@ -34,7 +34,7 @@ function App() {
       setSupportedChains,chains,converChainIDToName,pageSupported,setPageSupported}}>
     <div style={{ position: "relative",minHeight:'100%' }}>
       <h3 className="px-3 m-0" id="title">
-        Lott.Link
+        DAPP
       </h3>
       <div className="" id="app-container" style={{ minHeight: "calc(100vh - 3.75rem)" }} >
         <div className='w-100' style={{minHeight:"calc(100vh - 3.75rem)"}}>

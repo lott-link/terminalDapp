@@ -104,7 +104,7 @@ const Sidebar = ({HomePage = false}) => {
 
   return (
     <div className="w-100 d-flex flex-column" style={{minHeight: "calc(100vh - 7.5rem)"}}>
-      <div style={{height:'40%',position:'relative',minHeight:'15rem',flexGrow:"1"}} className="d-flex flex-column align-items-center">
+      <div style={{height:'40%',position:'relative',minHeight:'18rem'}} className="d-flex flex-column align-items-center">
         <div className="d-flex justify-content-center" style={{width:'90%',margin:'0.5rem auto',fontSize:'1.3rem'}}>{active ? "Wallet" : "Connect Wallet"}</div>
         {!active && <div className="w-100 text-center">
           <button onClick={metamask} className="wallet-button p-0" style={{maxWidth:"20rem"}}>
@@ -154,22 +154,9 @@ const Sidebar = ({HomePage = false}) => {
             </div> 
           </div>}
         </div>
-        <div className='mt-5'>
-            <h5 className='text-center'>Get free faucet</h5>
-            <div className="d-flex justify-content-center">
-                <a href="https://faucet.rinkeby.io/" target="_blank" rel="noreferrer" >
-                    <Button>Rinkeby</Button>
-                </a>
-                <a href="https://faucet.polygon.technology/" target="_blank" rel="noreferrer">
-                    <Button>Mumbai</Button>
-                </a>
-                <a href="https://faucets.chain.link/fuji" target="_blank" rel="noreferrer">
-                    <Button>Fuji</Button>
-                </a>
-            </div>
-        </div>
           <div className="w-100" style={{position:'absolute',bottom:'15%',left:'0'}}>
-            <div className='w-100 px-4 d-flex justify-content-center'>
+            <div className='w-100 px-4 d-flex flex-column align-items-center'>
+              <div><h6>Connect wallet</h6></div>
               <Select />
             </div>
           </div>
@@ -210,6 +197,20 @@ const Sidebar = ({HomePage = false}) => {
         {!HomePage && error && <div>{error}</div>}
         {!HomePage && active && !signedIn && <div className="w-100 text-center" style={{position:'absolute',bottom:'5%',right:'0'}}><button onClick={()=>history.push('/contract/signin')} className="secondary-button">Sign in</button></div>}
       </div>) : !HomePage && <div>loading...</div>}
+      <div className='mt-5'>
+            <h5 className='text-center'>Get free faucet</h5>
+            <div className="d-flex justify-content-center">
+                <a href="https://faucet.rinkeby.io/" target="_blank" rel="noreferrer" >
+                    <Button>Rinkeby</Button>
+                </a>
+                <a href="https://faucet.polygon.technology/" target="_blank" rel="noreferrer">
+                    <Button>Mumbai</Button>
+                </a>
+                <a href="https://faucets.chain.link/fuji" target="_blank" rel="noreferrer">
+                    <Button>Fuji</Button>
+                </a>
+            </div>
+        </div>
       </div>
   );
 };
