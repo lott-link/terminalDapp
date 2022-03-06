@@ -7,13 +7,13 @@
   font-family: "DosVGA";
 }
 :root {
-  --main-bg-color: #020227;
+  --main-bg-color: white;
+  /* --main-bg-color: #020227; */
 }
 #app-container {
-  /* min-height: 750px;
-  min-width: 1250px; */
   margin: 30px;
-  border: 7px double white;
+  border: 7px double black;
+  /* border: 7px double white; */
 }
 #title {
   position: absolute;
@@ -33,17 +33,20 @@
 
 #navbar {
   min-height: 3.75rem;
-  border-bottom: 2px solid white;
+  border-bottom: 2px solid black;
+  /* border-bottom: 2px solid white; */
   background-color: var(--main-bg-color);
   padding: 8px;
 }
 #navbar a {
   text-decoration: none;
-  color: white;
+  color: black;
+  /* color: white; */
 }
 #sidebar {
   background-color: var(--main-bg-color);
-  border-right: 2px solid white;
+  border-right: 2px solid black;
+  /* border-right: 2px solid white; */
 }
 .ascii-art {
   white-space: "pre";
@@ -51,10 +54,12 @@
 .input {
   outline: none;
   padding: 5px;
-  border: 7px double white;
+  border: 7px double black;
+  /* border: 7px double white; */
   background-color: var(--main-bg-color);
   caret-color: white;
-  color: white;
+  color: black;
+  /* color: white; */
 }
 .input::placeholder {
   color: white;
@@ -95,7 +100,7 @@
   background: yellow;
 }
 .selected-nav-item {
-  border: 1px solid white;
+  border: 1px solid black;
 }
 .directory {
   padding: 4px;
@@ -120,8 +125,6 @@
 *::-webkit-scrollbar-thumb {
   background-color: white;
 
-  /* background-color: orange;
-  border: 3px solid orange; */
 }
 *::-webkit-scrollbar-button:vertical:decrement {
   background-image: url(./Assetes/arrowUp.svg);

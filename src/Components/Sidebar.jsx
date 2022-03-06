@@ -6,7 +6,6 @@ import { useHistory } from "react-router";
 import Button from '../Components/styled/Button'
 import metamaskIcon from '../Assetes/icons/metamask/medium.png'
 import walletConnectIcon from '../Assetes/icons/walletconnect/medium.png'
-import { useEagerConnect, useInactiveListener } from '../Hooks/hooks'
 import { context } from '../App' 
 import styles from './sidebar.styles.module.css'
 import Select from "./Select";
@@ -102,26 +101,13 @@ const Sidebar = ({HomePage = false}) => {
     }
   },[])
 
-   // handle logic to recognize the connector currently being activated
-   const [activatingConnector, setActivatingConnector] = React.useState()
-   React.useEffect(() => {
-     if (activatingConnector && activatingConnector === connector) {
-       setActivatingConnector(undefined)
-     }
-   }, [activatingConnector, connector])
- 
-   // handle logic to eagerly connect to the injected ethereum provider, if it exists and has granted access already
-   const triedEager = useEagerConnect()
- 
-   // handle logic to connect in reaction to certain events on the injected ethereum provider, if it exists
-   useInactiveListener(!triedEager || !!activatingConnector)
 
   return (
     <div className="w-100 d-flex flex-column" style={{minHeight: "calc(100vh - 7.5rem)"}}>
-      <div style={{height:'40%',position:'relative',minHeight:'15rem',flexGrow:"1"}} className="d-flex flex-column">
-        <div style={{width:'90%',margin:'0.5rem auto',fontSize:'1.3rem'}}>{active ? "Wallet" : "Connect Wallet"}</div>
+      <div style={{height:'40%',position:'relative',minHeight:'15rem',flexGrow:"1"}} className="d-flex flex-column align-items-center">
+        <div className="d-flex justify-content-center" style={{width:'90%',margin:'0.5rem auto',fontSize:'1.3rem'}}>{active ? "Wallet" : "Connect Wallet"}</div>
         {!active && <div className="w-100 text-center">
-          <button onClick={metamask} className="wallet-button p-0">
+          <button onClick={metamask} className="wallet-button p-0" style={{maxWidth:"20rem"}}>
             <div className="d-flex h-100">
               <div className="wallet-button-logo d-flex justify-content-center align-items-center" style={{width:'15%'}}><img style={{width:'40px',height:"40px"}} src={metamaskIcon} alt="metamask icon" /></div>
               <div className="wallet-button-text d-flex align-items-center" style={{width:'85%'}}>metamask</div>
@@ -129,7 +115,7 @@ const Sidebar = ({HomePage = false}) => {
           </button>
         </div>}
         {!active && <div className="w-100 text-center">
-          <button onClick={walletConnect} className="wallet-button mt-2 p-0">
+          <button onClick={walletConnect} className="wallet-button mt-2 p-0" style={{maxWidth:"20rem"}}>
             <div className="d-flex h-100">
               <div className="wallet-button-logo d-flex justify-content-center align-items-center" style={{width:'15%'}}><img style={{width:'40px',height:"40px"}} src={walletConnectIcon} alt="walletconnect icon" /></div>
               <div className="wallet-button-text d-flex align-items-center" style={{width:'85%'}}>walletconnect</div>
@@ -168,14 +154,28 @@ const Sidebar = ({HomePage = false}) => {
             </div> 
           </div>}
         </div>
+        <div className='mt-5'>
+            <h5 className='text-center'>Get free faucet</h5>
+            <div className="d-flex justify-content-center">
+                <a href="https://faucet.rinkeby.io/" target="_blank" rel="noreferrer" >
+                    <Button>Rinkeby</Button>
+                </a>
+                <a href="https://faucet.polygon.technology/" target="_blank" rel="noreferrer">
+                    <Button>Mumbai</Button>
+                </a>
+                <a href="https://faucets.chain.link/fuji" target="_blank" rel="noreferrer">
+                    <Button>Fuji</Button>
+                </a>
+            </div>
+        </div>
           <div className="w-100" style={{position:'absolute',bottom:'15%',left:'0'}}>
-            <div className='w-100 px-4'>
+            <div className='w-100 px-4 d-flex justify-content-center'>
               <Select />
             </div>
           </div>
           {active && 
-            <div className="w-100 px-4" style={{position:'absolute',bottom:'0',left:'0'}}>
-              <button onClick={deactivate} className="my-2 w-100 wallet-button" style={{background:"#C4C4C4"}}>
+            <div className="w-100 px-4 d-flex justify-content-center" style={{position:'absolute',bottom:'0',left:'0'}}>
+              <button onClick={deactivate} className="my-2 w-100 wallet-button" style={{background:"#C4C4C4",maxWidth:'20rem'}}>
                 disconecct
               </button>
             </div>

@@ -155,10 +155,10 @@ const SelectNFT = ({approveBtn,setApproveBtn,setCircles,setStages
     }
     return (
         <div className={`${width < 992 ? "w-100" : "w-50"} h-100 p-2 ${styles["animation-in"]}`} 
-        style={{borderRight:"1px solid white",borderLeft:"1px solid white",position:"relative"}}>
-            <div className='w-100 h-100' style={{border:"1px solid white"}}>
+        style={{borderRight:"1px solid black",borderLeft:"1px solid black",position:"relative"}}>
+            <div className='w-100 h-100' style={{border:"1px solid black"}}>
                 {selectedWay ?
-                <div className='text-center py-4' style={{borderBottom:"1px solid white",fontSize:"22px"}}>
+                <div className='text-center py-4' style={{borderBottom:"1px solid black",fontSize:"22px"}}>
                     Select and Approve
                     <OverlayTrigger key={"bottom"} placement={"bottom"}
                     overlay={

@@ -8,22 +8,22 @@ const TextInput = styled.input`
     padding: 0.25em 1em;
     text-align: center;
     /* padding: 12px 0 12px 8px; */
-    border:7px white double;
-    color:white;
+    border:7px double black;
+    color:black;
     outline: none;
-    background-color: #020227;
+    background-color: white;
     font-size: 16px;
-    border-color:${props => props.success ? (props.success==="success" ? "#00AAAC" : "#FF00FF") : 'white'};
+    border-color:${props => props.success ? (props.success==="success" ? "#00AAAC" : "#FF00FF") : 'black'};
     &:focus {
         border:4px solid;
-        border-color:${props => props.success ? props.success==="success" ? "#00AAAC" : "#FF00FF" : 'white'};
+        border-color:${props => props.success ? props.success==="success" ? "#00AAAC" : "#FF00FF" : 'black'};
     }
     &:hover {
         border:2px solid;
-        border-color:${props => props.success ? props.success==="success" ? "#00AAAC" : "#FF00FF" : 'white'};
+        border-color:${props => props.success ? props.success==="success" ? "#00AAAC" : "#FF00FF" : 'black'};
     }
     &::placeholder{
-        color:white;
+        color:black;
         opacity: 70%;
     }
     &:disabled {
@@ -40,7 +40,7 @@ const Input = (props)=>{
     return (
         <div style={{display:'flex',flexDirection:'column',alignItems:'center',position:'relative'}}>
             <TextInput {...props} onFocus={()=>setFocus(true)} onBlur={()=>setFocus(false)} />
-            <label style={{position:'absolute',left:`${props.title && (props.title.length > 10 ? "33%":"40%")}`,backgroundColor:props.disabled?"#C0C0C0":'#020227',top:`${(focus || (props.value && props.value.length!==0)) ?"3px":"24px"}`,paddingLeft:"4px",paddingRight:"4px",transition:'0.2s',pointerEvents:'none'}}>{props.title}</label>
+            <label style={{position:'absolute',left:`${props.title && (props.title.length > 10 ? "33%":"40%")}`,backgroundColor:props.disabled?"#C0C0C0":'white',top:`${(focus || (props.value && props.value.length!==0)) ?"3px":"24px"}`,paddingLeft:"4px",paddingRight:"4px",transition:'0.2s',pointerEvents:'none'}}>{props.title}</label>
             {props.small && <Small style={{textAlign:'start',paddingLeft:"20px"}}>{props.small}</Small>}
         </div> 
     )

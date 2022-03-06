@@ -206,11 +206,6 @@ const Assets = () => {
     useEffect(()=>{
         data.network && getERC721()
     },[data.network,chainId])
-    if(tokens.length===0 && !loading && !error.err) return (
-      <div className='w-100 h-100 d-flex justify-content-center align-items-center' > 
-        <h1>you don't have any token</h1>
-      </div>
-    )
     const setSpamToken = (token)=>{
       token.isSpam = true;
       const foundGroup = tokens.find(item=>item[0].includes(token.contractAddress))
@@ -225,6 +220,11 @@ const Assets = () => {
       foundGroup[1].push(token)
       setTokens([...tokens])
     }
+    if(tokens.length===0 && !loading && !error.err) return (
+      <div className='w-100 h-100 d-flex justify-content-center align-items-center' > 
+        <h1>you don't have any token</h1>
+      </div>
+    )
     return (
         <div className='w-100 h-100' style={{overflowY:"auto",position:'relative'}}>
             <div className='d-flex flex-column flex-wrap px-3 py-4'>
@@ -233,9 +233,9 @@ const Assets = () => {
               return (
                 group[1].length !== 0 &&
                 <div key={Math.random()*1e6} className='px-4 pb-4 my-2'
-                 style={{border:'5px double white',overFlow:'auto',position:'relative'}}>
+                 style={{border:'5px double black',overFlow:'auto',position:'relative'}}>
                   <div className='px-2'
-                  style={{position:'absolute',top:"-1rem",zIndex:'20',backgroundColor:'#020227'}}>
+                  style={{position:'absolute',top:"-1rem",zIndex:'20',backgroundColor:'white'}}>
                     {group[0] && group[0].split(" ")[0]}
                     <OverlayTrigger key={"index"} placement={"bottom"}  overlay={<Tooltip >explore block</Tooltip>}>
                       <a href={data.chains[data.network].params[0].blockExplorerUrls[0]+"/"+"address"+"/"+ (group[0] && group[0].split(" ")[1])}
@@ -255,7 +255,7 @@ const Assets = () => {
             }
             { spams.length !== 0 &&
             <div className='px-4 pb-4 my-2'
-             style={{border:'5px double white',overFlow:'auto',position:'relative'}}>
+             style={{border:'5px double black',overFlow:'auto',position:'relative'}}>
               <div className='px-2'
               style={{position:'absolute',top:"-1rem",zIndex:'20',backgroundColor:'#020227'}}>
                 Spam
@@ -319,7 +319,7 @@ const NFTCard = ({token,setShow,setModalToken,getToken,checkLink,setSpamToken,se
     useEffect(()=>{
       for(let key in token){
         // if(key!=="chainId" && key!== "tokenID" && key!== "contractAddress" && key!=='image')
-        if(!["chainId","tokenID","contractAddress","image","interaction",'tokenURI'].includes(key))
+        if(!["chainId","tokenID","contractAddress","image","interaction",'tokenURI','isSpam'].includes(key))
         setInfo(prev=>[...prev,[key,token[key]]])
       }
     },[])
@@ -441,7 +441,7 @@ const AccordionComponent = ({property})=>{
     if(typeof property[1] !== "object") return
     for(let key in property[1]){
       // if(key!=="chainId" && key!== "tokenID" && key!== "contractAddress" && key!=='image')
-      if(!["chainId","tokenID","contractAddress","image","interaction",'tokenURI'].includes(key))
+      if(!["chainId","tokenID","contractAddress","image","interaction",'tokenURI','isSpam'].includes(key))
         setInfo(prev=>[...prev,[property[1][key].trait_type,property[1][key].value]])
     }
   },[])
@@ -495,8 +495,6 @@ const DropDownComponent = ({token,setShow,setModalToken,getToken,setSpamToken,se
       </OverlayTrigger>
         <span style={{position:'relative',left:token.tokenID.length > 5 ?'180px' : '200px',cursor:'pointer'}}>...</span>
         <Dropdown.Menu align="end">
-          <Dropdown.Item onClick={()=>history.push({pathname:"/tools/crosschain",state:{token,type:"transfer"}})}>transfer</Dropdown.Item>
-          <Dropdown.Item onClick={()=>history.push({pathname:"/tools/crosschain",state:{token,type:"crossChain"}})}>cross chain</Dropdown.Item>
           <Dropdown.Item onClick={()=>{setModalToken(token);setShow(true)}}>more info</Dropdown.Item>
           <Dropdown.Item onClick={()=>getToken(token.tokenID,token.contractAddress,true)}>refresh token</Dropdown.Item>
           <Dropdown.Item onClick={()=>token.isSpam ? setUnspamToken(token) : setSpamToken(token)}>{token.isSpam ? "show" : "hide"}</Dropdown.Item>

@@ -25,12 +25,12 @@
     color:#C0C0C0;
 }
 .select {
-    background-color: #020227;
-    color:white;
-    border: 6px double white;
+    background-color: white;
+    color:black;
+    border: 6px double black;
 }
 .select:hover {
-    border:6px solid white;
+    border:6px solid black;
 }
 .selected {
     background-color: rgba(255, 0, 0, 0.692);

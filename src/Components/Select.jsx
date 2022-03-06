@@ -13,18 +13,12 @@ const Select = () => {
   const data = useContext(context)
   const history = useHistory()
   const ref = useRef(null);
-  const { active } = useWeb3React()
+  const { active, chainId } = useWeb3React()
   const handleClickOutside = (event) => {
     if (ref.current && !ref.current.contains(event.target)) {
       setShow(false);
     }
   };
-  useEffect(() => {
-    document.addEventListener("click", handleClickOutside, true);
-    return () => {
-      document.removeEventListener("click", handleClickOutside, true);
-    };
-  });
   history.listen(location=>{
     handleAvailableChains(location.pathname)
   })
@@ -79,9 +73,6 @@ const Select = () => {
         }
         return tempChains;
     }
-  useEffect(()=>{
-    handleAvailableChains(history.location.pathname)
-  },[history.location.pathname])
   const handleNetworkChange = (chainName)=>{
     if(window.ethereum){
         window.ethereum
@@ -118,8 +109,17 @@ const Select = () => {
   useEffect(()=>{
     setSuppoerted()
   })
+  useEffect(()=>{
+    handleAvailableChains(history.location.pathname)
+  },[history.location.pathname])
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside, true);
+    return () => {
+      document.removeEventListener("click", handleClickOutside, true);
+    };
+  });
   return (
-    <div ref={ref} className="w-100" style={{position:'relative'}}>
+    <div ref={ref} className="w-100" style={{position:'relative',maxWidth:'20rem'}}>
       <div
         style={{width: "100%",height: "32px",padding: "0.25rem 1rem",
           outline: "none",backgroundColor: "#FFFF00",

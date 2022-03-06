@@ -278,7 +278,7 @@ const ContractPage = () => {
 </svg>
     return (
         <div className="w-100 h-100" style={{position:'relative'}}>
-            <div className={`px-4 d-flex align-items-center justify-content-between`} style={{height:'5%',borderBottom:'2px solid white'}}>
+            <div className={`px-4 d-flex align-items-center justify-content-between`} style={{height:'5%',borderBottom:'2px solid black'}}>
                 <div></div>
                 <div>Sign In</div>
                 <div className="d-flex">
@@ -333,7 +333,7 @@ const ContractPage = () => {
                     </div>
                     { active && !signedIn && !loadingProfile &&
                     <div className="d-flex flex-column align-items-center mx-auto" style={{width:width>600 ?'26rem':"20rem"}}>
-                        <div className="bg-white text-dark d-flex justify-content-around align-items-center w-100" style={{margin:"0 40px"}}>
+                        <div className="bg-dark text-white d-flex justify-content-around align-items-center w-100" style={{margin:"0 40px"}}>
                             <div className='d-flex '>
                                 <OverlayTrigger  placement={"bottom"}  overlay={<Tooltip >{payableAmount} wei</Tooltip>}>
                                     <div className="mx-4">{(payableAmount/1e18).toFixed(4)}</div>
@@ -396,7 +396,7 @@ const ContractPage = () => {
                     }
                 </div>
             </div>
-            <div className="p-3" style={{borderTop:'2px solid white',overflow:'auto',position:'relative',bottom:'0'}}>
+            <div className="p-3" style={{borderTop:'2px solid black',overflow:'auto',position:'relative',bottom:'0'}}>
             this contract mint a unique username on your wallet address to easily 
             named you on other contract. you can set your contact info optionaly.
              other people can see your info. 

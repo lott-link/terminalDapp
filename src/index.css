@@ -3,28 +3,30 @@ html {
   height:100%;
   margin: 0;
   padding: 0;
-  background-color: #020227 !important;
+  background-color: white !important;
+  /* background-color: #020227 !important; */
 }
 body {
   width:100%;
   height: calc(100% - 60px);
   margin: 0;
   padding: 0;
-  background-color: #020227 !important;
+  background-color: white !important;
+  /* background-color: #020227 !important; */
 }
 #root {
   width:100%;
   height:100%;
   margin: 0;
   padding: 0;
-  background-color: #020227;
+  background-color: whtie;
+  /* background-color: #020227; */
 }
 
 
 
 * {
   box-sizing: border-box;
-  /* font-family: 'Courier New', Courier, monospace; */
 }
 .grid {
   display: grid;
@@ -45,9 +47,6 @@ body {
 }
 
 
-/* rect:nth-child(2){
-  rx:20px;
-} */
 .filter {
   filter: invert(72%) sepia(65%) saturate(5387%) hue-rotate(150deg) brightness(97%) contrast(89%);
 }

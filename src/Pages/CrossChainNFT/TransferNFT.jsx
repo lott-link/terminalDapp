@@ -143,9 +143,9 @@ const TransferNFT = ({selectedToken,transferBtn,setTransferBtn,
     },[])
     return(
         <div className={`${width < 992 ? "w-100" : "w-50"} p-2 mx-auto ${styles["animation-in"]}`} 
-        style={{height:'100vh',borderRight:"1px solid white",borderLeft:"1px solid white",position:"relative"}}>
-            <div className='w-100 h-100' style={{border:"1px solid white"}}>
-                <div className='text-center py-4' style={{borderBottom:"1px solid white",fontSize:"22px"}}>
+        style={{borderRight:"1px solid black",borderLeft:"1px solid black",position:"relative"}}>
+            <div className='w-100 h-100' style={{border:"1px solid black"}}>
+                <div className='text-center py-4' style={{borderBottom:"1px solid black",fontSize:"22px"}}>
                     {isSafeTransfer ? "Transfer NFT" : "Cross Chainin"}
                 </div>
                 <div className={`py-3 text-center ${width > 992 ? "px-4" : "px-2"}`}>
@@ -172,9 +172,9 @@ const TransferNFT = ({selectedToken,transferBtn,setTransferBtn,
                         </div>}
                     </div>
                 </div> 
-                <div className="text-center text-dark">
+                <div className="text-center text-white">
                     {!isSafeTransfer &&
-                    <div className="bg-white d-flex justify-content-around align-items-center " style={{margin:"0 40px"}}>
+                    <div className="bg-dark d-flex justify-content-around align-items-center " style={{margin:"0 40px"}}>
                         <div className='d-flex '>
                             <OverlayTrigger  placement={"bottom"}  overlay={<Tooltip >{fee} wei</Tooltip>}>
                                 <div className="mx-4">{(fee/10e18).toFixed(4)}</div>

@@ -9,6 +9,7 @@ import { Nav, Container, Navbar } from 'react-bootstrap'
 import useWidth from "../Hooks/useWidth";
 import Sidebar from "./Sidebar";
 import Button from './styled/Button'
+import Select from "./Select";
 const MyNavbar = () => {
   //sidebar
   const [navItems, setNavItems] = useState();
@@ -55,23 +56,23 @@ const MyNavbar = () => {
           <Navbar.Toggle className="bg-light" aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             {width > 992 &&
-            <Nav className="me-auto text-white">
+            <Nav className="me-auto">
               {navItems &&
               navItems.map((item, index) => (
                 <div key={Math.random() * 1000} className="mx-1 d-flex align-items-center">
                   {item.type==="directory" && index === 0 && 
-                  <Link style={{color:'white',textTransform:"capitalize"}} to='/'
+                  <Link style={{textTransform:"capitalize"}} to='/'
                     className={`${index===0 && item.title!=="HomePage"  && "trapezoid py-1  "} mx-1`}
                     onClick={()=>handleNav("HomePage")}>{item.title!=="HomePage" && <img src={play} alt="play-icon" style={{width:'11px',height:"14px",transform:"rotate(180deg)"}} />}{" "}{item.title}</Link>
                   }
                   {item.type==="directory" && index !== 0 &&
-                  <button style={{border:'none',backgroundColor:"#020227",color:'white',textTransform:"capitalize"}} 
+                  <button style={{border:'none',textTransform:"capitalize"}} 
                     className="mx-1" 
                     onClick={()=>handleNav(item.title)}>{item.title}{item.title!=="HomePage" && <span >{" "}<img  style={{width:'11px',height:"14px"}} className='mb-1' alt="icon" src={play} /></span>}</button>
                   }
                   {item.type==="link" &&
                   <Link 
-                    to={item.path} style={{textTransform:"capitalize",color:'white'}}
+                    to={item.path} style={{textTransform:"capitalize"}}
                     className={pathName === item.path ? "selected-nav-item link px-2" : "link px-2"}
                     onClick={()=>handleNav(item.title)}>{item.title}</Link>
                   }

@@ -84,7 +84,7 @@ const NFTCrossChain = ({props}) => {
     else
     return (
         <div className='w-100 h-100' style={{display:'flex',flexFlow:'column'}} >
-            <div className='d-flex justify-content-between py-2' style={{borderBottom:"1px solid white"}}>
+            <div className='d-flex justify-content-between py-2' style={{borderBottom:"1px solid black"}}>
                 <div onClick={back} style={{cursor:"pointer"}} className='mx-4 my-auto'>{!stages[0] && "back"}</div>
                 <div className='my-auto'>
                 {isSafeTransfer ? "Transfer" : "Cross Chain NFT"}
@@ -119,23 +119,23 @@ const NFTCrossChain = ({props}) => {
                 }
                 </div>
             </div>
-            <div style={{borderRight:"1px solid white",borderLeft:"1px solid white",position:"relative",
+            <div style={{borderRight:"1px solid black",borderLeft:"1px solid black",position:"relative",
             backgroundColor:(approveBtn.loading || approveBtn.approving || transferBtn.loading || transferBtn.approving)?"rgba(2,117,216,0.5)":""}}
             className={`d-flex justify-content-center pt-2 ${width < 992 ? "w-100" : "w-50"} mx-auto`}>
                 {
                 circles.map((item,index)=>{
                     if(item) return(
                         <div key={index} className='mx-2' 
-                        style={{width:"15px",height:'15px',backgroundColor:"white",borderRadius:'50%'}}></div>
+                        style={{width:"15px",height:'15px',backgroundColor:"black",borderRadius:'50%'}}></div>
                     )
                     else return(
                         <div key={index} className='mx-2' 
-                        style={{width:"15px",height:'15px',backgroundColor:"white",borderRadius:'50%',opacity:'50%'}}></div>
+                        style={{width:"15px",height:'15px',backgroundColor:"black",borderRadius:'50%',opacity:'50%'}}></div>
                     )
                 })
                 }
             </div>
-            <div className='d-flex justify-content-center' style={{flexGrow:"1"}}>
+            <div className='d-flex justify-content-center' style={{flexGrow:"1",height:"calc(90vh - 6rem)"}}>
                 {stages[0] && <InfoPage setCircles={setCircles} setStages={setStages} setSelectedWay={setSelectedWay}/>}
                 {stages[1] && <SelectNFT setSelectedToken={setSelectedToken} selectedToken={selectedToken}
                  approveBtn={approveBtn} setApproveBtn={setApproveBtn} setCircles={setCircles} 

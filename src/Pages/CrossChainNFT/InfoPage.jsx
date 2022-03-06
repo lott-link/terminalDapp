@@ -16,9 +16,9 @@ const InfoPage = ({setCircles,setStages,setSelectedWay}) => {
     }
     return (
         <div className={`${width < 992 ? "w-100" : "w-50"} h-100 p-2 mx-auto ${styles["animation-in"]}`} 
-        style={{borderRight:"1px solid white",borderLeft:"1px solid white",position:"relative"}}>
-            <div className='w-100 h-100 d-flex flex-column' style={{border:"1px solid white"}}>
-                <div className='text-center py-4' style={{borderBottom:"1px solid white",fontSize:"22px"}}>
+        style={{borderRight:"1px solid black",borderLeft:"1px solid black",position:"relative"}}>
+            <div className='w-100 h-100 d-flex flex-column' style={{border:"1px solid black"}}>
+                <div className='text-center py-4' style={{borderBottom:"1px solid black",fontSize:"22px"}}>
                     Info
                 </div>
                 <div className='d-flex flex-column' style={{position:'relative',flexGrow:"1"}}>

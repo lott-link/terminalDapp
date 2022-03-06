@@ -217,7 +217,7 @@ const ContactUs = () => {
     {showTo && <div><Input title="To" value={to} style={{width:'20rem'}} onChange={handleChangeAddress}/></div>}
     {!showTo &&
     <select name="" id="" onChange={handleChangeAddress} className="text-center py-1 position-relative"
-    style={{width:'20rem', background:"#020227",color:'white',border:'7px double white'}}>
+    style={{width:'20rem', background:"white",color:'black',border:'7px double black'}}>
       <option value="">Select a section</option>
       <option value="0x8C97769D2Fc3e18967375B9E6e4214f1A393A862">Dapp</option>
       <option value="0x2beD17dDE61A5b862409eF7Af301229Ae50387f0">Solidity</option>
@@ -239,7 +239,7 @@ const ContactUs = () => {
     </div>
     <div style={{position:'relative'}}>
         <label htmlFor="" className='px-3' onChange={(e)=>setMsg(e.target.value)}
-        style={{position:'absolute',background:'#020227',top:'-10px',left:"20px"}}>
+        style={{position:'absolute',background:'white',top:'-10px',left:"20px"}}>
             Message
             <OverlayTrigger key={"bottom"} placement={"bottom"}
                 overlay={
@@ -251,7 +251,7 @@ const ContactUs = () => {
         </label>
         <textarea name="" id=""  rows="10" className='p-2' 
         onChange={(e)=>setMsg(e.target.value)} 
-        style={{background:'#020227',border:'7px double white',color:'white',width:'20rem'}}>
+        style={{background:'white',border:'7px double black',color:'black',width:'20rem'}}>
         </textarea>
     </div>
     <div className='d-flex flex-column'>

@@ -1,22 +1,39 @@
 import React, { createContext, useState } from 'react'; 
-import { HashRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import mainRoutes from "./Routes/mainRoutes";
 import MyNavbar from "./Components/Navbar";
-import Sidebar from "./Components/Sidebar";
 import useWidth from './Hooks/useWidth';
+import { useWeb3React } from "@web3-react/core";
 import "./app.styles.css";
+import { useEagerConnect, useInactiveListener } from './Hooks/hooks'
 import { addresses, chains, converChainIDToName } from './addresses';
+import Sidebar from './Components/Sidebar';
 export const context = createContext()
 function App() {
+  const { connector } = useWeb3React()
   const [network,setNetwork] = useState('')
   const [supportedChains,setSupportedChains] = useState([])
   const [pageSupported,setPageSupported] = useState('')
   const width = useWidth()
+
+   // handle logic to recognize the connector currently being activated
+   const [activatingConnector, setActivatingConnector] = React.useState()
+   React.useEffect(() => {
+     if (activatingConnector && activatingConnector === connector) {
+       setActivatingConnector(undefined)
+     }
+   }, [activatingConnector, connector])
+ 
+   // handle logic to eagerly connect to the injected ethereum provider, if it exists and has granted access already
+   const triedEager = useEagerConnect()
+ 
+   // handle logic to connect in reaction to certain events on the injected ethereum provider, if it exists
+   useInactiveListener(!triedEager || !!activatingConnector)
   return (
     <context.Provider value={{addresses,network,setNetwork,supportedChains,
       setSupportedChains,chains,converChainIDToName,pageSupported,setPageSupported}}>
     <div style={{ position: "relative",minHeight:'100%' }}>
-      <h3 className="text-white px-3 m-0" id="title">
+      <h3 className="px-3 m-0" id="title">
         Lott.Link
       </h3>
       <div className="" id="app-container" style={{ minHeight: "calc(100vh - 3.75rem)" }} >
@@ -24,14 +41,8 @@ function App() {
           <Router>
             <MyNavbar />
             <main className="d-flex justify-content-center w-100" style={{ minHeight: "calc(100% - 3.75rem)" }}>
-              {width > 992 &&
-              <div className="text-white" id="sidebar" style={{width:'28%'}}>
-                <Sidebar />
-              </div>
-              } 
               <div
-                className="text-white"
-                style={{ backgroundColor: "#020227",width:width > 992 ? '72%' : '100%',minHeight: "calc(100% - 3.75rem)" }}
+                style={{ backgroundColor: "white",width:'100%',minHeight: "calc(100% - 3.75rem)" }}
               >
                 <Switch>
                   {mainRoutes.map((route, index) => {
@@ -45,16 +56,16 @@ function App() {
                     );
                   })}
                 </Switch>
+                <div style={{display:'none'}}><Sidebar/></div>
               </div>
             </main>
           </Router>
         </div>
       </div>
-      <h6 className="position-absolute text-white px-3 m-0" 
-      style={{bottom:'-8px',right:'4rem',backgroundColor:"#020227"}}>V.0.2.4</h6>
+      <h6 className="position-absolute px-3 m-0" 
+      style={{bottom:'-8px',right:'4rem',backgroundColor:"white"}}>V.0.2.4</h6>
     </div>
     </context.Provider>
-
   );
 }
 
