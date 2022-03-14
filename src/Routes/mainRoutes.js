@@ -27,6 +27,7 @@ const mainRoutes = [
     {path:"/inbox",exact:false,component:Inbox,title:"Messenger",type:'link'},
     {path:"/contactus",exact:true,component:ContactUs,title:"Contact_us",type:'link'},
     // {path:"/dev",exact:true,component:Dev,title:"Dev",type:'link'},
+    {path:'/newmessage',exact:true,component:ContactUs,title:"new message"},
     {path:'/:user',exact:false,component:User,title:"user"}
 ]
 export default mainRoutes;

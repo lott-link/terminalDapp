@@ -2,8 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import { encrypt } from 'eth-sig-util'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'
-import { useLocation } from 'react-router-dom' 
-import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+import { useLocation, useHistory } from 'react-router-dom' 
 
 import Input from '../Components/styled/input';
 import Button from '../Components/styled/Button';
@@ -171,6 +170,11 @@ const ContactUs = () => {
       setShowTo(true)
       setTo(location.state.to)
       runFunc(location.state.to)
+    }
+    else if(location.search){
+      setShowTo(true)
+      setTo(location.search.slice(4))
+      runFunc(location.search.slice(4))
     }
     else
       setShowTo(false)
