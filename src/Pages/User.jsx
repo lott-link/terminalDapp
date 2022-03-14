@@ -19,6 +19,7 @@ const User = () => {
         //phone number
         //website
         //email
+
     }
 
 	useEffect(() => {
@@ -81,6 +82,12 @@ const User = () => {
                 else if(item[0] === 'Instagram')
                 return (
                     <a href={"https://instagram.com/"+item[1]} target="_blank" rel="noreferrer" key={index} className="w-25">
+                        <Button secondary className="w-100">{item[0]}</Button>
+                    </a>
+                )
+                else if(item[0] === 'Linkedin')
+                return (
+                    <a href={"https://www.linkedin.com/in/"+item[1]} target="_blank" rel="noreferrer" key={index} className="w-25">
                         <Button secondary className="w-100">{item[0]}</Button>
                     </a>
                 )
