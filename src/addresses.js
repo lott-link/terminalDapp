@@ -3,7 +3,7 @@ export const addresses = {
       NFT:"0xFE7FC1F36fBF10328F2E898b9487F9BD4ddA4287",
       erc721API:"https://api-rinkeby.etherscan.io/api?module=account&action=tokennfttx&startblock=0&endblock=999999999&sort=asc&apikey=WPZTIVDHXFF48WJ7UDAIE893S7WAVG6DSU&address=",
       crossChain:"0x64DfA1B8A8392E3c93f6Df96b5EbB01A1bB13e94",
-      register:"0x223beaBf32480C745f495a5C65459662818A1D5E",
+      register:"0xa68eA646284A54Ec954dcbA59BCF19743493f9Ba",
       messenger:"0x0d682f0593e7d242fF35Eed6EFea5FE9805D6E21",
       logAPI:"https://api-rinkeby.etherscan.io/api?module=logs&action=getLogs&fromBlock=9433622&toBlock=latest&apikey=WPZTIVDHXFF48WJ7UDAIE893S7WAVG6DSU&address="
     },
@@ -131,4 +131,13 @@ export const converChainIDToName = (chainID)=>{
     return "mumbai"
   else if(["0xa869",43113].includes(chainID))
     return "fuji"
+}
+export const checkLink = (link)=>{
+  if(!link) return;
+  const protocol = link.split('://')[0]
+  if(protocol.toLowerCase().includes(['http','https']))
+    return link
+  else if(protocol.toLowerCase().includes(['ipfs']))
+    return "https://ipfs.infura.io/ipfs/" + link.split('://')[1]
+  else return link
 }

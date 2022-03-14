@@ -8,6 +8,7 @@ import ContractPage from '../Pages/ContractPage'
 import ContactUs from '../Pages/ContactUs'
 import Inbox from '../Pages/Inbox'
 import Dev from '../Pages/Dev'
+import User from '../Pages/User'
 // const HomePage = React.lazy(()=>import('../Pages/HomePage'))
 // const Contract =  React.lazy(()=>import('../Pages/Contract'))
 // const NFT = React.lazy(()=>import('../Pages/NFT'))
@@ -25,6 +26,7 @@ const mainRoutes = [
     {path:"/assets",exact:false,component:Assets,title:"Assets",type:'link'},
     {path:"/inbox",exact:false,component:Inbox,title:"Messenger",type:'link'},
     {path:"/contactus",exact:true,component:ContactUs,title:"Contact_us",type:'link'},
-    {path:"/dev",exact:true,component:Dev,title:"Dev",type:'link'},
+    // {path:"/dev",exact:true,component:Dev,title:"Dev",type:'link'},
+    {path:'/:user',exact:false,component:User,title:"user"}
 ]
 export default mainRoutes;

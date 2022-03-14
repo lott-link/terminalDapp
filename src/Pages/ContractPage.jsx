@@ -12,6 +12,7 @@ import QrCode from '../Components/QrCode';
 import useWidth from '../Hooks/useWidth';
 
 const client = create('https://ipfs.infura.io:5001/api/v0')
+const dappId = "34543009667735482328789549672951212352526749190890401231713365715380358701851"
 const ContractPage = () => {
     const {account,chainId,active,library} = useWeb3React()
     const [buttonDisabled, setButtonDisabled] = useState(false)
@@ -135,6 +136,9 @@ const ContractPage = () => {
         setSendInfoLoading(true)
         setSendInfoDisabled(true)
         setShowQr(true)
+
+        getInfoFieldsData()
+
         const baseUrl = "ipfs://"
         console.log("creating and uploading qr image")
         setLoadingMsg("creating and uploading id card")
@@ -145,19 +149,24 @@ const ContractPage = () => {
         console.log("creating and uploading uri object")
         setLoadingMsg("creating and uploading uri object")
         //creating uri object
+
+        console.log(getInfoFieldsData())
+
         const obj = {
             image:baseUrl + qrImage.path,
             name:input.split("@")[0],
             attributes:[{trait_type:"dapp",value:"tapp v1.0"},{trait_type:"time",value:new Date().getTime()}],
-            interaction:interaction
+            interaction:interaction,
+            profile:getInfoFieldsData()
         }
         const uri = await client.add(JSON.stringify(obj))
 
         console.log("creating and uploading info hash")
         //creating info hash
-        let tempData = getInfoFieldsData()
-        tempData = JSON.stringify(tempData).replaceAll("\"","\'")
-        const infoHash = await client.add(JSON.stringify(tempData));
+
+        // let tempData = getInfoFieldsData()
+        // tempData = JSON.stringify(tempData).replaceAll("\"","\'")
+        // const infoHash = await client.add(JSON.stringify(tempData));
         
 
         setLoadingMsg("Wating to approve")
@@ -171,7 +180,12 @@ const ContractPage = () => {
         // }else{
             // let data = getInfoFieldsData()
             // data = JSON.stringify(data).replaceAll("\"","\'")
-            registerContract.methods.signIn(input.split("@")[0],baseUrl+infoHash.path,referral,0,baseUrl+uri.path).send({from:account,value:payableAmount})
+            // registerContract.methods.signIn(input.split("@")[0],baseUrl+infoHash.path,referral,0,baseUrl+uri.path).send({from:account,value:payableAmount})
+              
+            const referralId = library.utils.toBN(library.utils.soliditySha3(referral)).toString()
+            
+            console.log("payable amount",payableAmount)
+            registerContract.methods.signIn(input.split("@")[0],baseUrl+uri.path,[dappId,referralId],[50,50]).send({from:account,value:payableAmount})
             .on("transactionHash",transactionHash=>{
                 setLoadingMsg('Wating to comfirm')
                 progress()
