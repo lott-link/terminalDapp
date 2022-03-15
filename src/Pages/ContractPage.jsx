@@ -65,7 +65,7 @@ const ContractPage = () => {
         setInfoFields(values)
         setInfoOptions(prev=>[...prev,item.key])
     }
-    const [infoOptions,setInfoOptions] = useState(['Telegram', 'Phone number', 'Email','Website','Facebook','Instagram','Linkedin'])
+    const [infoOptions,setInfoOptions] = useState(['Telegram', 'Phone number', 'Email','Website','Facebook','Instagram','Linkedin','Discord'])
     const addOptionInput = (option)=>{
         const values = [...infoFields]
         const keys = values.map(item => item.key)
