@@ -148,6 +148,21 @@ const User = () => {
 								</Button>
 							</a>
 						);
+					else if (item[0] === "Discord")
+						return (
+						<a
+							href={"https://www.discordapp.com/users/" + item[1]}
+							target="_blank"
+							rel="noreferrer"
+							key={index}
+							className="w-25"
+						>
+							<Button secondary className="w-100">
+								{item[0]}
+							</Button>
+						</a>
+					);
+					
 				})}
                 {owner &&  
                 <Link className="w-25" to={{pathname:"/inbox/newmessage",state:{type:'reply',to:owner}}}>
