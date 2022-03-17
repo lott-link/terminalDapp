@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { walletconnect, injected } from "../Wallet/connectors";
 import { useWeb3React } from "@web3-react/core";
-import { registerContractABI} from '../Contracts/ContractsABI'
+import { registerContractABI} from './SidebarABI'
 import { useHistory } from "react-router";
 import Button from '../Components/styled/Button'
 import metamaskIcon from '../Assetes/icons/metamask/medium.png'

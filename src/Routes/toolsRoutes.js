@@ -1,5 +1,5 @@
 import React from "react";
-import CrossChain from '../Pages/NFTCrossChain'
+import CrossChain from '../Pages/NFTCrossChain/NFTCrossChain'
 // const CrossChain = React.lazy(()=>import('../Pages/NFTCrossChain'))
 const toolsRoutes = [
     {path:"/tools",exact:false,component:null,title:"tools",type:'directory',render:false,display:true},

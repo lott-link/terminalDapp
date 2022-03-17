@@ -5,9 +5,8 @@ import contractRoutes from "../Routes/contractRoutes";
 import nftRoutes  from '../Routes/nftRoutes.js'
 import play from '../Assetes/play.svg'
 import toolsRoutes from "../Routes/toolsRoutes";
-import { Nav, Container, Navbar } from 'react-bootstrap'
+import { Nav, Navbar } from 'react-bootstrap'
 import useWidth from "../Hooks/useWidth";
-import Sidebar from "./Sidebar";
 import Button from './styled/Button'
 const MyNavbar = () => {
   //sidebar

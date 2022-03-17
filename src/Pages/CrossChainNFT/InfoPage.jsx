@@ -1,7 +1,9 @@
 import React from 'react'
+
 import Button from '../../Components/styled/Button'
 import styles from './SelectNFT.module.css'
 import useWidth from '../../Hooks/useWidth'
+
 const InfoPage = ({setCircles,setStages,setSelectedWay}) => {
     const width = useWidth()
     const lockAndMint = ()=>{

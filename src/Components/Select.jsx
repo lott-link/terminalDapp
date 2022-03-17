@@ -4,7 +4,6 @@ import { useHistory } from "react-router-dom";
 import { context } from "../App";
 import Badge from 'react-bootstrap/Badge'
 import styles from './select.module.css'
-import { useWeb3React } from "@web3-react/core";
 const Select = () => {
   const [show, setShow] = useState(false);
   const [value,setValue] = useState()
@@ -13,7 +12,6 @@ const Select = () => {
   const data = useContext(context)
   const history = useHistory()
   const ref = useRef(null);
-  const { active } = useWeb3React()
   const handleClickOutside = (event) => {
     if (ref.current && !ref.current.contains(event.target)) {
       setShow(false);

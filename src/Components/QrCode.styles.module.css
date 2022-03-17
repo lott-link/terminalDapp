@@ -4,15 +4,6 @@
     background-color:#720000;
     position: relative;
 }
-.polygon {
-    width: 350px;
-    height: 350px;
-    background: url('../Assetes/tel_lottlink3.svg');
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-    position: relative;
-}
 .eth {
     width: 350px;
     height: 350px;

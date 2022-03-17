@@ -1,5 +1,5 @@
 import React from "react";
-import NFTMint from '../Pages/NFTMint'
+import NFTMint from '../Pages/NFTMint/NFTMint'
 // const NFTMint = React.lazy(()=>import('../Pages/NFTMint'))
 const nftRoutes = [
     {path:"/nft",exact:false,component:null,title:"NFT",type:'directory',render:false,display:true},

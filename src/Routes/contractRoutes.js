@@ -1,8 +1,8 @@
 import React from 'react'
-import CreateChanceRoom from  '../Pages/CreateChanceRoom'
-import Contract from '../Pages/Contract'
-import ChanceRoomList from '../Pages/ChanceRoomList'
-import ChanceRoom from '../Pages/ChanceRoom'
+import CreateChanceRoom from  '../Pages/CreateChanceRoom/CreateChanceRoom'
+import Contract from '../Pages/Contract/Contract'
+import ChanceRoomList from '../Pages/ChanceRoomList/ChanceRoomList'
+import ChanceRoom from '../Pages/ChanceRoom/ChanceRoom'
 
 // const CreateChanceRoom = React.lazy(()=>import('../Pages/CreateChanceRoom'))
 // const Contract = React.lazy(()=>import('../Pages/Contract'))

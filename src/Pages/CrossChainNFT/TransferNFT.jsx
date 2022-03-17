@@ -1,13 +1,15 @@
 import React, { useState , useEffect , useContext, useRef } from 'react'
+import { useWeb3React } from '@web3-react/core'
+import { OverlayTrigger, Tooltip} from 'react-bootstrap'
+
 import styles from './SelectNFT.module.css'
 import Input from '../../Components/styled/input'
 import Button from '../../Components/styled/Button'
 import { context } from '../../App'
-import { useWeb3React } from '@web3-react/core'
 import ProgressBar from '../../Components/ProgressBar'
-import { crossChainNFTABI as abi, NFTContractABI } from '../../Contracts/ContractsABI'
-import { OverlayTrigger, Tooltip} from 'react-bootstrap'
+import { NFTContractABI, abi } from './TransferNFTABI'
 import useWidth from '../../Hooks/useWidth'
+
 const TransferNFT = ({selectedToken,transferBtn,setTransferBtn,
                         setStages,setCircles,selectedWay,isSafeTransfer})=>{
     const { active, account, library } = useWeb3React()
@@ -201,14 +203,6 @@ const TransferNFT = ({selectedToken,transferBtn,setTransferBtn,
                             <Button onClick={safeTranferFrom} secondary>Safe Transfer</Button>
                         </div>
                     }
-                    {/* <Button onClick={transfer}
-                    className="w-75 d-flex justify-content-between mx-auto" primary>
-                        <div>Safe Mint CrossChain</div> 
-                        <div className='d-flex'>
-                            <div className='mx-1'>{fee}</div>
-                            <div><img style={{width:'25px',height:'25px'}} src={data.network && data.chains[data.network].icon} alt="" /></div>
-                        </div>
-                    </Button>                             */}
                 </div>
                 <div className='text-center'style={{padding:"0 48px"}}>your NFT will appear in your destination address in a few minutes</div>
             </div>
