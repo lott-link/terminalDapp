@@ -10,12 +10,12 @@ import Input from '../../Components/styled/input';
 import { context } from '../../App';
 import QrCode from '../../Components/QrCode';
 import useWidth from '../../Hooks/useWidth';
-import { factoryContractABI, registerContractABI ,interaction } from './ContractPageABI'
+import { factoryContractABI, registerContractABI ,interaction } from './SigninABI'
 
 const client = create('https://ipfs.infura.io:5001/api/v0')
 const dappId = "34543009667735482328789549672951212352526749190890401231713365715380358701851"
 
-const ContractPage = () => {
+const Signin = () => {
     const {account,chainId,active,library} = useWeb3React()
     const [buttonDisabled, setButtonDisabled] = useState(false)
     const [sendInfoDisabled,setSendInfoDisabled] = useState(false)
@@ -60,7 +60,7 @@ const ContractPage = () => {
         values.push({key:'',value:''})
         setInfoFields(values)
     }
-    const handleRempveField = (index,item) =>{
+    const handleRemoveField = (index,item) =>{
         console.log(item)
         const values = [...infoFields]
         values.splice(index,1)
@@ -337,7 +337,7 @@ const ContractPage = () => {
                                 <div>
                                     <Input style={{width:width>600 ?'16.5rem':"12.5rem"}} title={item.key.slice(0,1).toUpperCase()+item.key.slice(1,item.key.length)} className=""  onChange={event=>handleInputChange(index,event)} name="value" value={item.value} type="text" />
                                 </div>
-                                <div onClick={()=>handleRempveField(index,item)}>
+                                <div onClick={()=>handleRemoveField(index,item)}>
                                     <Button>Remove</Button>
                                 </div>
                             </div>
@@ -422,6 +422,6 @@ const ContractPage = () => {
     )
 }
 
-export default ContractPage
+export default Signin
 
 

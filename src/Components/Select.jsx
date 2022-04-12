@@ -37,6 +37,8 @@ const Select = () => {
         setAvailableChains([...tempChains])
         break
       case '/signin':
+      case '/signin/register':
+      case '/signin/editprofile':
         setAvailableChains(checkNetworkSupport("register"))
         break;
       case '/contract/createchanceroom':

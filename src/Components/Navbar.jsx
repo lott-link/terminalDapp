@@ -3,6 +3,7 @@ import { Link, useHistory } from "react-router-dom";
 import mainRoutes from "../Routes/mainRoutes";
 import contractRoutes from "../Routes/contractRoutes";
 import nftRoutes  from '../Routes/nftRoutes.js'
+import signinRoutes from "../Routes/signinRoutes";
 import play from '../Assetes/play.svg'
 import toolsRoutes from "../Routes/toolsRoutes";
 import { Nav, Navbar } from 'react-bootstrap'
@@ -29,6 +30,9 @@ const MyNavbar = () => {
       case "/tools":
         setNavItems([...toolsRoutes]);
         break;
+      case '/sign_in':
+        setNavItems([...signinRoutes]);
+        break;
       default:
         break;
     }
@@ -43,6 +47,8 @@ const MyNavbar = () => {
       setNavItems([...nftRoutes])
     if(path==="tools")
       setNavItems([...toolsRoutes])
+    if(path==="sign_in")
+      setNavItems([...signinRoutes])
 
   }
   useEffect(() => {

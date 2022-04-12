@@ -14,7 +14,7 @@ const User = () => {
     const [owner,setOwner] = useState()
 	const { user } = useParams();
 	const data = useContext(context);
-
+	console.log(user)
 	useEffect(() => {
 		(async () => {
 			if (!data.network) return;
