@@ -66,13 +66,22 @@ const MyNavbar = () => {
                 <div key={Math.random() * 1000} className="mx-1 d-flex align-items-center">
                   {item.type==="directory" && index === 0 && 
                   <Link style={{color:'white',textTransform:"capitalize"}} to='/'
-                    className={`${index===0 && item.title!=="HomePage"  && "trapezoid py-1  "} mx-1`}
-                    onClick={()=>handleNav("HomePage")}>{item.title!=="HomePage" && <img src={play} alt="play-icon" style={{width:'11px',height:"14px",transform:"rotate(180deg)"}} />}{" "}{item.title}</Link>
+                    className={`${index===0 && item.title!=="HomePage"  && "trapezoid py-1  "} mx-1 d-flex align-items-center`}
+                    onClick={()=>handleNav("HomePage")}>{item.title!=="HomePage" && <div style={{width:'0px',height:"0px",borderTop:"7.5px solid transparent",borderRight:"15px solid #555",borderBottom:"7.5px solid transparent"}} className="mx-2" ></div>}<div>{" "}{item.title}</div></Link>
                   }
                   {item.type==="directory" && index !== 0 &&
                   <button style={{border:'none',backgroundColor:"#020227",color:'white',textTransform:"capitalize"}} 
-                    className="mx-1" 
-                    onClick={()=>handleNav(item.title)}>{item.title}{item.title!=="HomePage" && <span >{" "}<img  style={{width:'11px',height:"14px"}} className='mb-1' alt="icon" src={play} /></span>}</button>
+                    className="mx-1 d-flex align-items-center" 
+                    onClick={()=>handleNav(item.title)}>
+                      <div>
+                        {item.title}
+                      </div>
+                      {item.title!=="HomePage" && 
+                      <span >{" "}
+                      <div style={{width:'0px',height:"0px",borderTop:"7.5px solid transparent",borderLeft:"15px solid #555",borderBottom:"7.5px solid transparent"}} className="mx-2" >
+                      </div>
+                      </span>}
+                  </button>
                   }
                   {item.type==="link" &&
                   <Link 
@@ -91,13 +100,14 @@ const MyNavbar = () => {
                 <div key={Math.random() * 1000} className="mx-1 d-flex align-items-start">
                   {item.type==="directory" && index === 0 && 
                   <Button primary style={{textTransform:"capitalize",margin:'8px 0'}} 
-                    className={`${index===0 && item.title!=="HomePage"  && "trapezoid py-1  "} `}
-                    onClick={()=>{handleNav("HomePage");history.push('/')}}>{item.title!=="HomePage" && <img src={play} alt="play-icon" style={{width:'11px',height:"14px",transform:"rotate(180deg)",filter:'contrast(10%)'}} />}{" "}{item.title}</Button>
+                    className={`${index===0 && item.title!=="HomePage"  && "trapezoid py-1  "} d-flex align-items-center`}
+                    onClick={()=>{handleNav("HomePage");history.push('/')}}>{item.title!=="HomePage" && <div style={{width:'0px',height:"0px",borderTop:"7.5px solid transparent",borderRight:"15px solid #555",borderBottom:"7.5px solid transparent"}} className="mx-2" ></div>}{" "}{item.title}</Button>
                   }
                   {item.type==="directory" && index !== 0 &&
                   <Button primary style={{border:'none',textTransform:"capitalize",margin:'8px 0'}} 
-                    className="" 
-                    onClick={()=>handleNav(item.title)}>{item.title}{item.title!=="HomePage" && <span >{" "}<img  style={{width:'11px',height:"14px",filter:'contrast(10%)'}} className='mb-1' alt="icon" src={play} /></span>}</Button>
+                    className="d-flex align-items-center" 
+                    onClick={()=>handleNav(item.title)}>{item.title}{item.title!=="HomePage" && <span >{" "}<div style={{width:'0px',height:"0px",borderTop:"7.5px solid transparent",borderLeft:"15px solid #555",borderBottom:"7.5px solid transparent"}} className="mx-2" >
+                    </div></span>}</Button>
                   }
                   {item.type==="link" &&
                   <Button primary
