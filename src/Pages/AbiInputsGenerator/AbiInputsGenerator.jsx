@@ -173,7 +173,7 @@ const AbiInputsGenerator = () => {
 				{ 
                     readFunctions.map((item,key)=>(
 						<Accordion.Item eventKey={key} key={"key"+key} style={{backgroundColor:'white'}}>
-							<Accordion.Header className="py-2" 
+							<Accordion.Header className="py-2 acc-header" 
 							style={{backgroundColor:'#020227'}}>
 								{key+1}.{" "}{item.name}
 							</Accordion.Header>
