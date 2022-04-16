@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Web3 from "web3";
+import Accordion from 'react-bootstrap/Accordion'
 
 import Input from "../../Components/styled/input";
 import Button from "../../Components/styled/Button";
@@ -15,6 +16,7 @@ const AbiInputsGenerator = () => {
 	const [readFunctions,setReadFunctions] = useState([])
 	const [writeFunctions,setWriteFunctions] = useState([])
 	const [show,setShow] = useState(0)
+	const [localABIs,setLocalABIs] = useState([])
 
 	const handleGenerate = async ()=>{
         if(window.ethereum){
@@ -36,6 +38,15 @@ const AbiInputsGenerator = () => {
 			setWriteFunctions(
 				abi.filter(item=>item.type === "function" && item.stateMutability === "nonpayable")
 			)
+			let abis = localStorage.getItem('abis')
+			if(abis){
+				abis = JSON.parse(abis)
+				const found = abis.find(item=>item.contractAddress === contractAddress)
+				if(!found)
+					localStorage.setItem('abis',JSON.stringify([...abis,{contractAddress,abi}]))
+			}else{
+				localStorage.setItem('abis',JSON.stringify([{contractAddress,abi}]))
+			}
         }
 	}
 	
@@ -89,40 +100,53 @@ const AbiInputsGenerator = () => {
         return arr;
     };
 
-    // useEffect(()=>{
-    //     (async()=>{
-    //         if(window.ethereum){
-
-    //             const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    //             accounts && setAccount(accounts[0])
-
-    //             window.ethereum.on('accountsChanged', function (accounts) {
-    //                 setAccount(accounts[0])
-    //             });
-
-    //             const web3 = new Web3(window.web3.currentProvider);
-    //             const contract = new web3.eth.Contract(
-    //               abi,
-    //               "0x8e4AD033CC7A8D1f8071C2228B079456575B0749"
-    //             );
-    //             setContract(contract)
-    //         }
-    //     })()
-    // },[])
+	const handleSelect = (e)=>{
+		console.log(e.target.value)
+		const item = localABIs.find(item=>item.contractAddress === e.target.value )
+		if(item){
+			setContractAddress(item.contractAddress)
+			setAbi(item.abi)
+		}
+	}
 
     useEffect(()=>{
-        // if(!readFunctions) return
         readFunctions.forEach(item=>{
             if(item.inputs.length === 0)
                 handleLoad(item)
         })
     },[readFunctions])
+
+	useEffect(()=>{
+		const abis = localStorage.getItem('abis')
+		if(abis){
+			setLocalABIs(JSON.parse(abis))
+		}
+	},[])
+
     return (
         <div className="h-100 w-100 d-flex flex-column align-items-center text-white wrapper mx-auto position-relative">
     	    <div className='d-flex justify-content-center py-2 w-100' style={{borderBottom:"1px solid white"}}>
             	<div>ABI Generator</div>	
     		</div>
-			
+			{
+				localABIs.length !== 0 &&
+			<div className="w-100 d-flex flex-column align-items-center">
+				<div>preview</div>
+				<select name="" id=""  className="text-center py-1 position-relative w-50"
+    			style={{background:"#020227",color:'white',border:'7px double white'}}
+				onChange={handleSelect}
+    			>
+					<option value="">select</option>
+					{
+						localABIs.map((item,key)=>(
+							<option key={"abi"+key} value={item.contractAddress}>
+								{item.contractAddress}
+							</option>
+						))
+					}
+				</select>
+			</div>
+			}
 			<div className="w-50">
 				<Input style={{width:"100%"}}
             	value={contractAddress} title="Contract Address" type="text" onChange={e=>setContractAddress(e.target.value)}/>
@@ -132,7 +156,7 @@ const AbiInputsGenerator = () => {
     	    	style={{position:'absolute',background:'#020227',top:'-10px',left:"20px"}}>
     	    	    ABI   
     	    	</label>
-    	    	<textarea name="" id=""  rows="10" className='w-100 p-2' 
+    	    	<textarea name="" id=""  rows="10" className='w-100 p-2'
     	    	onChange={(e)=>setAbi(JSON.parse(e.target.value))} 
     	    	style={{background:'#020227',border:'7px double white',color:'white',width:'20rem'}}>
     	    	</textarea>
@@ -143,28 +167,25 @@ const AbiInputsGenerator = () => {
 				<Button secondary onClick={()=>setShow(1)}>Write</Button>
 			</div>
 			{ readFunctions.length !== 0 && show === 0 && 
-			<div className="w-75">
+			<div className="w-75 mb-4">
                 <div className="my-3 px-4" style={{fontSize:'28px'}}>Read Contract</div>
-                <div className="d-flex flex-column align-items-center gap-4 w-100">
-                { 
+				<Accordion defaultActiveKey="0">
+				{ 
                     readFunctions.map((item,key)=>(
-                        <div key={key} className="d-flex flex-column gap-2 w-100 p-4" style={{border:'1px solid white'}}>
-                            <div className="text-xl">{item.name}</div>
-                            <div className="d-flex flex-column gap-2">
+						<Accordion.Item eventKey={key} key={"key"+key} style={{backgroundColor:'white'}}>
+							<Accordion.Header className="py-2" 
+							style={{backgroundColor:'#020227'}}>
+								{key+1}.{" "}{item.name}
+							</Accordion.Header>
+                            <Accordion.Body className="py-2" style={{backgroundColor:'#020227'}}>
                             {
                                 item.inputs.map((item,index)=>(
-                                    <Input className="w-100"
+                                    <Input className="w-100 my-1"
 									key={index} placeholder={`${item.name} (${item.type})`}  name={item.name} 
 									onChange={(e) => handleChange(e, item)}
 									/>
-									// <input 
-                                    // style={{borderRadius:"10px",outline:'none',padding:'1rem', backgroundColor:'#2c2f48',color:'white',border:'none'}}
-                                    // type="text" key={index*-1} name={item.name} placeholder={`${item.name} (${item.type})`} 
-                                    // onChange={(e) => handleChange(e, item)}
-                                    // />
                                 ))
                             }
-                            </div>
                             {
                                 item.inputs.length === 0 && <div>{data[item.name] ? data[item.name] : "loading..." }</div>
                             }
@@ -182,32 +203,32 @@ const AbiInputsGenerator = () => {
                             {
                                 loading[item.name] && <div>loading...</div>
                             }
-                        </div>
+                            </Accordion.Body>
+                        </Accordion.Item>
                     ))    
                 }
-                </div>
+				</Accordion>
             </div> 
 			}
 			{ writeFunctions.length !== 0 && show === 1 &&
-            <div className="w-75">
+            <div className="w-75 mb-4">
                 <div className="my-3 px-4" style={{fontSize:'28px'}}>Write Contract</div>
-                <div className="d-flex flex-column align-items-center gap-4 w-100">
+                <Accordion defaultActiveKey="0">
                 { 
                     writeFunctions.map((item,key)=>(
-                        <div key={key} className="d-flex flex-column gap-2 w-100 p-4" style={{border:'1px solid white'}}>
-                            <div className="text-xl">{item.name}</div>
+                        <Accordion.Item eventKey={key} key={"key"+key} style={{backgroundColor:'white'}}>
+                            <Accordion.Header className="py-2" 
+							style={{backgroundColor:'#020227'}}>
+								{key+1}.{" "}{item.name}
+							</Accordion.Header>
+						<Accordion.Body className="py-2" style={{backgroundColor:'#020227'}}>
                             <div className="d-flex flex-column gap-2">
                             {
                                 item.inputs.map((item,index)=>(
-									<Input className="w-100"
+									<Input className="w-100 my-1"
 									key={index*-1} placeholder={`${item.name} (${item.type})`}  name={item.name} 
 									onChange={(e) => handleChange(e, item)}
 									/>
-                                    // <input 
-                                    // style={{borderRadius:"10px",outline:'none',padding:'1rem', backgroundColor:'#2c2f48',color:'white',border:'none'}}
-                                    // type="text" key={index*-1} name={item.name} placeholder={`${item.name} (${item.type})`} 
-                                    // onChange={(e) => handleChange(e, item)}
-                                    // />
                                 ))
                             }
                             </div>
@@ -216,10 +237,11 @@ const AbiInputsGenerator = () => {
 								Write
 								</Button>
                             </div>
-                        </div>
+						</Accordion.Body>
+						</Accordion.Item>
                     ))    
                 }
-                </div>
+                </Accordion>
             </div>
 			}
         </div>
