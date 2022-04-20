@@ -118,7 +118,41 @@ export const chains = {
       rpcUrls: [''],     
       blockExplorerUrls: ['https://etherscan.io/']
       }]
-   }
+   },
+   binance:{
+    chainIdDecimal:56,
+    chainIdHex:"0x38",
+    icon:'/eth/Preview.png',
+    params:[
+      {
+        chainId: '0x38',
+        chainName: "Smart Chain",
+        nativeCurrency: {
+        name: "BNB",
+        symbol: "BNB",
+        decimals: 18
+      },
+    rpcUrls: ['https://bsc-dataseed.binance.org/'],     
+    blockExplorerUrls: ['https://bscscan.com']
+    }]
+  },
+  "binance-testnet":{
+    chainIdDecimal:97,
+    chainIdHex:"0x61",
+    icon:'/eth/Preview.png',
+    params:[
+      {
+        chainId: '0x61',
+        chainName: "Smart Chain - Testnet",
+        nativeCurrency: {
+        name: "BNB",
+        symbol: "BNB",
+        decimals: 18
+      },
+    rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545/'],     
+    blockExplorerUrls: ['https://testnet.bscscan.com']
+    }]
+  },
 }
 export const converChainIDToName = (chainID)=>{
   if(["0x1",1].includes(chainID))
@@ -131,6 +165,8 @@ export const converChainIDToName = (chainID)=>{
     return "mumbai"
   else if(["0xa869",43113].includes(chainID))
     return "fuji"
+  else if(["0x38",56].includes(chainID))
+  return "binance"
 }
 export const checkLink = (link)=>{
   if(!link) return;

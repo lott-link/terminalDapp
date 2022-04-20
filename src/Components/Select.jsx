@@ -31,7 +31,7 @@ const Select = () => {
     switch(location){
       case '/':
         const tempChains = []
-        for(let key in data.addresses){
+        for(let key in data.chains){
           tempChains.push({chain:key,supported:true})
         }
         setAvailableChains([...tempChains])

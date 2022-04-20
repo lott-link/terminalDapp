@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Web3 from "web3";
 import Accordion from 'react-bootstrap/Accordion'
 
@@ -8,27 +8,57 @@ import Button from "../../Components/styled/Button";
 const AbiInputsGenerator = () => {
     const [contract,setContract] = useState(null)
     const [account,setAccount] = useState(null)
-    const [data,setData] = useState({})
     const [result,setResult] = useState({})
     const [loading,setLoading] = useState({})
-	const [abi,setAbi] = useState("")
 	const [contractAddress,setContractAddress] = useState("")
 	const [readFunctions,setReadFunctions] = useState([])
 	const [writeFunctions,setWriteFunctions] = useState([])
 	const [show,setShow] = useState(0)
 	const [localABIs,setLocalABIs] = useState([])
+    const [err,setErr] = useState({msg:"",error:false})
+    const [contractName,setContractName] = useState('')
+    const [showItems,setShowItems] = useState(false)
 
-	const handleGenerate = async ()=>{
+    const abiRef = useRef(null)
+
+	const handleGenerate = async ()=>{        
         if(window.ethereum){
             const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+            console.log(chainId) 
             accounts && setAccount(accounts[0])
             window.ethereum.on('accountsChanged', function (accounts) {
                 setAccount(accounts[0])
             });
             const web3 = new Web3(window.web3.currentProvider);
+
+            //checking address validation
+            if(!web3.utils.isAddress(contractAddress.trim())){
+                setErr({error:true,msg:"Address Isn't Valid!"})
+                return;
+            }
+            //checking abi validation
+            let abi;
+            try {
+                abi = JSON.parse(abiRef.current.value);
+                if(typeof abi !== 'object'){
+                    setErr({error:true,msg:"ABI is corupted"})
+                    return;
+                }
+            }
+            catch(err){
+                console.log(err)
+                setErr({error:true,msg:"ABI is corupted"})
+                if(typeof abi !== 'object'){
+                    setErr({error:true,msg:"ABI is corupted"})
+                    return;
+                }
+                return;
+            }
+            
             const contract = new web3.eth.Contract(
               abi,
-              contractAddress
+              contractAddress.trim()
             );
             setContract(contract)
 
@@ -38,14 +68,16 @@ const AbiInputsGenerator = () => {
 			setWriteFunctions(
 				abi.filter(item=>item.type === "function" && item.stateMutability === "nonpayable")
 			)
+
+            //persisting contract ABIs
 			let abis = localStorage.getItem('abis')
 			if(abis){
 				abis = JSON.parse(abis)
 				const found = abis.find(item=>item.contractAddress === contractAddress)
 				if(!found)
-					localStorage.setItem('abis',JSON.stringify([...abis,{contractAddress,abi}]))
+					localStorage.setItem('abis',JSON.stringify([...abis,{contractName,contractAddress,abi,chainId}]))
 			}else{
-				localStorage.setItem('abis',JSON.stringify([{contractAddress,abi}]))
+				localStorage.setItem('abis',JSON.stringify([{contractName,contractAddress,abi,chainId}]))
 			}
         }
 	}
@@ -53,11 +85,6 @@ const AbiInputsGenerator = () => {
     const handleChange = (e, item) => {
         item.param =  e.target.value ;
     };
-
-    const handleLoad = async (item)=>{
-        const res = await contract.methods[item.name]().call()
-        setData(prev =>{return{...prev,[item.name]:res}})
-    }
 
     const call = (item) => {
         const args = paramOrder(item);
@@ -77,6 +104,7 @@ const AbiInputsGenerator = () => {
         catch(err){
             console.log(err)
             setLoading(prev=>{return{...prev,[item.name]:false}})
+            setErr({error:true,msg:err.reason})
         }
     };
 
@@ -89,6 +117,7 @@ const AbiInputsGenerator = () => {
         }
         catch(err){
             console.log(err)
+            setErr({error:true,msg:err.reason})
         }
     };
 
@@ -100,39 +129,38 @@ const AbiInputsGenerator = () => {
         return arr;
     };
 
-	const handleSelect = (e)=>{
-		console.log(e.target.value)
-		const item = localABIs.find(item=>item.contractAddress === e.target.value )
-		if(item){
-			setContractAddress(item.contractAddress)
-			setAbi(item.abi)
-		}
+	const handleSelect = (item)=>{
+		setContractAddress(item.contractAddress)
+        abiRef.current.value = JSON.stringify(item.abi);
+        setContractName(item.contractName)
 	}
 
-    useEffect(()=>{
-        readFunctions.forEach(item=>{
-            if(item.inputs.length === 0)
-                handleLoad(item)
-        })
-    },[readFunctions])
+    const handleRemoveABI = (itemToRemomve)=>{
+        const abis = localStorage.getItem('abis')
+        const filteredABIs = JSON.parse(abis).filter(item=>item.contractAddress !== itemToRemomve.contractAddress)
+        localStorage.setItem('abis',JSON.stringify(filteredABIs))
+        setLocalABIs(localABIs.filter(item=>item.contractAddress !== itemToRemomve.contractAddress))
+    }
 
 	useEffect(()=>{
-		const abis = localStorage.getItem('abis')
-		if(abis){
-			setLocalABIs(JSON.parse(abis))
-		}
+        (async()=>{
+            const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+            const abis = localStorage.getItem('abis')
+            if(abis){
+                setLocalABIs(JSON.parse(abis).filter(item=>item.chainId === chainId))
+            }
+        })()
 	},[])
 
     return (
         <div className="h-100 w-100 d-flex flex-column align-items-center text-white wrapper mx-auto position-relative">
     	    <div className='d-flex justify-content-center py-2 w-100' style={{borderBottom:"1px solid white"}}>
-            	<div>ABI Generator</div>	
+            	<div>ABI Generator</div>	{console.log(err)}
     		</div>
 			{
 				localABIs.length !== 0 &&
 			<div className="w-100 d-flex flex-column align-items-center">
-				<div>preview</div>
-				<select name="" id=""  className="text-center py-1 position-relative w-50"
+				{/* <select name="" id=""  className="text-center py-1 mt-4 position-relative w-50"
     			style={{background:"#020227",color:'white',border:'7px double white'}}
 				onChange={handleSelect}
     			>
@@ -140,13 +168,39 @@ const AbiInputsGenerator = () => {
 					{
 						localABIs.map((item,key)=>(
 							<option key={"abi"+key} value={item.contractAddress}>
-								{item.contractAddress}
+								{item.contractName}
 							</option>
 						))
 					}
-				</select>
+				</select> */}
+                <div 
+                className="text-center py-1 mt-4 position-relative w-50 px-2"
+                style={{background:"#020227",color:'white',border:'7px double white'}}
+                onClick={()=>setShowItems(!showItems)}
+                > Select From Previuos ABIs
+                    { showItems &&
+                        localABIs.map((item,key)=>(
+                            <div key={"abi"+key} className="d-flex justify-content-around align-items-center p-2"
+                            style={{width:'100%',zIndex:'20',background:"#020227",border:'1px solid white'}}
+                             value={item.contractAddress}
+                             onClick={(e)=>{e.stopPropagation();handleSelect(item)}}
+                            >
+                                <div>{item.contractName}</div>
+                                <div><Button style={{margin:'0'}} onClick={(e)=>{e.stopPropagation();handleRemoveABI(item)}}>remove</Button></div>
+                            </div>
+                        ))
+                    }
+                </div>
 			</div>
 			}
+            <div className="w-50">
+                <Input style={{width:"100%"}}
+            	value={contractName} title="Contract Name" type="text" 
+                onChange={e=>setContractName(e.target.value)}
+                small="this is an optional value for saving your abi with name."
+                smallProps={{style:{width:'100%'}}}
+                />
+            </div>
 			<div className="w-50">
 				<Input style={{width:"100%"}}
             	value={contractAddress} title="Contract Address" type="text" onChange={e=>setContractAddress(e.target.value)}/>
@@ -157,7 +211,7 @@ const AbiInputsGenerator = () => {
     	    	    ABI   
     	    	</label>
     	    	<textarea name="" id=""  rows="10" className='w-100 p-2'
-    	    	onChange={(e)=>setAbi(JSON.parse(e.target.value))} 
+    	    	ref={abiRef}
     	    	style={{background:'#020227',border:'7px double white',color:'white',width:'20rem'}}>
     	    	</textarea>
 	    	</div>
@@ -186,17 +240,14 @@ const AbiInputsGenerator = () => {
 									/>
                                 ))
                             }
-                            {
+                            {/* {
                                 item.inputs.length === 0 && <div>{data[item.name] ? data[item.name] : "loading..." }</div>
-                            }
-                            {
-                                item.inputs.length !== 0 &&
+                            } */}
                             <div>
 								<Button secondary onClick={() => call(item)}>
 									Query
 								</Button>
                             </div>
-                            }
                             {
                                 result[item.name] && <div style={{wordBreak:'break-word'}}>{result[item.name]}</div>
                             }
@@ -217,7 +268,7 @@ const AbiInputsGenerator = () => {
                 { 
                     writeFunctions.map((item,key)=>(
                         <Accordion.Item eventKey={key} key={"key"+key} style={{backgroundColor:'white'}}>
-                            <Accordion.Header className="py-2" 
+                            <Accordion.Header className="py-2 acc-header" 
 							style={{backgroundColor:'#020227'}}>
 								{key+1}.{" "}{item.name}
 							</Accordion.Header>
@@ -244,8 +295,26 @@ const AbiInputsGenerator = () => {
                 </Accordion>
             </div>
 			}
+            {
+                err.error &&
+                <div className="w-100 h-100 d-flex justify-content-center align-items-center position-absolute top-0" 
+                style={{backgroundColor:"rgba(2,117,216,0.5)"}}>
+                    <div className="bg-dark p-4 d-flex flex-column gap-2 position-absolute mx-4" style={{top:'35vh'}}>
+                        <div style={{cursor:'pointer'}} onClick={()=>setErr({err:false,msg:''})}>close</div>
+                        <div><h4>{err.msg}</h4></div>
+                    </div>
+                </div>
+            }
         </div>
     );
 }
 
 export default AbiInputsGenerator
+
+
+/***************TODO************/
+ 
+//save contract by name and network
+//remove abi
+
+//bynance testnet mainnet ezafe shavad
