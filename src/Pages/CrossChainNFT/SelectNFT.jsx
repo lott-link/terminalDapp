@@ -200,7 +200,7 @@ const SelectNFT = ({approveBtn,setApproveBtn,setCircles,setStages
                                     <tr onClick={()=>{onChangeToken(token,index)}} 
                                     key={index} className={`${styles.tr} ${selectedIndex===index ? styles.selected : ""}`}>
                                         <td>{token.chainId}</td>
-                                        <td>{token.tokenID}</td>
+                                        <td>{token?.tokenID?.length > 4 ? token.tokenID.slice(0,4)+"..." : token.tokenID}</td>
                                         <td>{token.contractAddress&&(token.contractAddress.slice(0,4)+"..."+token.contractAddress.slice(-4))}</td>
                                         <td>{token.description && token.description.length > 7 ? token.description.slice(0,7)+"..." : token.description }</td>
                                     </tr>        

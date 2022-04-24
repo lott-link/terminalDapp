@@ -178,10 +178,11 @@ const AbiInputsGenerator = () => {
                 style={{background:"#020227",color:'white',border:'7px double white'}}
                 onClick={()=>setShowItems(!showItems)}
                 > Select From Previuos ABIs
+                </div>
                     { showItems &&
                         localABIs.map((item,key)=>(
                             <div key={"abi"+key} className="d-flex justify-content-around align-items-center p-2"
-                            style={{width:'100%',zIndex:'20',background:"#020227",border:'1px solid white'}}
+                            style={{width:'50%',zIndex:'20',background:"#020227",border:'1px solid white'}}
                              value={item.contractAddress}
                              onClick={(e)=>{e.stopPropagation();handleSelect(item)}}
                             >
@@ -190,7 +191,6 @@ const AbiInputsGenerator = () => {
                             </div>
                         ))
                     }
-                </div>
 			</div>
 			}
             <div className="w-50">
