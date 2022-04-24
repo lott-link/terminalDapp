@@ -51,7 +51,7 @@ function App() {
         </div>
       </div>
       <h6 className="position-absolute text-white px-3 m-0" 
-      style={{bottom:'-8px',right:'4rem',backgroundColor:"#020227"}}>V.0.2.10</h6>
+      style={{bottom:'-8px',right:'4rem',backgroundColor:"#020227"}}>V.0.2.11</h6>
     </div>
     </context.Provider>
 
