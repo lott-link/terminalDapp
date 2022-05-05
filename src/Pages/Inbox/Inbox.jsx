@@ -11,6 +11,7 @@ import Button from '../../Components/styled/Button'
 import styles from '../ChanceRoomList/chanceRoomList.module.css'
 import ContactUs from "../ContactUs/ContactUs";
 import useWidth from "../../Hooks/useWidth";
+import { registerContractABI } from '../Signin/SigninABI'
 
 const Inbox = ()=>{
     return (
@@ -50,25 +51,55 @@ const InboxPage = () => {
 
         const ids = JSON.parse(localStorage.getItem('messages')) || {}
 
-        res.data.result.forEach((item) => {
+        const registerContract = new library.eth.Contract(registerContractABI,data.addresses[data.network]["register"])
+
+        const usernames = {}
+
+        res.data.result.forEach(async(item) => {
             try {
                 const result = library.eth.abi.decodeLog(typesArr, item.data);
 
                 result.timeStamp = library.utils.hexToNumber(item.timeStamp) * 1000
 
-                const tempMessage = JSON.parse(result.message.replaceAll("\'","\"")); 
-                result.isHashed = tempMessage.isHashed;
-                result.msg = tempMessage.msg;
-                result.id = item.transactionHash
+                let errHappened = false;
+                try{
+                    const tempMessage = JSON.parse(result.message.replaceAll("\'","\"")); 
+                    result.isHashed = tempMessage.isHashed;
+                    result.msg = tempMessage.msg;
+                    result.id = item.transactionHash
+                }catch(err){
+                    errHappened = true;
+                }
+                //beahves like continue in simple for loop
+                //if any error happens in parsing json
+                //it goes to next message
+                if(errHappened) return;
+                if(!(result.from in usernames)){
+                    const from = await registerContract.methods.primaryUsername(result.from).call()
+                    usernames[result.from] = from
+                    result.from = from
+                }else {
+                    result.from = usernames[result.from]
+                }
+
+                // if(!(result.to in usernames)){
+                //     const to = await registerContract.methods.primaryUsername(result.to).call()
+                //     usernames[result.to] = to
+                //     result.to = to
+                // }else {
+                //     result.to = usernames[result.to]
+                // }
 
                 if(result.to === account){
                     result.isRead = ids[item.transactionHash] ? ids[item.transactionHash] : false ;
                     ids[item.transactionHash] = result.isRead
                     tempLogs.push(result);
+                    setLogs(prev=>[...prev,result])
                 }
                 if(result.from === account){
                     result.isRead = true;
                     tempSentMessages.push(result)
+                    setSentMessages(prev=>[...prev,result])
                 }
             }
             catch(err) {
@@ -76,14 +107,23 @@ const InboxPage = () => {
             }
         });
         localStorage.setItem("messages",JSON.stringify(ids))
-        console.log(tempLogs);
-        setLogs(tempLogs.reverse())
+        console.log("tempLogs",tempLogs);
+        console.log("sent messages",tempSentMessages)
+        // setLogs(prev => prev.reverse())
         setAllMsgs(tempLogs)
-        setSentMessages(tempSentMessages)
+        // setSentMessages(tempSentMessages)
 
         setLoadinTable(false)
         
 	};
+    const checkAddress = (address)=>{
+        const check = library.utils.isAddress(address)
+        if(check){
+            return width > 600 ? address.slice(0,5)+"..."+address.slice(-5):address.slice(0,2)+"."+address.slice(-2)
+        }else{
+            return address.length > 10 ? address.slice(0,4)+"..." : address ;
+        }
+    }
 	useEffect(() => {
 		getLogs();
 	}, [data.network]);
@@ -112,7 +152,7 @@ const InboxPage = () => {
         return (<h2 className="w-100 h-100 d-flex justify-content-center align-items-center">Chain not supported</h2>)
     else
 	return (
-    <div className="w-100" style={{ height: "calc(100vh - 7.5rem)" }}>{console.log(logs)}
+    <div className="w-100" style={{ height: "calc(100vh - 7.5rem)" }}>{console.log("renderLogs",logs)}
 
         <div className='d-flex justify-content-between py-2' style={{borderBottom:"1px solid white"}}>
             <div style={{cursor:"pointer"}} className='mx-4 my-auto'>{/*don't delete this div */}</div>
@@ -153,12 +193,12 @@ const InboxPage = () => {
             </thead>
             <tbody>
                 {
-                logs.map((message,index)=>(
+                logs.reverse().map((message,index)=>(
                 <tr key={index} className={styles.tr} style={{cursor:'pointer',fontWeight:message.isRead ? 'normal' : 'bold',backgroundColor:!message.isRead && "#262643" }} 
                 onClick={()=>history.push({pathname:"/inbox/message",state:message})} >
                     <td>{index+1}</td>
-                    {selectedBtn === 0 && <td>{width > 600 ? message.from.slice(0,5)+"..."+message.from.slice(-5):message.from.slice(0,2)+"."+message.from.slice(-2)}</td>}
-                    {selectedBtn === 1 &&<td>{width > 600 ? message.to.slice(0,5)+"..."+message.to.slice(-5):message.to.slice(0,2)+"."+message.to.slice(-2)}</td>}
+                    {selectedBtn === 0 && <td>{checkAddress(message.from)}</td>}
+                    {selectedBtn === 1 &&<td>{checkAddress(message.to)}</td>}
                     <td>{message.subject}</td>
                     <td>{width > 600 ? (message.msg && message.msg.length > 30 ? message.msg.slice(0,30) : message.msg) : (message.msg && message.msg.length > 5 ? message.msg.slice(0,5) : message.msg) }</td>
                     <td>
