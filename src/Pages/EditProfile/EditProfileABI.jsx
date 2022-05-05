@@ -30,4 +30,13 @@ export const signinABI = [
 		stateMutability: "nonpayable",
 		type: "function",
 	},
+	{
+		"inputs": [
+			{ "internalType": "string", "name": "_username", "type": "string" }
+		],
+		"name": "userId",
+		"outputs": [{ "internalType": "uint256", "name": "Id", "type": "uint256" }],
+		"stateMutability": "view",
+		"type": "function"
+	},
 ]

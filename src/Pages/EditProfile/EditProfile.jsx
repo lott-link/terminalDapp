@@ -21,10 +21,14 @@ const EditProfile = () => {
   const [registered,setRegistered] = useState(true)
   const [metadata,setMetadata] = useState(null)
   const [availableChains,setAvailableChains] = useState([])
-  const [loading,setLoading] = useState(true)
+  const [loading,setLoading] = useState(false)
   const [username,setUsername] = useState("")
   const [tokenID,setTokenID] = useState("")
   const [txLoading,setTxLoading] = useState(false)
+  const [inputUsername,setInputUsername] = useState("")
+  const [showBtns,setShowBtns] = useState(false)
+  // const [searchMsg,setSearchMsg] = useState("")
+  const [userValid,setUserValid] = useState({valid:false,msg:""})
   const [infoOptions,setInfoOptions] = useState(['Telegram', 'Phone number', 'Email',
   'Website','Facebook','Instagram','Linkedin','Discord'])
   const [infoFields,setInfoFields] = useState([])
@@ -79,18 +83,22 @@ const EditProfile = () => {
       console.log(err)
     }
   }
-  useEffect(()=>{
-    (async()=>{
-      if(!active || !data.network) return;
+
+  const handleSearch = async()=>{
+    if(!active || !data.network) return;
       try {
+        setLoading(true)
         const contract = new library.eth.Contract(signinABI,data.addresses[data.network]["register"])
-        const userID = await contract.methods.primaryToken(account).call()
+        
+        const userID = await contract.methods.userId(inputUsername).call()
+
         console.log(userID)
         if(userID === "0") {
           setRegistered(false)
           setLoading(false)
           return
         }
+
         setTokenID(userID)
         const tokenURI = await contract.methods.tokenURI(userID).call()
         console.log(tokenURI)
@@ -104,12 +112,16 @@ const EditProfile = () => {
           addOptionInput(item[0],item[1])
         })
         setLoading(false)
+        setShowBtns(true)
+        setUserValid({msg:"",valid:"success"})
       }
       catch(err){
         console.log(err)
+        setUserValid({msg:"User does not exist",valid:"failure"})
       }
-    })()
-  },[data.network])
+  }
+ 
+
   useEffect(()=>{
     const tempChains = []
     for(let key in data.addresses){
@@ -131,7 +143,7 @@ const EditProfile = () => {
       </div>
     )
   return (
-    <div className='w-100 h-100 justify-content-center' style={{position:'relative'}}>{console.log("infoFields",infoFields)}
+    <div className='w-100 h-100' style={{position:'relative'}}>{console.log("infoFields",infoFields)}
       <div className={`px-4 d-flex align-items-center justify-content-between`} style={{height:'5%',borderBottom:'2px solid white'}}>
           <div></div>
           <div>Edit Profile</div>
@@ -152,7 +164,15 @@ const EditProfile = () => {
           }
           </div>
       </div>
-      <div className='w-100 d-flex justify-content-center my-3'>username:{username}</div>
+      <div className='d-flex justify-content-center align-items-center position-relative' style={{top:showBtns?"0":"40%"}}>
+        <Input name="username" title="username" onChange={(e)=>setInputUsername(e.target.value)}
+        style={{width:width>600 ?'16.5rem':"12.5rem"}} value={inputUsername}
+        success={userValid.valid ? "success" : "failure"} small={userValid.msg} 
+        />
+        <Button secondary onClick={handleSearch}>Search username</Button>
+        
+      </div>
+      {username && <div className='w-100 d-flex justify-content-center my-3'>username:{username}</div>}
       <div className='flex mt-4 flex-wrap justify-contetn-center align-items-center mx-auto w-75'>
         {infoFields.map((item,index)=>{
             return (
@@ -168,20 +188,22 @@ const EditProfile = () => {
         })}
       </div>
       <div className='flex flex-wrap justify-contetn-center align-items-center mx-auto w-75'>
-        {
+        {showBtns &&
           infoOptions.map((option,key)=>(
             <Button onClick={()=>addOptionInput(option)} secondary key={key}>{option}</Button>
           ))
         }
       </div>
-      {txLoading &&
+      {(txLoading || loading) &&
       <div className="d-flex flex-column w-100 h-100" style={{position:'absolute',top:'0',backgroundColor:"rgba(2,117,216,0.5)"}}>
         <LoadingBalls style={{position:'absolute',top:'50%',left:'45%'}} />
       </div>
       }
-      <div className='d-flex justify-content-center'>
+      {showBtns &&
+        <div className='d-flex justify-content-center'>
         <Button secondary style={{width:'14rem'}} onClick={updateInfo}>Update</Button>
       </div>
+      }
     </div>
   )
 }

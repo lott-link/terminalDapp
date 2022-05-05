@@ -249,7 +249,7 @@ const AbiInputsGenerator = () => {
 								</Button>
                             </div>
                             {
-                                result[item.name] && <div style={{wordBreak:'break-word'}}>{result[item.name]}</div>
+                                result[item.name] && <div style={{wordBreak:'break-word'}}>{JSON.stringify(result[item.name])}</div>
                             }
                             {
                                 loading[item.name] && <div>loading...</div>

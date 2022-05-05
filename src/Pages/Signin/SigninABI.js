@@ -30,7 +30,16 @@ export const registerContractABI = [
         outputs: [],
         stateMutability: "payable",
         type: "function",
-    }
+    },
+    {
+		"inputs": [
+			{ "internalType": "string", "name": "_username", "type": "string" }
+		],
+		"name": "usernamePrice",
+		"outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+		"stateMutability": "view",
+		"type": "function"
+	},
 ]
 export const interaction = {
     read:[

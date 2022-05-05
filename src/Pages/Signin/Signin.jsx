@@ -30,7 +30,7 @@ const Signin = () => {
     const [payableAmount,setPayableAmount] = useState(0)
     const [referral,setReferral] = useState("")
     const [loadingMsg,setLoadingMsg] = useState()
-    const [userValid,setUserValid] = useState(false)
+    const [userValid,setUserValid] = useState({valid:false,msg:""})
     const [showQr,setShowQr] = useState(false)
     const [availableChains,setAvailableChains] = useState([])
     const [label,setLabel] = useState("")
@@ -188,23 +188,9 @@ const Signin = () => {
             
             console.log("payable amount",payableAmount)
             registerContract.methods.signIn(input.split("@")[0],baseUrl+uri.path,[dappId,referralId],[50,50]).send({from:account,value:payableAmount})
-            .on("transactionHash",transactionHash=>{
-                setLoadingMsg('Wating to comfirm')
-                progress()
-            })
             .on("receipt",receipt=>{
-                setNow(0)
-                setLoadingMsg()
-                setSendInfoDisabled(false)
                 setSendInfoLoading(false)
-                // getUserInfo()
-                // addressToUser(account)
-            })
-            .on("error",error=>{
-                setLoadingMsg()
                 setSendInfoDisabled(false)
-                setSendInfoLoading(false)
-                console.log("error in sending info",error)
             })
         // }
       }
@@ -244,11 +230,11 @@ const Signin = () => {
         // contract.methods.usernamePrice(e.target.value.split("@")[0]).call().then(res=>{
         contract.methods.usernamePrice(e.target.value).call().then(res=>{
             setPayableAmount(res) 
-            setUserValid(true)
+            setUserValid({valid:true,msg:'Enter Username'})
         })
         .catch(err=>{
             console.log(err)
-            setUserValid(false)
+            setUserValid({valid:false,msg:"Username has been registered"})
         })
     }
     useEffect(()=>{
@@ -320,10 +306,10 @@ const Signin = () => {
                         <div>loading...</div> : 
                             <div className="my-2">
                                 <div className="d-flex flex-column align-items-center position-relative w-100">
-                                    <Input style={{width:width>600 ?'24rem':"20rem",paddingRight:'7rem'}} small={`enter a name`} success={userValid ? "success" : "failure"}
+                                    <Input style={{width:width>600 ?'24rem':"20rem",paddingRight:'7rem'}} small={userValid.msg} smallProps={{style:{textAlign:'start'}}} success={userValid.valid ? "success" : "failure"}
                                     value={input}  title="Enter username" type="text" onChange={handleUserName} />
                                     {input.length !== 0 && <div className='position-relative' style={{top:'-3.2rem',left:"9rem"}}><label htmlFor="">{label}</label></div>}
-                                    <Input style={{width:width>600 ?"24rem":"20rem"}} small="enter username of your referral, as default Lott.Link" 
+                                    <Input style={{width:width>600 ?"24rem":"20rem"}} small="enter username of your referral, as default Lott.Link"  smallProps={{style:{textAlign:'start'}}}
                                     value={referral} title="referral" type="text" onChange={e=>setReferral(e.target.value)}/>
                                 </div>
                                 {sendInfoLoading && <span>loading...</span>}
