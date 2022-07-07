@@ -100,7 +100,7 @@ const ChanceRoomList = () => {
               owner:"0x"+result.data.slice(90,130),
               commission:Web3.utils.toDecimal(commission),
               userLimit:Web3.utils.toDecimal(userLimit),
-            timeLimit:Web3.utils.toDecimal(timeLimit),
+              timeLimit:Web3.utils.toDecimal(timeLimit),
           }])
           setCList(prevState=>[...prevState,{
             address:"0x"+result.data.slice(26,66),

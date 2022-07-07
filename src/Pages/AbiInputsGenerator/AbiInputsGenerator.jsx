@@ -41,6 +41,7 @@ const AbiInputsGenerator = () => {
             let abi;
             try {
                 abi = JSON.parse(abiRef.current.value);
+                console.log(abi)
                 if(typeof abi !== 'object'){
                     setErr({error:true,msg:"ABI is corupted"})
                     return;
@@ -66,7 +67,7 @@ const AbiInputsGenerator = () => {
 				abi.filter(item=>item.type === "function" && item.stateMutability === "view")
 			)
 			setWriteFunctions(
-				abi.filter(item=>item.type === "function" && item.stateMutability === "nonpayable")
+				abi.filter(item=>item.type === "function" && ["nonpayable","payable"].includes(item.stateMutability))
 			)
 
             //persisting contract ABIs
