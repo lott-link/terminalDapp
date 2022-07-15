@@ -1,12 +1,3 @@
-export const factoryContractABI = [
-	{
-		inputs: [],
-		name: "registerContract",
-		outputs: [{ internalType: "address", name: "", type: "address" }],
-		stateMutability: "view",
-		type: "function",
-	},
-];
 export const registerContractABI = [
 	{
 		inputs: [{ internalType: "uint256", name: "Id", type: "uint256" }],
@@ -36,35 +27,3 @@ export const registerContractABI = [
 		type: "function",
 	},
 ];
-export const interaction = {
-	read: [
-		{
-			inputs: [
-				{
-					internalType: "uint256",
-					name: "userId",
-					type: "uint256",
-				},
-			],
-			name: "balanceInWei",
-			outputs: [
-				{
-					internalType: "uint256",
-					name: "",
-					type: "uint256",
-				},
-			],
-			stateMutability: "view",
-			type: "function",
-		},
-	],
-	write: [
-		{
-			inputs: [],
-			name: "withdraw",
-			outputs: [],
-			stateMutability: "nonpayable",
-			type: "function",
-		},
-	],
-};
