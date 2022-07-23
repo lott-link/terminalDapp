@@ -14,7 +14,7 @@ export const addresses = {
 		NFT: "0x6517077303340e0E826d6DaCD64813cb6A9E3195",
 		erc721API:
 			"https://api.polygonscan.com/api?module=account&action=tokennfttx&startblock=0&endblock=999999999&sort=asc&apikey=GFYDP8PCVIJA4JCTYPNSQETUAWQHKAD16Y&address=",
-		messenger: "0xe16a89bC2e4c49F49DF130928F04bF3eE674c75a",
+		messenger: "0x632B7c1bb31c79D8dE85B2c8122C70EAF33D6783",
 		logAPI:
 			"https://api.polygonscan.com/api?module=logs&action=getLogs&fromBlock=5000000&toBlock=999999999&apikey=GFYDP8PCVIJA4JCTYPNSQETUAWQHKAD16Y&address=",
 	},
