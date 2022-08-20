@@ -87,11 +87,17 @@ const SignInWithoutTemplate = () => {
 	};
 	const setInfo = async () => {
 		setSendInfoDisabled(true);
-		const baseUrl = "ipfs://";
 
+		// const baseUrl = "ipfs://";
+
+		const base64Pre = "data:application/json;base64,";
 		let obj = getInfoFieldsData(infoFields);
 		obj = { ...obj, defaultTemplate: true };
-		const inputObj = await client.add(JSON.stringify(obj));
+
+		//encoding
+		const base64Obj = Buffer.from(JSON.stringify(obj)).toString("base64");
+		//decoding
+		// const decoded = Buffer.from(base64Obj, "base64").toString();
 
 		const referralId = library.utils
 			.toBN(library.utils.soliditySha3(referral.toLowerCase()))
@@ -103,7 +109,7 @@ const SignInWithoutTemplate = () => {
 		);
 
 		registerContract.methods
-			.register(account, input, baseUrl + inputObj.path, referralId, dappId)
+			.register(account, input, base64Pre + base64Obj, referralId, dappId)
 			.send({ from: account, value: payableAmount })
 			.on("receipt", (receipt) => {
 				console.log("%cRecirpt", "color:yellow", receipt);

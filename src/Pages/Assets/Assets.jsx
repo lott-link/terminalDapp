@@ -419,7 +419,7 @@ const Assets = () => {
 									>
 										{modalToken.image.length < 40
 											? modalToken.image
-											: modalToken.image.slice(0, 40)}
+											: modalToken.image.slice(0, 40) + "..."}
 									</div>
 								</OverlayTrigger>
 							</div>
@@ -440,7 +440,7 @@ const Assets = () => {
 									>
 										{modalToken.tokenURI.length < 40
 											? modalToken.tokenURI
-											: modalToken.tokenURI.slice(0, 40)}
+											: modalToken.tokenURI.slice(0, 40) + "..."}
 									</div>
 								</OverlayTrigger>
 							</div>

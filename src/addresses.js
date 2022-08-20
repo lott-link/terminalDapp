@@ -184,6 +184,6 @@ export const checkLink = (link) => {
 	const protocol = link.split("://")[0];
 	if (protocol.toLowerCase().includes(["http", "https"])) return link;
 	else if (protocol.toLowerCase().includes(["ipfs"]))
-		return "https://ipfs.infura.io/ipfs/" + link.split("://")[1];
+		return "https://ipfs.io/ipfs/" + link.split("://")[1];
 	else return link;
 };

@@ -8,14 +8,14 @@ export const signinABI = [
 	},
 	{
 		inputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
-		name: "tokenURI",
+		name: "charInfo",
 		outputs: [{ internalType: "string", name: "", type: "string" }],
 		stateMutability: "view",
 		type: "function",
 	},
 	{
 		inputs: [{ internalType: "uint256", name: "_userId", type: "uint256" }],
-		name: "username",
+		name: "charName",
 		outputs: [{ internalType: "string", name: "_username", type: "string" }],
 		stateMutability: "view",
 		type: "function",
@@ -31,12 +31,10 @@ export const signinABI = [
 		type: "function",
 	},
 	{
-		"inputs": [
-			{ "internalType": "string", "name": "_username", "type": "string" }
-		],
-		"name": "userId",
-		"outputs": [{ "internalType": "uint256", "name": "Id", "type": "uint256" }],
-		"stateMutability": "view",
-		"type": "function"
+		inputs: [{ internalType: "string", name: "_username", type: "string" }],
+		name: "charId",
+		outputs: [{ internalType: "uint256", name: "Id", type: "uint256" }],
+		stateMutability: "view",
+		type: "function",
 	},
-]
+];
