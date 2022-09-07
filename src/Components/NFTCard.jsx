@@ -4,15 +4,16 @@ import { useWeb3React } from "@web3-react/core";
 import DropDownComponent from "./DropDownComponent";
 import LazyImage from "./LazyImage";
 import AccordionComponent from "./AccordionComponent";
+import { checkLink } from "../addresses";
 
 const NFTCard = ({
 	token,
 	setShow,
 	setModalToken,
 	getToken,
-	checkLink,
 	setSpamToken,
 	setUnspamToken,
+	showHideAndSpam,
 }) => {
 	const { library, account } = useWeb3React();
 	const [loading, setLoading] = useState(true);
@@ -20,6 +21,7 @@ const NFTCard = ({
 	const [info, setInfo] = useState([]);
 	const [val, setVal] = useState("");
 	useEffect(() => {
+		const list = [];
 		for (let key in token) {
 			// if(key!=="chainId" && key!== "tokenID" && key!== "contractAddress" && key!=='image')
 			if (
@@ -32,10 +34,12 @@ const NFTCard = ({
 					"tokenURI",
 					"isSpam",
 				].includes(key)
-			)
-				setInfo((prev) => [...prev, [key, token[key]]]);
+			) {
+				list.push([key, token[key]]);
+			}
 		}
-	}, []);
+		setInfo(list);
+	}, [token]);
 	const handleChange = (e, item) => {
 		if (item.params) {
 			item.params = { ...item.params, [e.target.name]: e.target.value };
@@ -73,6 +77,7 @@ const NFTCard = ({
 					getToken={getToken}
 					setSpamToken={setSpamToken}
 					setUnspamToken={setUnspamToken}
+					showHideAndSpam={showHideAndSpam}
 				/>
 			</div>
 			<div
@@ -100,7 +105,7 @@ const NFTCard = ({
 				{token.interaction !== "noInteraction" && (
 					<>
 						<div>
-							{token.interaction.read.map((item, index) => {
+							{token?.interaction?.read?.map((item, index) => {
 								return (
 									<div key={index}>
 										<div>
@@ -126,7 +131,7 @@ const NFTCard = ({
 							})}
 						</div>
 						<div>
-							{token.interaction.write.map((item, index) => {
+							{token?.interaction?.write?.map((item, index) => {
 								return (
 									<div key={index * -1}>
 										<label htmlFor="">{item.name}</label>

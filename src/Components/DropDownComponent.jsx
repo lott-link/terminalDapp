@@ -11,6 +11,7 @@ const DropDownComponent = ({
 	getToken,
 	setSpamToken,
 	setUnspamToken,
+	showHideAndSpam = true,
 }) => {
 	const [showTransferModal, setShowTransferModal] = useState(false);
 	const history = useHistory();
@@ -80,18 +81,24 @@ const DropDownComponent = ({
 					>
 						more info
 					</Dropdown.Item>
-					<Dropdown.Item
-						onClick={() => getToken(token.tokenID, token.contractAddress, true)}
-					>
-						refresh token
-					</Dropdown.Item>
-					<Dropdown.Item
-						onClick={() =>
-							token.isSpam ? setUnspamToken(token) : setSpamToken(token)
-						}
-					>
-						{token.isSpam ? "show" : "hide"}
-					</Dropdown.Item>
+					{showHideAndSpam && (
+						<>
+							<Dropdown.Item
+								onClick={() =>
+									getToken(token.tokenID, token.contractAddress, true)
+								}
+							>
+								refresh token
+							</Dropdown.Item>
+							<Dropdown.Item
+								onClick={() =>
+									token.isSpam ? setUnspamToken(token) : setSpamToken(token)
+								}
+							>
+								{token.isSpam ? "show" : "hide"}
+							</Dropdown.Item>
+						</>
+					)}
 				</Dropdown.Menu>
 			</Dropdown.Toggle>
 			<TransferModal
