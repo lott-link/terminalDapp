@@ -141,7 +141,10 @@ const AbiInputsGenerator = () => {
 		const args = paramOrder(item);
 		try {
 			contract.methods[item.name](...args)
-				.send({ from: account, value: item?.payable === true ? value : 0 })
+				.send({
+					from: account,
+					value: item?.payable === true ? value * 1e18 : 0,
+				})
 				.then((res) => console.log(res));
 		} catch (err) {
 			console.log(err);
@@ -151,9 +154,15 @@ const AbiInputsGenerator = () => {
 
 	const paramOrder = (item) => {
 		const arr = [];
+		console.log(item);
 		for (let i = 0; i < item.inputs.length; i++) {
-			arr.push(item.inputs[i].param);
+			if (/[\w]*[\d]*(\[\])/.test(item.inputs[i].type)) {
+				arr.push(JSON.parse(item.inputs[i].param));
+			} else {
+				arr.push(item.inputs[i].param);
+			}
 		}
+
 		return arr;
 	};
 
