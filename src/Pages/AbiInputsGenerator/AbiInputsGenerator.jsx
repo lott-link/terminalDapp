@@ -139,6 +139,7 @@ const AbiInputsGenerator = () => {
 	const write = (item) => {
 		console.log(item);
 		const args = paramOrder(item);
+		console.log(args);
 		try {
 			contract.methods[item.name](...args)
 				.send({
@@ -156,7 +157,9 @@ const AbiInputsGenerator = () => {
 		const arr = [];
 		console.log(item);
 		for (let i = 0; i < item.inputs.length; i++) {
-			if (/[\w]*[\d]*(\[\])/.test(item.inputs[i].type)) {
+			if (item.param || item.param === "") {
+				arr.push("");
+			} else if (/[\w]*[\d]*(\[\])/.test(item.inputs[i].type)) {
 				arr.push(JSON.parse(item.inputs[i].param));
 			} else {
 				arr.push(item.inputs[i].param);
@@ -247,6 +250,7 @@ const AbiInputsGenerator = () => {
 								onClick={(e) => {
 									e.stopPropagation();
 									handleSelect(item);
+									setShowItems(false);
 								}}
 							>
 								<div>{item.contractName}</div>
@@ -347,14 +351,17 @@ const AbiInputsGenerator = () => {
 									className="py-2"
 									style={{ backgroundColor: "#020227" }}
 								>
-									{item.inputs.map((item, index) => (
-										<Input
-											className="w-100 my-1"
-											key={index}
-											placeholder={`${item.name} (${item.type})`}
-											name={item.name}
-											onChange={(e) => handleChange(e, item)}
-										/>
+									{item.inputs.map((input, index) => (
+										<div key={index * -1}>
+											<label htmlFor="">{`${input.name} (${input.type})`}</label>
+											<Input
+												className="w-100"
+												key={index}
+												placeholder={`${input.name} (${input.type})`}
+												name={input.name}
+												onChange={(e) => handleChange(e, input)}
+											/>
+										</div>
 									))}
 									{/* {
                                 item.inputs.length === 0 && <div>{data[item.name] ? data[item.name] : "loading..." }</div>
@@ -399,20 +406,23 @@ const AbiInputsGenerator = () => {
 									style={{ backgroundColor: "#020227" }}
 								>
 									<div className="d-flex flex-column gap-2">
-										{item.inputs.map((item, index) => (
-											<Input
-												className="w-100 my-1"
-												key={index * -1}
-												placeholder={`${item.name} (${item.type})`}
-												name={item.name}
-												onChange={(e) => handleChange(e, item)}
-											/>
+										{item.inputs.map((input, index) => (
+											<div key={index * -1}>
+												<label htmlFor="">{`${input.name} (${input.type})`}</label>
+												<Input
+													className="w-100"
+													placeholder={`${input.name} (${input.type})`}
+													name={input.name}
+													onChange={(e) => handleChange(e, input)}
+												/>
+											</div>
 										))}
+										<label htmlFor="">Payable Amount</label>
 										{item?.payable === true && (
 											<Input
-												className="w-100 my-1"
+												className="w-100"
 												key="payable value"
-												placeholder={"payable value"}
+												placeholder={"Payable Value"}
 												name={"payable value"}
 												onChange={(e) => setValue(e.target.value)}
 											/>
