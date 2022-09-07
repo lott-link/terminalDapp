@@ -17,7 +17,9 @@ const ViewNFT = () => {
 	const [nextToken, setNextToken] = useState();
 	const [show, setShow] = useState(false);
 	const [modalToken, setModalToken] = useState(null);
-	const [loading, setLoading] = useState(false);
+
+	const [loadingPrev, setLoadingPrev] = useState(false);
+	const [loadingNext, setLoadingNext] = useState(false);
 
 	const { active, chainId, library: web3 } = useWeb3React();
 
@@ -38,28 +40,37 @@ const ViewNFT = () => {
 	};
 
 	const loadNext = async () => {
-		setLoading(true);
+		setLoadingNext(true);
 		setPreviousToken({ ...currentToken });
 		setCurrentToken({ ...nextToken });
 
-		const tempNextToken = await getToken(parseInt(tokenID) + 2);
+		const tempNextToken = await getToken(parseInt(tokenID) + 2).catch((err) => {
+			console.log(err);
+			setLoadingNext(true);
+		});
 		setNextToken(tempNextToken);
 
 		setTokenId(parseInt(tokenID) + 1);
 
-		setLoading(false);
+		setLoadingNext(false);
 	};
 
 	const loadPrevious = async () => {
-		setLoading(true);
+		setLoadingPrev(true);
 		setNextToken({ ...currentToken });
 		setCurrentToken({ ...previousToken });
 
-		const tempPrevToken = await getToken(parseInt(tokenID) - 2);
+		let tempPrevToken;
+		if (parseInt(tokenID) - 2 >= 0) {
+			tempPrevToken = await getToken(parseInt(tokenID) - 2).catch((err) => {
+				console.log(err);
+				setLoadingPrev(true);
+			});
+		}
 		setPreviousToken(tempPrevToken);
 
 		setTokenId(parseInt(tokenID) - 1);
-		setLoading(false);
+		setLoadingPrev(false);
 	};
 
 	useEffect(() => {
@@ -67,9 +78,16 @@ const ViewNFT = () => {
 		if (previousToken || nextToken) return;
 		(async () => {
 			if (!tokenID) return;
+			let nextToken, previousToken;
 
-			const previousToken = await getToken(parseInt(tokenID) - 1);
-			const nextToken = await getToken(parseInt(tokenID) + 1);
+			if (parseInt(tokenID) - 1 >= 0) {
+				previousToken = await getToken(parseInt(tokenID) - 1).catch((err) =>
+					console.log(err)
+				);
+			}
+			nextToken = await getToken(parseInt(tokenID) + 1).catch((err) =>
+				console.log(err)
+			);
 
 			setPreviousToken(previousToken);
 			setNextToken(nextToken);
@@ -129,7 +147,7 @@ const ViewNFT = () => {
 								secondary
 								className="mx-0"
 								onClick={loadPrevious}
-								disabled={loading}
+								disabled={loadingPrev}
 							>
 								Previous
 							</Button>
@@ -139,7 +157,7 @@ const ViewNFT = () => {
 								secondary
 								className="mx-0"
 								onClick={loadNext}
-								disabled={loading}
+								disabled={loadingNext}
 							>
 								Next
 							</Button>
