@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
+
 import mainRoutes from "../Routes/mainRoutes";
 import contractRoutes from "../Routes/contractRoutes";
 import nftRoutes  from '../Routes/nftRoutes.js'
@@ -9,6 +10,8 @@ import toolsRoutes from "../Routes/toolsRoutes";
 import { Nav, Navbar } from 'react-bootstrap'
 import useWidth from "../Hooks/useWidth";
 import Button from './styled/Button'
+import investRoutes from "../Routes/investRoutes";
+
 const MyNavbar = () => {
   //sidebar
   const [navItems, setNavItems] = useState();
@@ -33,6 +36,9 @@ const MyNavbar = () => {
       case '/sign_in':
         setNavItems([...signinRoutes]);
         break;
+      case '/invest':
+        setNavItems([...investRoutes]);
+        break;
       default:
         break;
     }
@@ -49,7 +55,8 @@ const MyNavbar = () => {
       setNavItems([...toolsRoutes])
     if(path==="sign_in")
       setNavItems([...signinRoutes])
-
+    if(path === "Invest")
+      setNavItems([...investRoutes])
   }
   useEffect(() => {
     setNavItems(mainRoutes);

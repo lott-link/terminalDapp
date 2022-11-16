@@ -17,6 +17,8 @@ export const addresses = {
 		messenger: "0x632B7c1bb31c79D8dE85B2c8122C70EAF33D6783",
 		logAPI:
 			"https://api.polygonscan.com/api?module=logs&action=getLogs&fromBlock=5000000&toBlock=999999999&apikey=GFYDP8PCVIJA4JCTYPNSQETUAWQHKAD16Y&address=",
+		lottWhiteList:"0xA5e1A9225A3d8a257CC8257caF313A3c35D07616",
+		lottMatic:"0x1912bfe71f8b78AC01278eAEc63f5d9cC2c97372"
 	},
 	mumbai: {
 		factory: "0xe88f4Ba9F8fe1701F3463A6244dcd7d3538a3b3F",
