@@ -90,7 +90,7 @@ const Referral = () => {
                 Get Referral Code
               </Button>
             </div>
-            <div className="w-100  mt-4">
+            <div className="w-100  mt-4" style={{wordBreak:"break-all"}}>
               {referralResult.referralCode !== "" ? (
                 <div>your referal code is: {referralResult.referralCode}</div>
               ) : null}
@@ -105,12 +105,12 @@ const Referral = () => {
             {noReferral ? <div className="text-danger">You don't have any referrals</div> : null}
             </div>
           </div>
-          <div
+          {/* <div
             className="px-4 text-center mb-4 d-flex align-items-end"
             style={{ color: "#FF00FF", flexGrow: "1" }}
           >
             info text goes here
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

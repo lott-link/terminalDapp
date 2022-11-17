@@ -3,10 +3,10 @@ import Button from "../../../Components/styled/Button";
 const Step4 = () => {
   const addToken = async () => {
 
-    const tokenAddress = "0xd00981105e61274c8a5cd5a88fe7e037d935b513";
-    const tokenSymbol = "TUT";
+    const tokenAddress = "0xc86CAA33EcaFDD65951F9F809CBaf3D67eeB64bd";
+    const tokenSymbol = "Lott";
     const tokenDecimals = 18;
-    const tokenImage = "http://placekitten.com/200/300";
+    // const tokenImage = "http://placekitten.com/200/300";
 
     try {
       // wasAdded is a boolean. Like any RPC method, an error may be thrown.
@@ -18,7 +18,7 @@ const Step4 = () => {
             address: tokenAddress, // The address that the token is at.
             symbol: tokenSymbol, // A ticker symbol or shorthand, up to 5 chars.
             decimals: tokenDecimals, // The number of decimals in the token
-            image: tokenImage, // A string url of the token logo
+            // image: tokenImage, // A string url of the token logo
           },
         },
       });

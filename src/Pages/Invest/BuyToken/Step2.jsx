@@ -129,7 +129,7 @@ const Step2 = ({
         className="px-4 d-flex justify-content-end"
         style={{ transform: "translateY(-8px)" }}
       >
-        <div>Your balance:{balance}</div>
+        <div>Your balance:{balance * 1e-18}</div>
       </div>
       <div className="px-4 mt-1">
         <div
