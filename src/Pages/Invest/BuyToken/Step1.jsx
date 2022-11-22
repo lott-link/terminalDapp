@@ -10,14 +10,13 @@ const Step1 = ({ setSteps, referral, setReferral }) => {
   const submit = () => {
     try {
       if (window.atob(referral)) {
-        console.log("firstasdft")
+        console.log(window.atob(referral))
         setReferral(referral);
         setSteps("step2");
       } else {
          setNoReferral(true);
       }
     } catch (err) {
-        console.log("firsthisasdft")
       setNoReferral(true);
       console.log(err);
     }

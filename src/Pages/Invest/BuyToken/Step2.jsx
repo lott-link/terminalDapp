@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { useWeb3React } from "@web3-react/core";
+import Web3 from "web3";
 
 import Input from "../../../Components/styled/input";
 import Button from "../../../Components/styled/Button";
@@ -33,7 +34,7 @@ const Step2 = ({
       selectedToken.address
     );
     tokenContract.methods
-      .approve(selectedToken.address, amount)
+      .approve(selectedToken.address, web3.utils.toWei(amount))
       .send({ from: account })
       .then((res) => {
         setSteps("step3");
@@ -49,11 +50,16 @@ const Step2 = ({
       buyTokenABI,
       data.addresses[data.network]["lottMatic"]
     );
+    try{
     const amount = await contract.methods
-      .amountLott(selectedToken.address, value)
+      .amountLott(selectedToken.address, web3.utils.toWei(value))
       .call();
     setReceiveAmount(amount);
-    console.log(amount);
+    }
+    catch(err){
+      console.log(err)
+    }
+   console.log(amount);
   };
 
   useEffect(() => {
@@ -129,14 +135,14 @@ const Step2 = ({
         className="px-4 d-flex justify-content-end"
         style={{ transform: "translateY(-8px)" }}
       >
-        <div>Your balance:{balance * 1e-18}</div>
+        <div>Your balance:{balance && web3.utils.fromWei(balance)}</div>
       </div>
       <div className="px-4 mt-1">
         <div
           className="text-center"
           style={{ width: "100%", border: "7px double white" }}
         >
-          {receiveAmount}
+          {receiveAmount && web3.utils.fromWei(receiveAmount)}
         </div>
       </div>
       <div className="w-100 px-4 mt-4">

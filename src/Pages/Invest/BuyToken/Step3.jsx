@@ -23,9 +23,9 @@ const Step3 = ({
       buyTokenABI,
       data.addresses[data.network]["lottMatic"]
     );
-    contract
-      .methods()
-      .swap(selectedToken.address, amount, referral)
+    
+    contract.methods
+      .swap(selectedToken.address, web3.utils.toWei(amount), referral)
       .send({ from: account })
       .then((res) => {
         console.log(res);
@@ -47,11 +47,11 @@ const Step3 = ({
           className="text-center"
           style={{ width: "100%", border: "7px double white" }}
         >
-          <div>{amount}</div>
+          <div>{amount && web3.utils.fromWei(amount)}</div>
         </div>
       </div>
       <div className="px-4 d-flex justify-content-end">
-        <div>Your balance:{balance}</div>
+        <div>Your balance:{balance && web3.utils.fromWei(balance)}</div>
       </div>
       <div className="px-4">
         <div>You Receive:</div>

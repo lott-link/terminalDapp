@@ -15,7 +15,7 @@ const BuyToken = () => {
 
   const [selectedToken, setSelectedToken] = useState({ address: "", name: "" });
 
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState("");
 
   const [receiveAmount, setReceiveAmount] = useState(0);
 
