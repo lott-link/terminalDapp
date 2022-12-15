@@ -33,14 +33,28 @@ const Step2 = ({
       tokenABI,
       selectedToken.address
     );
+
     tokenContract.methods
-      .approve(selectedToken.address, web3.utils.toWei(amount))
-      .send({ from: account })
+      .allowance(account, data.addresses[data.network]["lottIo"])
+      .call()
       .then((res) => {
-        setSteps("step3");
-      })
-      .catch((err) => {
-        console.log(err);
+        console.log(res);
+        if (res < web3.utils.toWei(amount)) {
+          tokenContract.methods
+            .approve(
+              data.addresses[data.network]["lottIo"],
+              web3.utils.toWei(amount)
+            )
+            .send({ from: account })
+            .then((res) => {
+              setSteps("step3");
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        } else {
+          setSteps("step3");
+        }
       });
   };
 
@@ -48,18 +62,17 @@ const Step2 = ({
     if (selectedToken.address === "") return;
     const contract = new web3.eth.Contract(
       buyTokenABI,
-      data.addresses[data.network]["lottMatic"]
+      data.addresses[data.network]["lottIo"]
     );
-    try{
-    const amount = await contract.methods
-      .amountLott(selectedToken.address, web3.utils.toWei(value))
-      .call();
-    setReceiveAmount(amount);
+    try {
+      const amount = await contract.methods
+        .amountLott(selectedToken.address, web3.utils.toWei(value))
+        .call();
+      setReceiveAmount(amount);
+    } catch (err) {
+      console.log(err);
     }
-    catch(err){
-      console.log(err)
-    }
-   console.log(amount);
+    console.log(amount);
   };
 
   useEffect(() => {
@@ -84,7 +97,7 @@ const Step2 = ({
       if (!active) return;
       const contract = new web3.eth.Contract(
         buyTokenABI,
-        data.addresses[data.network]["lottMatic"]
+        data.addresses[data.network]["lottIo"]
       );
       const list = await contract.methods.tokensIn().call();
       console.log(list);

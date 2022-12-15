@@ -10,11 +10,11 @@ const Step1 = ({ setSteps, referral, setReferral }) => {
   const submit = () => {
     try {
       if (window.atob(referral)) {
-        console.log(window.atob(referral))
-        setReferral(referral);
+        console.log(window.atob(referral));
+        setReferral(window.atob(referral));
         setSteps("step2");
       } else {
-         setNoReferral(true);
+        setNoReferral(true);
       }
     } catch (err) {
       setNoReferral(true);
@@ -45,7 +45,9 @@ const Step1 = ({ setSteps, referral, setReferral }) => {
         </Button>
       </div>
       {noReferral ? (
-        <div className="text-danger px-4 mt-3">You don't have any referrals</div>
+        <div className="text-danger px-4 mt-3">
+          You don't have any referrals
+        </div>
       ) : null}
     </div>
   );

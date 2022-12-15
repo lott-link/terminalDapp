@@ -21,9 +21,15 @@ const Step3 = ({
     if (!active) return;
     const contract = new web3.eth.Contract(
       buyTokenABI,
-      data.addresses[data.network]["lottMatic"]
+      data.addresses[data.network]["lottIo"]
     );
-    
+
+    console.log(
+      { tokenAddress: selectedToken.address },
+      { amount: web3.utils.toWei(amount) },
+      { referral }
+    );
+
     contract.methods
       .swap(selectedToken.address, web3.utils.toWei(amount), referral)
       .send({ from: account })
@@ -47,7 +53,7 @@ const Step3 = ({
           className="text-center"
           style={{ width: "100%", border: "7px double white" }}
         >
-          <div>{amount && web3.utils.fromWei(amount)}</div>
+          <div>{amount}</div>
         </div>
       </div>
       <div className="px-4 d-flex justify-content-end">
@@ -60,7 +66,7 @@ const Step3 = ({
             className="text-center"
             style={{ width: "100%", border: "7px double white" }}
           >
-            {receiveAmount}
+            {receiveAmount && web3.utils.fromWei(receiveAmount)}
           </div>
         </div>
       </div>

@@ -1,12 +1,16 @@
+import { useState, useEffect, useContext } from "react";
+
+import { context } from "../../../App";
 import Button from "../../../Components/styled/Button";
 
 const Step4 = () => {
-  const addToken = async () => {
+  const data = useContext(context);
 
-    const tokenAddress = "0xc86CAA33EcaFDD65951F9F809CBaf3D67eeB64bd";
+  const addToken = async () => {
+    const tokenAddress = data.addresses[data.network]["lottToken"];
     const tokenSymbol = "Lott";
     const tokenDecimals = 18;
-    // const tokenImage = "http://placekitten.com/200/300";
+    const tokenImage = "https://dapp.lott.link/icon.png";
 
     try {
       // wasAdded is a boolean. Like any RPC method, an error may be thrown.
@@ -18,7 +22,7 @@ const Step4 = () => {
             address: tokenAddress, // The address that the token is at.
             symbol: tokenSymbol, // A ticker symbol or shorthand, up to 5 chars.
             decimals: tokenDecimals, // The number of decimals in the token
-            // image: tokenImage, // A string url of the token logo
+            image: tokenImage, // A string url of the token logo
           },
         },
       });
