@@ -21,18 +21,18 @@ const BuyToken = () => {
 
   const [balance, setBalance] = useState(0);
 
-  const [referral, setReferral] = useState("")
+  const [referral, setReferral] = useState("");
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
+    console.log(urlParams);
     const referralCode = urlParams.get("ref");
-    console.log(referralCode);
+    console.log({ referralCode });
     if (referralCode) {
-      try{
+      try {
         setReferral(window.atob(referralCode));
-      }
-      catch(err){
-        console.log(err)
+      } catch (err) {
+        console.log(err);
       }
       setSteps("step2");
     }
@@ -65,7 +65,13 @@ const BuyToken = () => {
         >
           <div className="py-4">
             <div>
-              {steps === "step1" ? <Step1 setSteps={setSteps} referral={referral} setReferral={setReferral} /> : null}
+              {steps === "step1" ? (
+                <Step1
+                  setSteps={setSteps}
+                  referral={referral}
+                  setReferral={setReferral}
+                />
+              ) : null}
               {steps === "step2" ? (
                 <Step2
                   setSteps={setSteps}
