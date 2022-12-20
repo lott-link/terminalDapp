@@ -402,6 +402,20 @@ const Dev = () => {
     }
   };
 
+  const handleOldSign = async () => {
+    try {
+      const msg = `0x${Buffer.from(signDataInput, "utf8").toString("hex")}`;
+      const sign = await window.ethereum.request({
+        method: "personal_sign",
+        params: [msg, account, "Example password"],
+      });
+      console.log(sign);
+      setSignResult(sign);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <div
       className="w-100 h-100 d-flex flex-column align-items-center justify-content-center"
@@ -422,7 +436,8 @@ const Dev = () => {
             onChange={(e) => setSignDataInput(e.target.value)}
           />
         </div>
-        <Button onClick={handleNewSign}>sign</Button>
+        <Button onClick={handleOldSign}>old sign</Button>
+        <Button onClick={handleNewSign}>new sign</Button>
         <div className="w-75 " style={{ wordBreak: "break-all" }}>
           {signResult}
         </div>
