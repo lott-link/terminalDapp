@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useWeb3React } from "@web3-react/core";
 import { context } from "../../App";
 import { useContext } from "react";
+import Web3 from "web3";
 
 import Input from "../../Components/styled/input";
 import Button from "../../Components/styled/Button";
@@ -389,10 +390,10 @@ const Dev = () => {
 
   const handleNewSign = async () => {
     try {
-      const msg = `0x${Buffer.from(signDataInput, "utf8").toString("hex")}`;
+      // const msg = Web3.utils.sha3(signDataInput);
       const sign = await window.ethereum.request({
         method: "personal_sign",
-        params: [msg, account, "Example password"],
+        params: [signDataInput, account],
       });
       console.log(sign);
       setSignResult(sign);
