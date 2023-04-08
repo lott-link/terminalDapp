@@ -19,17 +19,76 @@ import Invest from '../Pages/Invest/Invest'
 // const ContactUs = React.lazy(()=>import('../Pages/ContactUs'))
 // const Inbox = React.lazy(()=>import('../Pages/Inbox'))
 const mainRoutes = [
-    {path:"/",exact:true,component:HomePage,title:"HomePage",type:'directory'},
-    {path:'/signin',exact:false,component:SigninRoot,title:"sign_in",type:'directory'},
-    {path:"/contract",exact:false,component:Contract,title:"Contract",type:'directory'},
-    {path:"/nft",exact:false,component:NFT,title:"NFT",type:'directory'},
-    {path:"/tools",exact:false,component:Tools,title:"tools",type:'directory'},
-    {path:"/invest",exact:false,component:Invest,title:"Invest",type:'directory'},
-    {path:"/assets",exact:false,component:Assets,title:"Assets",type:'link'},
-    {path:"/inbox",exact:false,component:Inbox,title:"Messenger",type:'link'},
-    {path:"/contactus",exact:true,component:ContactUs,title:"Contact_us",type:'link'},
-    {path:'/newmessage',exact:true,component:ContactUs,title:"new message"},
-    {path:"/dev",exact:true,component:Dev,title:"Dev",type:'link'},
-    {path:'/:user',exact:false,component:User,title:"user"}
-]
+  {
+    path: "/",
+    exact: true,
+    component: HomePage,
+    title: "HomePage",
+    type: "directory",
+  },
+  {
+    path: "/signin",
+    exact: false,
+    component: SigninRoot,
+    title: "sign_in",
+    type: "directory",
+  },
+  {
+    path: "/contract",
+    exact: false,
+    component: Contract,
+    title: "Contract",
+    type: "directory",
+  },
+  {
+    path: "/nft",
+    exact: false,
+    component: NFT,
+    title: "NFT",
+    type: "directory",
+  },
+  {
+    path: "/tools",
+    exact: false,
+    component: Tools,
+    title: "tools",
+    type: "directory",
+  },
+  {
+    path: "/invest",
+    exact: false,
+    component: Invest,
+    title: "Invest",
+    type: "directory",
+  },
+  {
+    path: "/assets",
+    exact: false,
+    component: Assets,
+    title: "Assets",
+    type: "link",
+  },
+  {
+    path: "/inbox",
+    exact: false,
+    component: Inbox,
+    title: "Messenger",
+    type: "link",
+  },
+  {
+    path: "/contactus",
+    exact: true,
+    component: ContactUs,
+    title: "Contact_us",
+    type: "link",
+  },
+  {
+    path: "/newmessage",
+    exact: true,
+    component: ContactUs,
+    title: "new message",
+  },
+  { path: "/dev", exact: true, component: Dev, title: "Dev", type: "link" },
+  { path: "/:user", exact: false, component: User, title: "user" },
+];
 export default mainRoutes;
