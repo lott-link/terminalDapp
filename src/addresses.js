@@ -24,10 +24,12 @@ export const addresses = {
   mumbai: {
     factory: "0xe88f4Ba9F8fe1701F3463A6244dcd7d3538a3b3F",
     NFT: "0x4316773d8a9f366f3Ae53419000188b3979360C2",
+    messenger: "0xEF414978d98FE34AaCe34E2a1c06E42CDa05Cbe2",
     erc721API:
       "https://api-testnet.polygonscan.com/api?module=account&action=tokennfttx&startblock=0&endblock=999999999&sort=asc&address=",
     crossChain: "0xfd23d6C7083D116394aA203552eB23F486554e69",
-    logAPI: "",
+    logAPI:
+      "https://api-testnet.polygonscan.com//api?module=logs&action=getLogs&fromBlock=34318444&toBlock=999999999&apikey=GFYDP8PCVIJA4JCTYPNSQETUAWQHKAD16Y&address=",
   },
   fuji: {
     NFT: "0xc1A9ee55b5E915E72BfED9DBEcc27d0834d2f2b6",
