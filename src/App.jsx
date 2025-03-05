@@ -1,17 +1,20 @@
 import React, { createContext, useState } from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { HashRouter as Router, Switch, Route } from "react-router-dom"; // Change BrowserRouter to HashRouter
 import mainRoutes from "./Routes/mainRoutes";
 import MyNavbar from "./Components/Navbar";
 import Sidebar from "./Components/Sidebar";
 import useWidth from "./Hooks/useWidth";
 import "./app.styles.css";
 import { addresses, chains, converChainIDToName } from "./addresses";
+
 export const context = createContext();
+
 function App() {
   const [network, setNetwork] = useState("");
   const [supportedChains, setSupportedChains] = useState([]);
   const [pageSupported, setPageSupported] = useState("");
   const width = useWidth();
+
   return (
     <context.Provider
       value={{
@@ -36,6 +39,7 @@ function App() {
           style={{ minHeight: "calc(100vh - 3.75rem)" }}
         >
           <div className="w-100" style={{ minHeight: "calc(100vh - 3.75rem)" }}>
+            {/* Changed BrowserRouter to HashRouter */}
             <Router>
               <MyNavbar />
               <main
