@@ -1,24 +1,24 @@
 {
   "files": {
-    "main.css": "/static/css/main.5d205127.chunk.css",
-    "main.js": "/static/js/main.5f4a91ae.chunk.js",
-    "runtime-main.js": "/static/js/runtime-main.49eb71ff.js",
-    "static/css/2.00e19939.chunk.css": "/static/css/2.00e19939.chunk.css",
-    "static/js/2.9667f1a4.chunk.js": "/static/js/2.9667f1a4.chunk.js",
-    "static/js/3.dd8cd6fa.chunk.js": "/static/js/3.dd8cd6fa.chunk.js",
-    "static/js/4.432793c2.chunk.js": "/static/js/4.432793c2.chunk.js",
-    "static/js/5.344031ca.chunk.js": "/static/js/5.344031ca.chunk.js",
-    "index.html": "/index.html",
-    "static/js/2.9667f1a4.chunk.js.LICENSE.txt": "/static/js/2.9667f1a4.chunk.js.LICENSE.txt",
-    "static/js/3.dd8cd6fa.chunk.js.LICENSE.txt": "/static/js/3.dd8cd6fa.chunk.js.LICENSE.txt",
-    "static/media/app.styles.css": "/static/media/arrowUp.6b04a3eb.svg",
-    "static/media/play.15c0e61a.svg": "/static/media/play.15c0e61a.svg"
+    "main.css": "https://dapp.lott.link/static/css/main.af21d846.chunk.css",
+    "main.js": "https://dapp.lott.link/static/js/main.5f4a91ae.chunk.js",
+    "runtime-main.js": "https://dapp.lott.link/static/js/runtime-main.bc3835cd.js",
+    "static/css/2.00e19939.chunk.css": "https://dapp.lott.link/static/css/2.00e19939.chunk.css",
+    "static/js/2.3bb6e7d7.chunk.js": "https://dapp.lott.link/static/js/2.3bb6e7d7.chunk.js",
+    "static/js/3.dd8cd6fa.chunk.js": "https://dapp.lott.link/static/js/3.dd8cd6fa.chunk.js",
+    "static/js/4.432793c2.chunk.js": "https://dapp.lott.link/static/js/4.432793c2.chunk.js",
+    "static/js/5.344031ca.chunk.js": "https://dapp.lott.link/static/js/5.344031ca.chunk.js",
+    "index.html": "https://dapp.lott.link/index.html",
+    "static/js/2.3bb6e7d7.chunk.js.LICENSE.txt": "https://dapp.lott.link/static/js/2.3bb6e7d7.chunk.js.LICENSE.txt",
+    "static/js/3.dd8cd6fa.chunk.js.LICENSE.txt": "https://dapp.lott.link/static/js/3.dd8cd6fa.chunk.js.LICENSE.txt",
+    "static/media/app.styles.css": "https://dapp.lott.link/static/media/arrowUp.6b04a3eb.svg",
+    "static/media/play.15c0e61a.svg": "https://dapp.lott.link/static/media/play.15c0e61a.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.49eb71ff.js",
+    "static/js/runtime-main.bc3835cd.js",
     "static/css/2.00e19939.chunk.css",
-    "static/js/2.9667f1a4.chunk.js",
-    "static/css/main.5d205127.chunk.css",
+    "static/js/2.3bb6e7d7.chunk.js",
+    "static/css/main.af21d846.chunk.css",
     "static/js/main.5f4a91ae.chunk.js"
   ]
 }
