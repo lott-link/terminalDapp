@@ -2,7 +2,7 @@
   "name": "simple-dapp",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://dapp.lott.link",
+  "homepage": "https://dapp.lott.link/",
   "dependencies": {
     "@metamask/eth-sig-util": "^4.0.0",
     "@testing-library/jest-dom": "^5.14.1",
